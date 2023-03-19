@@ -1,4 +1,3 @@
-import { onAuthStateChanged } from "firebase/auth";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { UserContext, IUserContext } from "./userContext";
 

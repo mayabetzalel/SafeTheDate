@@ -12,14 +12,14 @@ import LockOutlinedIcon from "@mui/icons-material/Lock";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { useTheme } from "@mui/material/styles";
-import { User } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { RoutePaths } from "../App";
 import GoogleButton from "react-google-button";
 
 export const loginUserWithGoogle = async (
-  onSuccess: (user: User) => void,
+  // onSuccess: (user: User) => void,
+  onSuccess: (user: any) => void,
   onError: (error: any) => void
 ) => {
   try {
@@ -32,7 +32,8 @@ export const loginUserWithGoogle = async (
 const loginUser = async (
   email: React.MutableRefObject<any>,
   password: React.MutableRefObject<any>,
-  onSuccess: (user: User) => void,
+  // onSuccess: (user: User) => void,
+  onSuccess: (user: any) => void,
   onError: (error: any) => void
 ) => {
   try {
