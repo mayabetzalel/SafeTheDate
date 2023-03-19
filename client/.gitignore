@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 
+.idea
 # testing
 /coverage
 
@@ -18,6 +19,9 @@
 .env.development.local
 .env.test.local
 .env.production.local
+# misc
+.DS_Store
+.env
 
 npm-debug.log*
 yarn-debug.log*
