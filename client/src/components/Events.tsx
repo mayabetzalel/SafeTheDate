@@ -1,7 +1,8 @@
-import { Typography } from "@mui/material";
+import {Paper, Typography} from "@mui/material";
 import { useUserContext } from "../controller/userController/userContext";
+import ThemeExamples from "../overrieds/ThemeExamples";
 
-const Home = () => {
+const Events = () => {
   const { user } = useUserContext();
 
   return (
@@ -10,13 +11,13 @@ const Home = () => {
     //   isSuccess={isSuccess}
     //   isLoading={isLoading}
     // >
-    <>
+    <Paper>
       <Typography variant={"h4"}>
         Welcome to Safe The Date {user?.displayName}
       </Typography>
-    </>
+    </Paper>
     // </FetchingState>
   );
 };
 
-export default Home;
+export default Events;

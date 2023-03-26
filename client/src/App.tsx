@@ -1,44 +1,92 @@
-import Home from "./components/Home";
+import Events from "./components/Events";
 import { Box, Container } from "@mui/material";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-import Navbar from "./components/AppBar";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import Navbar from "./components/AppBar/AppBar";
+import {
+  Route,
+  BrowserRouter as Router,
+  Routes,
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements,
+  Outlet,
+} from "react-router-dom";
 import PrivateRoute from "./utils/PrivateRoute";
 import { useUserContext } from "./controller/userController/userContext";
+import {CreateEvent} from "./components/CreateEvent";
+import {ImportTicket} from "./components/ImportTicket";
+import {Profile} from "./components/Profile";
 
 // use this enum to make links to pages
 export enum RoutePaths {
-  HOME = "/",
   LOGIN = "/login",
   SIGNUP = "/signup",
+  EVENTS = "/",
+  CREATE_EVENT = "/create-event",
+  IMPORT_TICKET = "/import-ticket",
+  PROFILE = "/profile",
 }
 
-const App = () => {
-  const { user } = useUserContext();
+const router = createBrowserRouter([
+  {
+    element: (
+      <>
+        <Navbar />
+        <Box height="90%">
+          <Container sx={{ height: "inherit"}}>
+            <Outlet />
+          </Container>
+        </Box>
+      </>
+    ),
+    children: [
+      {
+        path: RoutePaths.LOGIN,
+        element: <Login />,
+      },
+      {
+        path: RoutePaths.SIGNUP,
+        element: <Signup />,
+      },
+      {
+        path: RoutePaths.EVENTS,
+        element: (
+          <PrivateRoute>
+            <Events />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: RoutePaths.CREATE_EVENT,
+        element: (
+          <PrivateRoute>
+            <CreateEvent />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: RoutePaths.IMPORT_TICKET,
+        element: (
+          <PrivateRoute>
+            <ImportTicket />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: RoutePaths.PROFILE,
+        element: (
+          <PrivateRoute>
+            <Profile />
+          </PrivateRoute>
+        ),
+      },
+    ],
+  },
+]);
 
-  return (
-    <Router>
-      {/* {user && <Navbar />} */}
-      <Navbar />
-      <Box height="90%" marginTop={5}>
-        <Container sx={{ height: "inherit" }}>
-          <Routes>
-            <Route path={RoutePaths.LOGIN} element={<Login />} />
-            <Route path={RoutePaths.SIGNUP} element={<Signup />} />
-            <Route
-              path={RoutePaths.HOME}
-              element={
-                <PrivateRoute>
-                  <Home />
-                </PrivateRoute>
-              }
-            />
-          </Routes>
-        </Container>
-      </Box>
-    </Router>
-  );
+const App = () => {
+  return <RouterProvider router={router} />;
 };
 
 export default App;
