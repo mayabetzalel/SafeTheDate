@@ -2,10 +2,10 @@
   "name": "server",
   "version": "1.0.0",
   "description": "graphql server",
-  "main": "index.js",
+  "main": "server.ts",
   "scripts": {
-    "start": "nodemon src/index.ts",
-    "start:prod": "node /dist/index.js",
+    "start": "nodemon src/server.ts",
+    "start:prod": "node /dist/server.js",
     "prestart": "npm run build",
     "build": "tsc",
     "prebuild": "npm run generate",
