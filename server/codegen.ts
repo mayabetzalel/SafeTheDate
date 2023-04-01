@@ -9,7 +9,7 @@ const config: CodegenConfig = {
     require: ['ts-node/register'],
     generates: {
         'src/graphql/typeDefs/index.ts': {
-            plugins: ['typescript', 'typescript-resolvers'],
+            plugins: ['typescript', 'typescript-resolvers']
         },
     },
 };
