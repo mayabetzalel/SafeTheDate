@@ -4,17 +4,24 @@ import ThemeExamples from "../overrieds/ThemeExamples";
 import { gql, useQuery } from "urql";
 import FetchingState from "../utils/fetchingState";
 
+interface ticketData {
+
+    ticket: { areaNumber: number; id: string }[];
+
+}
+
 const ticketQuery = gql`
   query ticketQuery {
     ticket {
-      id    
+      id
+      areaNumber
     }
   }
 `;
 
 const Events = () => {
   const { user } = useUserContext();
-  const [{ data, fetching, error }, reexecuteQuery] = useQuery({
+  const [{ data, fetching, error }, reexecuteQuery] = useQuery<ticketData>({
     query: ticketQuery,
   });
   return (
@@ -23,7 +30,7 @@ const Events = () => {
         <Typography variant={"h4"}>
           Welcome to Safe The Date {user?.displayName}
         </Typography>
-        <Typography variant={"h4"}>{data}</Typography>
+        <Typography variant={"h4"}>areaNumber: {data?.ticket?.[0].areaNumber}</Typography>
       </Paper>
     </FetchingState>
   );
