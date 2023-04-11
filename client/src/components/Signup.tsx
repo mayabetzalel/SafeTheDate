@@ -17,6 +17,7 @@ import GoogleButton from "react-google-button";
 import { RoutePaths } from "../App";
 import { loginUserWithGoogle } from "./Login";
 import { useAuth } from "../controller/userController/userContext"
+import { last } from "lodash";
 
 
 const Signup = () => {
@@ -26,6 +27,9 @@ const Signup = () => {
 
   const email: React.MutableRefObject<any> = useRef(null);
   const password: React.MutableRefObject<any> = useRef(null);
+  const username: React.MutableRefObject<any> = useRef(null);
+  const lastName: React.MutableRefObject<any> = useRef(null);
+  const firstName: React.MutableRefObject<any> = useRef(null);
   const theme = useTheme();
   const paperStyle = {
     padding: 20,
@@ -41,6 +45,9 @@ const Signup = () => {
   const signUpUser = async (
     email: React.MutableRefObject<any>,
     password: React.MutableRefObject<any>,
+    username: React.MutableRefObject<any>,
+    lastName: React.MutableRefObject<any>,
+    firstName: React.MutableRefObject<any>,
     enqueueSnackbar: any,
     navigate: any
   ) => {
@@ -55,7 +62,8 @@ const Signup = () => {
       //   email.current.value,
       //   password.current.value
       // );
-      signUp(email.current.value.trim(), password.current.value.trim())
+      signUp(email.current.value.trim(), username.current.value.trim(), firstName.current.value.trim(), 
+      lastName.current.value.trim(), password.current.value.trim())
       enqueueSnackbar("Successful sign up!", { variant: "success" });
       navigate("/");
     } catch (error: any) {
@@ -82,6 +90,30 @@ const Signup = () => {
         />
         <TextField
           sx={{ margin: "8px 0" }}
+          inputRef={firstName}
+          label="FirstName"
+          placeholder="Enter first name"
+          fullWidth
+          required
+        />
+        <TextField
+          sx={{ margin: "8px 0" }}
+          inputRef={lastName}
+          label="LastName"
+          placeholder="Enter last name"
+          fullWidth
+          required
+        />
+        <TextField
+          sx={{ margin: "8px 0" }}
+          inputRef={username}
+          label="Username"
+          placeholder="Enter username"
+          fullWidth
+          required
+        />
+        <TextField
+          sx={{ margin: "8px 0" }}
           inputRef={password}
           label="Password"
           placeholder="Enter password"
@@ -94,7 +126,7 @@ const Signup = () => {
           variant="contained"
           style={btnstyle}
           fullWidth
-          onClick={() => signUpUser(email, password, enqueueSnackbar, navigate)}
+          onClick={() => signUpUser(email, username, firstName, lastName, password, enqueueSnackbar, navigate)}
         >
           Sign up
         </Button>

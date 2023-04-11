@@ -20,13 +20,13 @@ const backendAPI = {
         });
       },
 
-      async signUpWithEmailAndPassword(email : string, password : string) {
-        console.log("11")
+      async signUpWithEmailAndPassword(email: string, username: string, firstName: string, 
+        lastName: string, password: string) {
         return await axios.post(REST_API.auth.signUpWithEmailAndPassword, {
           email,
-          username: "username",
-          firstName: "first",
-          lastName: "second",
+          username: username,
+          firstName: firstName,
+          lastName: lastName,
           password,
         });
       },

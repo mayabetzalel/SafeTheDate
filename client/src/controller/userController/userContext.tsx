@@ -2,11 +2,12 @@ import { createContext, useContext } from "react";
 import backendAPI from '../../api';
 
 const AuthContext = createContext({
-  signUp: async (email: string, password: string) => {
-    backendAPI.auth.signUpWithEmailAndPassword(email, password)
+  signUp: async (email: string, username: string, firstName: string, 
+    lastName: string, password: string) => {
+    backendAPI.auth.signUpWithEmailAndPassword(email, username, firstName, lastName, password)
   },
   signIn: async ( email: string, password: string ) => {
-    backendAPI.auth.signUpWithEmailAndPassword(email, password)
+    backendAPI.auth.signInWithEmailAndPassword(email, password)
   }
 })
 
