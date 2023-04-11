@@ -34,7 +34,7 @@ const router = createBrowserRouter([
       <>
         <Navbar />
         <Box height="90%">
-          <Container sx={{ height: "inherit"}}>
+          <Container sx={{ height: "inherit"}} maxWidth={"xl"}>
             <Outlet />
           </Container>
         </Box>
