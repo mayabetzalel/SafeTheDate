@@ -1,6 +1,6 @@
-import { Paper, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { useUserContext } from "../hooks/userController/userContext";
-import ThemeExamples from "../overrieds/ThemeExamples";
+import TicketCard from "./TicketCard/TicketCard";
 import { gql, useQuery } from "urql";
 import FetchingState from "../utils/fetchingState";
 import {graphql} from "../graphql";
@@ -14,20 +14,21 @@ const ticketQuery = graphql(`
   }
 `);
 
+
+
 const Events = () => {
   const { user } = useUserContext();
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: ticketQuery,
   });
   return (
-    <FetchingState isError={error} isFetching={fetching}>
-      <Paper>
-        <Typography variant={"h4"}>
-          Welcome to Safe The Date {user?.displayName}
-        </Typography>
-        <Typography variant={"h4"}>areaNumber: {data?.ticket?.[0]?.areaNumber}</Typography>
-      </Paper>
-    </FetchingState>
+    <Grid container spacing={3}>
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(() => (
+        <Grid item sm={4} md={3}>
+          <TicketCard />
+        </Grid>
+      ))}
+    </Grid>
   );
 };
 
