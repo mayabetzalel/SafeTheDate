@@ -16,28 +16,14 @@ import { useNavigate } from "react-router-dom";
 import GoogleButton from "react-google-button";
 import { RoutePaths } from "../App";
 import { loginUserWithGoogle } from "./Login";
+import { useAuth } from "../controller/userController/userContext"
 
-const signUpUser = async (
-  email: React.MutableRefObject<any>,
-  password: React.MutableRefObject<any>,
-  enqueueSnackbar: any,
-  navigate: any
-) => {
-  try {
-    // await createUserWithEmailAndPassword(
-    //   auth,
-    //   email.current.value,
-    //   password.current.value
-    // );
-    enqueueSnackbar("Successful sign up!", { variant: "success" });
-    navigate("/");
-  } catch (error: any) {
-    enqueueSnackbar(error.message, { variant: "error" });
-  }
-};
+
 const Signup = () => {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const { signUp } = useAuth();
+
   const email: React.MutableRefObject<any> = useRef(null);
   const password: React.MutableRefObject<any> = useRef(null);
   const theme = useTheme();
@@ -48,8 +34,35 @@ const Signup = () => {
     margin: "auto",
     backgroundColor: theme.palette.background.paper,
   };
+
   const avatarStyle = { backgroundColor: theme.palette.primary.main };
   const btnstyle = { margin: "8px 0" };
+
+  const signUpUser = async (
+    email: React.MutableRefObject<any>,
+    password: React.MutableRefObject<any>,
+    enqueueSnackbar: any,
+    navigate: any
+  ) => {
+    try {
+      console.log("-------------------------------")
+  
+      console.log(email.current.value.trim())
+      console.log(password.current.value.trim())
+      console.log("-------------------------------")
+      // await createUserWithEmailAndPassword(
+      //   auth,
+      //   email.current.value,
+      //   password.current.value
+      // );
+      signUp(email.current.value.trim(), password.current.value.trim())
+      enqueueSnackbar("Successful sign up!", { variant: "success" });
+      navigate("/");
+    } catch (error: any) {
+      enqueueSnackbar(error.message, { variant: "error" });
+    }
+  };
+
   return (
     <Grid>
       <Paper elevation={10} style={paperStyle}>
@@ -95,7 +108,7 @@ const Signup = () => {
                 enqueueSnackbar("Successful login!", { variant: "success" });
                 navigate(RoutePaths.HOME);
               },
-              (error) => {
+              (error: { message: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; }) => {
                 enqueueSnackbar(error.message, { variant: "error" });
               }
             )

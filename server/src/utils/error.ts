@@ -125,6 +125,7 @@ export const errorHandler: (logger?: ILogger) => ErrorRequestHandler =
             )
           );
       } else {
+        console.log("here3")
         // Track uncaught exception to appinsights and mark it as critical
         res
           .status(500)
@@ -135,6 +136,7 @@ export const errorHandler: (logger?: ILogger) => ErrorRequestHandler =
       logger.error(e as Error);
 
       if (res.headersSent) return;
+      console.log("here4")
       res.status(500).send(retServerError(serverErrorCodes.ServiceUnavilable));
     }
   };

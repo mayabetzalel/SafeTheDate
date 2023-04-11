@@ -16,6 +16,8 @@ import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { RoutePaths } from "../App";
 import GoogleButton from "react-google-button";
+import { useAuth } from "../controller/userController/userContext"
+
 
 export const loginUserWithGoogle = async (
   // onSuccess: (user: User) => void,
@@ -29,26 +31,9 @@ export const loginUserWithGoogle = async (
     onError(error);
   }
 };
-const loginUser = async (
-  email: React.MutableRefObject<any>,
-  password: React.MutableRefObject<any>,
-  // onSuccess: (user: User) => void,
-  onSuccess: (user: any) => void,
-  onError: (error: any) => void
-) => {
-  try {
-    // const user = await signInWithEmailAndPassword(
-    //   email.current.value,
-    //   password.current.value
-    // );
-    // if (user == null) throw new Error();
-    // onSuccess(user);
-  } catch (error: any) {
-    onError(error);
-  }
-};
 
 const Login = () => {
+  const { signIn } = useAuth();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
@@ -62,6 +47,35 @@ const Login = () => {
     backgroundColor: theme.palette.background.paper,
   };
   const btnstyle = { margin: "8px 0" };
+
+  const loginUser = async (
+    email: React.MutableRefObject<any>,
+    password: React.MutableRefObject<any>,
+    // onSuccess: (user: User) => void,
+    onSuccess: (user: any) => void,
+    onError: (error: any) => void
+  ) => {
+    try {
+      console.log("-------------------------------")
+  
+      console.log(email.current.value.trim())
+      console.log(password.current.value.trim())
+      console.log("-------------------------------")
+      
+      signIn(email.current.value.trim(), password.current.value.trim())
+      // const user = await signInWithEmailAndPassword(
+      //   email.current.value,
+      //   password.current.value
+      // );
+      // if (user == null) throw new Error();
+      // onSuccess(user);
+    } catch (error: any) {
+      console.log("Ine rrorororor")
+      onError(error);
+    }
+  };
+
+
   return (
     <Grid>
       <Paper elevation={10} style={paperStyle}>
@@ -127,7 +141,7 @@ const Login = () => {
         />
         <Typography>
           {" "}
-          Don't you have an account ?<Link href="/Signup">Sign Up</Link>
+          Dont you have an account ?<Link href="/Signup">Sign Up</Link>
         </Typography>
       </Paper>
     </Grid>

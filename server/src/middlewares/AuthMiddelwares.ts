@@ -31,6 +31,7 @@ export const useAuthorizationParser: (logger?: ILogger) => RequestHandler =
   async (req, res, next) => {
     const authToken = (req.cookies ?? {})[ACCESS_TOKEN_COOKIE_NAME];
 
+    // TODO: only on register
     if (!authToken) {
       logger.error(
         new FunctionalityError(

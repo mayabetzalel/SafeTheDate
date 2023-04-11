@@ -1,4 +1,21 @@
 import { createContext, useContext } from "react";
+import backendAPI from '../../api';
+
+const AuthContext = createContext({
+  signUp: async (email: string, password: string) => {
+    backendAPI.auth.signUpWithEmailAndPassword(email, password)
+  },
+  signIn: async ( email: string, password: string ) => {
+    backendAPI.auth.signUpWithEmailAndPassword(email, password)
+  }
+})
+
+export default AuthContext;
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
+
 export interface IUserContext {
   user: any | undefined;
   // user: User | undefined;
@@ -7,11 +24,16 @@ export interface IUserContext {
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
 }
+
 const defaultValue: IUserContext = {
   user: undefined,
-  setUser: () => {},
+  setUser: () => {
+    console.log("setting user")
+  },
   isLoading: true,
-  setIsLoading: () => {},
+  setIsLoading: () => {
+    console.log("setting is loading")
+  },
 };
 
 export const UserContext = createContext(defaultValue);

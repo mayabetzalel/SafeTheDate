@@ -40,7 +40,9 @@ class AuthService {
     confirmationId: IUserConfirmation["_id"],
     registeredUserEmail: IUser["email"]
   ) {
+    console.log("sendConfirmationMail to " + registeredUserEmail)
     const id = confirmationId.valueOf();
+    console.log("Id is: " + id)
     const url = `${process.env.FRONTEND_ENDPOINT}/user-confirmation?confirmation=${id}`;
 
     MailSender.getInstance()
@@ -62,6 +64,9 @@ class AuthService {
   ): Promise<FormFieldError<RegisterDTO>[]> {
     const errors: FormFieldError<RegisterDTO>[] = [];
 
+    console.log("----------------------------")
+    console.log(userToRegister)
+    
     // Check if email or username already exists
     const dbUser = await this.userTableIntegrator
       .findOne({
@@ -90,9 +95,13 @@ class AuthService {
       return errors;
     }
 
-    // All good, create the user
+    // All good, create the user(
     let createdUser: any = null;
+    const idToInsert = new mongoose.Types.ObjectId();
     const userConfirmation = await this.userConfirmationTableIntegrator.create({
+      _id: idToInsert,
+      id: 1,
+      user: userToRegister.username,
       email: userToRegister.email,
     });
     if (userConfirmation) {
@@ -108,7 +117,7 @@ class AuthService {
         userConfirmation: userConfirmation._id.valueOf(),
       });
       this.sendConfirmationMail(
-        createdUser?.userConfirmation?._id!,
+        createdUser?.firstName,
         createdUser?.email
       );
     }
@@ -153,8 +162,10 @@ class AuthService {
       { $set: { isConfirmed: true } }
     );
 
-    if (!updUser)
+    if (!updUser){
+      console.log("here1")
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
+    }
 
     return updUser;
   }
@@ -216,7 +227,7 @@ class AuthService {
     );
 
     if (!result) {
-      // TODO:  change error
+      console.log("here2")
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
     }
 
