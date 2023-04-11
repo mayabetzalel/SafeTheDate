@@ -33,7 +33,9 @@ const TicketCard = ({ ticket }: TicketCardProps) => {
         subheader="September 14, 2016"
       />
       <CardContent>
-        <Typography variant="h5" align={'center'}>Event Name</Typography>
+        <Typography variant="h5" align={"center"}>
+          Event Name
+        </Typography>
       </CardContent>
       <CardMedia
         sx={{ height: 200 }}
