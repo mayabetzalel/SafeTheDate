@@ -1,12 +1,13 @@
-import { Button, Grid, Paper, Typography } from "@mui/material";
+import { Button, Divider, Grid, Paper, Typography } from "@mui/material";
 import Stack from "@mui/material/Stack";
 
 // use this component to see palette examples
 const ThemeExamples = () => {
   return (
-    <div>
-      <Paper sx={{padding: "20px"}}>
-        <h4>paper background color</h4>
+    <Paper sx={{ padding: "20px" }}>
+      <Stack spacing={2}>
+        <Typography>All colors are defined in MuiTheme.ts</Typography>
+        <Divider />
         <Stack direction="row" spacing={2}>
           <Button variant="contained">Default</Button>
           <Button variant="contained" color="primary">
@@ -34,7 +35,8 @@ const ThemeExamples = () => {
             Warning
           </Button>
         </Stack>
-      </Paper>
+      </Stack>
+
       <Typography variant="h1" component="h2" gutterBottom>
         h1. Heading
       </Typography>
@@ -82,7 +84,7 @@ const ThemeExamples = () => {
       <Typography variant="overline" display="block" gutterBottom>
         overline text
       </Typography>
-    </div>
+    </Paper>
   );
 };
 export default ThemeExamples;

@@ -136,7 +136,7 @@ const Signup = () => {
             loginUserWithGoogle(
               () => {
                 enqueueSnackbar("Successful login!", { variant: "success" });
-                navigate(RoutePaths.HOME);
+                navigate(RoutePaths.EVENTS);
               },
               (error: { message: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; }) => {
                 enqueueSnackbar(error.message, { variant: "error" });

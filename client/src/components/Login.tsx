@@ -114,7 +114,7 @@ const Login = () => {
               password,
               () => {
                 enqueueSnackbar("Successful login!", { variant: "success" });
-                navigate(RoutePaths.HOME);
+                navigate(RoutePaths.EVENTS);
               },
               (error) => {
                 enqueueSnackbar(error.message, { variant: "error" });
@@ -131,7 +131,7 @@ const Login = () => {
             loginUserWithGoogle(
               () => {
                 enqueueSnackbar("Successful login!", { variant: "success" });
-                navigate(RoutePaths.HOME);
+                navigate(RoutePaths.EVENTS);
               },
               (error) => {
                 enqueueSnackbar(error.message, { variant: "error" });
