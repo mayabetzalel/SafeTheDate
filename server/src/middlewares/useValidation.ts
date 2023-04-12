@@ -28,6 +28,7 @@ const queryParamsParser = (queryParams: Object) => {
 const useValidateDto =
   <T extends ClassConstructor<any>>(c: T, origin: payloadOrigin) =>
   async (req: Request, res: Response, next: NextFunction) => {
+
     if (origin === "query") {
       queryParamsParser(req[origin]);
     }

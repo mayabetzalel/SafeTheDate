@@ -40,7 +40,9 @@ class AuthService {
     confirmationId: IUserConfirmation["_id"],
     registeredUserEmail: IUser["email"]
   ) {
+    console.log("sendConfirmationMail to " + registeredUserEmail)
     const id = confirmationId.valueOf();
+    console.log("Id is: " + id)
     const url = `${process.env.FRONTEND_ENDPOINT}/user-confirmation?confirmation=${id}`;
 
     MailSender.getInstance()
@@ -62,6 +64,9 @@ class AuthService {
   ): Promise<FormFieldError<RegisterDTO>[]> {
     const errors: FormFieldError<RegisterDTO>[] = [];
 
+    console.log("----------------------------")
+    console.log(userToRegister)
+    
     // Check if email or username already exists
     const dbUser = await this.userTableIntegrator
       .findOne({
@@ -75,13 +80,13 @@ class AuthService {
       if (dbUser.email === userToRegister.email) {
         errors.push({
           fieldName: "email",
-          message: "קיים משתמש עם המייל הזה, נסה אחד אחר",
+          message: "Email address already in use, please try another",
         });
       }
       if (dbUser.username === userToRegister.username) {
         errors.push({
           fieldName: "username",
-          message: "קיים משתמש עם שם משתמש זה, נסה אחד אחר",
+          message: "Username already in use, please try another",
         });
       }
     }
@@ -90,9 +95,12 @@ class AuthService {
       return errors;
     }
 
-    // All good, create the user
+    // All good, create the user(
     let createdUser: any = null;
+    const generatedId = new mongoose.Types.ObjectId();
     const userConfirmation = await this.userConfirmationTableIntegrator.create({
+      _id: generatedId,
+      user: userToRegister.username,
       email: userToRegister.email,
     });
     if (userConfirmation) {
@@ -108,7 +116,7 @@ class AuthService {
         userConfirmation: userConfirmation._id.valueOf(),
       });
       this.sendConfirmationMail(
-        createdUser?.userConfirmation?._id!,
+        createdUser?.firstName,
         createdUser?.email
       );
     }
@@ -153,8 +161,9 @@ class AuthService {
       { $set: { isConfirmed: true } }
     );
 
-    if (!updUser)
+    if (!updUser){
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
+    }
 
     return updUser;
   }
@@ -216,7 +225,6 @@ class AuthService {
     );
 
     if (!result) {
-      // TODO:  change error
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
     }
 
@@ -224,12 +232,12 @@ class AuthService {
   }
   private createAccessToken(tokenPayload: AccessTokenPayload): Promise<string> {
     return new Promise((resolve, reject) => {
-      const JWT_SECRET = process.env.JWT_SECRET ?? "";
+      const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET ?? "";
       const JWT_EXPIRATION = +(process.env.JWT_EXPIRATION ?? 0);
 
       jwt.sign(
         tokenPayload,
-        JWT_SECRET,
+        ACCESS_TOKEN_SECRET,
         {
           expiresIn: JWT_EXPIRATION,
           audience: process.env.JWT_AUDIENCE,
