@@ -9,7 +9,7 @@ import { LoginDTO } from "../dto-types/login.req";
 import { RegisterDTO } from "../dto-types/register.req";
 import { TokenRequestDTO } from "../dto-types/token.req";
 import { TokensPack } from "../dto-types/tokensPack";
-import { useAuth } from "../middlewares/AuthMiddelwares";
+import { useAuth, authenticate } from "../middlewares/AuthMiddelwares";
 import { useValidateBodyDto } from "../middlewares/useValidation";
 import { authService } from "../services/auth.service";
 import { FunctionalityError, serverErrorCodes } from "../utils/error";

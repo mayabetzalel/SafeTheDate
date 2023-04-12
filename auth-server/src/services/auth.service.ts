@@ -123,6 +123,10 @@ class AuthService {
 
     if (!createdUser) {
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
+    } 
+    // Create access token
+    else {
+      await this.createRefreshToken(createdUser)
     }
 
     return [];
@@ -206,10 +210,11 @@ class AuthService {
 
     return { expiryDate: expiredAt, token };
   }
+
   private async createRefreshToken(user: IUser): Promise<IToken> {
     const token = this.generateRefreshToken();
     console.log(user._id.valueOf());
-    console.log(user);
+    
     const result = await this.refreshTokenTableIntegrator.updateOne(
       {
         user: user._id,
@@ -223,11 +228,9 @@ class AuthService {
       },
       { upsert: true }
     );
-
     if (!result) {
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
     }
-
     return token;
   }
   private createAccessToken(tokenPayload: AccessTokenPayload): Promise<string> {

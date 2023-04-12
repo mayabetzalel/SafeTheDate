@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { Jwt, JwtPayload, TokenExpiredError, verify } from "jsonwebtoken";
+import { Jwt, JwtPayload, TokenExpiredError, verify, sign } from "jsonwebtoken";
 import { ACCESS_TOKEN_COOKIE_NAME } from "../constants";
 import appLogger from "../lib/app-logger";
 import {
@@ -9,7 +9,6 @@ import {
 } from "../utils/error";
 import { ILogger } from "../utils/logger";
 import { AccessTokenPayload, HttpStatus } from "../utils/types";
-import User from "mongo/models/User";
 
 
 export function verifyJWTToken(
@@ -63,21 +62,30 @@ export const useAuthorizationParser: (logger?: ILogger) => RequestHandler =
 export const authenticate :RequestHandler = (req, res, next) => {
   const authHeadres = req.headers['authorization']
   const token = authHeadres && authHeadres.split(" ")[1]
+
   if (token == null) {
     return res.status(HttpStatus.UNAUTHORIZED)
   } else {
-    if (process.env.ACCESS_TOKEN_SECRET) {
-      verify(token, process.env.ACCESS_TOKEN_SECRET , (err, user: any) => {
-        if(err) return res.status(HttpStatus.UNAUTHORIZED)
-        else {
-          req.user = user
-          return next()
-        }
-      })
-    }
+    verify(token, process.env.ACCESS_TOKEN_SECRET as string , (err, user: any) => {
+      if(err) return res.status(HttpStatus.UNAUTHORIZED)
+      else {
+        req.user = user
+        return next()
+      }
+    })
     return res.status(HttpStatus.UNAUTHORIZED)
   }
 }
+
+export const createToken = (userId: string, userEmail: string) => {
+  const token: string = sign(
+  { user_id: userId, userEmail }, 
+  process.env.ACCESS_TOKEN_SECRET as string,
+  {
+    expiresIn: process.env.JWT_EXPIRATION,
+  })
+  return token
+};
 
 export const useAuth: RequestHandler = (req, res, next) => {
   if (!req.user || !req.user.username) {
