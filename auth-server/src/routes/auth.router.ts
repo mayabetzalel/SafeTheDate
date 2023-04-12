@@ -9,7 +9,7 @@ import { LoginDTO } from "../dto-types/login.req";
 import { RegisterDTO } from "../dto-types/register.req";
 import { TokenRequestDTO } from "../dto-types/token.req";
 import { TokensPack } from "../dto-types/tokensPack";
-import { useAuth, authenticate } from "../middlewares/AuthMiddelwares";
+import { useAuth } from "../middlewares/AuthMiddelwares";
 import { useValidateBodyDto } from "../middlewares/useValidation";
 import { authService } from "../services/auth.service";
 import { FunctionalityError, serverErrorCodes } from "../utils/error";
@@ -39,11 +39,18 @@ const router = express.Router();
 router.post("/register", useValidateBodyDto(RegisterDTO), (req, res, next) => {
   authService
     .register(req.body as RegisterDTO)
-    .then((errors) => {
+    .then((response) => {
+      const errors: any[] = response[0]? [] : response[0]
+      const tokens = response[1]
       if (errors.length > 0) {
         res.status(HttpStatus.BAD_REQUEST).send(errors);
       } else {
-        res.sendStatus(HttpStatus.CREATED);
+        configureTokensCookie(res, tokens);
+        res.cookie("access_token", tokens, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+        })
+        .sendStatus(HttpStatus.CREATED);
       }
     })
     .catch(next);

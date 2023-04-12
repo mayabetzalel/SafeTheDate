@@ -12,10 +12,7 @@ const backendAPI = {
       async signInWithEmailAndPassword(email : string, password : string) {
         return await axios.post(REST_API.auth.signInWithEmailAndPassword, {
           email,
-          username: "username",
-          firstName: "first",
-          lastName: "second",
-          password,
+          password
         });
       },
 
@@ -26,7 +23,7 @@ const backendAPI = {
           username: username,
           firstName: firstName,
           lastName: lastName,
-          password,
+          password
         });
       },
     }

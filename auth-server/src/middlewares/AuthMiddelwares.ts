@@ -30,8 +30,11 @@ export function verifyJWTToken(
 export const useAuthorizationParser: (logger?: ILogger) => RequestHandler =
   (logger: ILogger = appLogger()) =>
   async (req, res, next) => {
+
+    console.log(req)
+    
     const authToken = (req.cookies ?? {})[ACCESS_TOKEN_COOKIE_NAME];
-    console.log("Checking useAuthorizationParser")
+
     // TODO: only on register
     if (!authToken) {
       logger.error(
@@ -59,23 +62,28 @@ export const useAuthorizationParser: (logger?: ILogger) => RequestHandler =
       });
   };
 
-export const authenticate :RequestHandler = (req, res, next) => {
-  const authHeadres = req.headers['authorization']
-  const token = authHeadres && authHeadres.split(" ")[1]
+// export const authenticate :RequestHandler = (req, res, next) => {
+//   console.log(req)
 
-  if (token == null) {
-    return res.status(HttpStatus.UNAUTHORIZED)
-  } else {
-    verify(token, process.env.ACCESS_TOKEN_SECRET as string , (err, user: any) => {
-      if(err) return res.status(HttpStatus.UNAUTHORIZED)
-      else {
-        req.user = user
-        return next()
-      }
-    })
-    return res.status(HttpStatus.UNAUTHORIZED)
-  }
-}
+
+//   const authHeadres = req.headers['authorization']
+//   || req.body.token || req.query.token || req.headers["x-access-token"]
+
+//   const token = authHeadres && authHeadres.split(" ")[1]
+
+//   if (token == null) {
+//     return res.status(HttpStatus.UNAUTHORIZED)
+//   } else {
+//     verify(token, process.env.ACCESS_TOKEN_SECRET as string , (err, user: any) => {
+//       if(err) return res.status(HttpStatus.UNAUTHORIZED)
+//       else {
+//         req.user = user
+//         return next()
+//       }
+//     })
+//     return res.status(HttpStatus.UNAUTHORIZED)
+//   }
+// }
 
 export const createToken = (userId: string, userEmail: string) => {
   const token: string = sign(

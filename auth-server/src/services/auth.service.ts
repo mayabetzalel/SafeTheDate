@@ -19,6 +19,7 @@ import { v4 } from "uuid";
 import jwt from "jsonwebtoken";
 import { MailSender } from "../utils/mail.utils";
 import mongoose from "mongoose";
+import { response } from "express";
 
 class AuthService {
   private logger: ILogger;
@@ -36,6 +37,7 @@ class AuthService {
     this.userTableIntegrator = userTableIntegrator;
     this.userConfirmationTableIntegrator = userConfirmationTableIntegrator;
   }
+
   private sendConfirmationMail(
     confirmationId: IUserConfirmation["_id"],
     registeredUserEmail: IUser["email"]
@@ -59,11 +61,12 @@ class AuthService {
       )
       .catch(this.logger.error);
   }
+
   async register(
     userToRegister: RegisterDTO
-  ): Promise<FormFieldError<RegisterDTO>[]> {
-    const errors: FormFieldError<RegisterDTO>[] = [];
+  ) {
 
+    const errors: FormFieldError<RegisterDTO>[] = [];
     console.log("----------------------------")
     console.log(userToRegister)
     
@@ -76,6 +79,7 @@ class AuthService {
         ],
       })
       .lean();
+
     if (dbUser) {
       if (dbUser.email === userToRegister.email) {
         errors.push({
@@ -83,6 +87,7 @@ class AuthService {
           message: "Email address already in use, please try another",
         });
       }
+
       if (dbUser.username === userToRegister.username) {
         errors.push({
           fieldName: "username",
@@ -103,6 +108,7 @@ class AuthService {
       user: userToRegister.username,
       email: userToRegister.email,
     });
+
     if (userConfirmation) {
       createdUser = await this.userTableIntegrator.create({
         email: userToRegister.email,
@@ -120,16 +126,18 @@ class AuthService {
         createdUser?.email
       );
     }
+    let token: any = ""
 
     if (!createdUser) {
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
     } 
+    
     // Create access token
     else {
-      await this.createRefreshToken(createdUser)
+      token = await this.createTokensPack(createdUser)
     }
 
-    return [];
+    return [[], token];
   }
 
   private verifyTokenExpiration(token: IToken) {
@@ -149,6 +157,7 @@ class AuthService {
     }
     return this.createTokensPack(token.user);
   }
+
   async confirmUser(confirmationId: IUserConfirmation["_id"]) {
     const user = await this.userConfirmationTableIntegrator
       .findOne({
@@ -171,15 +180,17 @@ class AuthService {
 
     return updUser;
   }
+
   async login({ emailOrUsername, password }: LoginDTO): Promise<TokensPack> {
-    // Try selecting either by email or username
+    // Try selecting by email or username
+    console.log("in login")
     const user: IUser | null = await this.userTableIntegrator
       .findOne({
         $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
       })
       .lean();
 
-    // No such user with given email or username
+    // User does not exist
     if (!user) {
       throw new FunctionalityError(
         serverErrorCodes.UserPasswordIncorrect,
@@ -198,6 +209,7 @@ class AuthService {
 
     return this.createTokensPack(user);
   }
+
   private generateRefreshToken(): IToken {
     const REFRESH_TOKEN_EXPIRATION = +(
       process.env.REFRESH_TOKEN_EXPIRATION ?? 0
@@ -233,6 +245,7 @@ class AuthService {
     }
     return token;
   }
+
   private createAccessToken(tokenPayload: AccessTokenPayload): Promise<string> {
     return new Promise((resolve, reject) => {
       const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET ?? "";
@@ -277,6 +290,7 @@ class AuthService {
     };
   }
 }
+
 export const authService = new AuthService(
   ConsoleLogger.getInstance(),
   RefreshToken,
