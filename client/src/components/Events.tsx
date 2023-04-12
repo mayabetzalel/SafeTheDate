@@ -23,8 +23,8 @@ const Events = () => {
   });
   return (
     <Grid container spacing={3}>
-      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(() => (
-        <Grid item sm={4} md={3}>
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+        <Grid key={i} item sm={4} md={3}>
           <TicketCard />
         </Grid>
       ))}
