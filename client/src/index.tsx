@@ -5,23 +5,16 @@ import reportWebVitals from "./reportWebVitals";
 import { SnackbarProvider } from "notistack";
 import theme from "./overrieds/MuiTheme";
 import { ThemeProvider } from "@mui/material";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { UserProvider } from "./controller/userController/userProvider";
+import { UserProvider } from "./hooks/userController/userProvider";
+import GraphqlClientProvider from "./hooks/GraphqlClientProvider/GraphqlClientProvider";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-    },
-  },
-});
 
 root.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
+    <GraphqlClientProvider>
       <UserProvider>
         <SnackbarProvider maxSnack={3}>
           <ThemeProvider theme={theme}>
@@ -29,7 +22,7 @@ root.render(
           </ThemeProvider>
         </SnackbarProvider>
       </UserProvider>
-    </QueryClientProvider>
+    </GraphqlClientProvider>
   </React.StrictMode>
 );
 

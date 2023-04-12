@@ -13,7 +13,7 @@ import {
   Outlet,
 } from "react-router-dom";
 import PrivateRoute from "./utils/PrivateRoute";
-import { useUserContext } from "./controller/userController/userContext";
+import { useUserContext } from "./hooks/userController/userContext";
 import {CreateEvent} from "./components/CreateEvent";
 import {ImportTicket} from "./components/ImportTicket";
 import {Profile} from "./components/Profile";

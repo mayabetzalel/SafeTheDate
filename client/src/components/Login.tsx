@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { RoutePaths } from "../App";
 import GoogleButton from "react-google-button";
-import { useAuth } from "../controller/userController/userContext"
+import {useAuth} from "../hooks/userController/userContext";
 
 
 export const loginUserWithGoogle = async (
@@ -57,11 +57,11 @@ const Login = () => {
   ) => {
     try {
       console.log("-------------------------------")
-  
+
       console.log(email.current.value.trim())
       console.log(password.current.value.trim())
       console.log("-------------------------------")
-      
+
       signIn(email.current.value.trim(), password.current.value.trim())
       // const user = await signInWithEmailAndPassword(
       //   email.current.value,

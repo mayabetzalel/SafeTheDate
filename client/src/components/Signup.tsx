@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import GoogleButton from "react-google-button";
 import { RoutePaths } from "../App";
 import { loginUserWithGoogle } from "./Login";
-import { useAuth } from "../controller/userController/userContext"
+import {useAuth} from "../hooks/userController/userContext";
 
 
 const Signup = () => {
@@ -51,7 +51,7 @@ const Signup = () => {
   ) => {
     try {
       console.log("-------------------------------")
-  
+
       console.log(email.current.value.trim())
       console.log(password.current.value.trim())
       console.log("-------------------------------")
@@ -60,7 +60,7 @@ const Signup = () => {
       //   email.current.value,
       //   password.current.value
       // );
-      signUp(email.current.value.trim(), username.current.value.trim(), firstName.current.value.trim(), 
+      signUp(email.current.value.trim(), username.current.value.trim(), firstName.current.value.trim(),
       lastName.current.value.trim(), password.current.value.trim())
       enqueueSnackbar("Successful sign up!", { variant: "success" });
       navigate("/");

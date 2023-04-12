@@ -3,15 +3,14 @@ import React from "react";
 import Spinner from "./spinner";
 
 interface FetchingStateProps {
-  isLoading: boolean;
-  isError?: boolean;
+  isFetching: boolean;
+  isError?: any;
   isSuccess?: boolean;
   children: React.ReactNode;
 }
 const FetchingState: React.FunctionComponent<FetchingStateProps> = ({
-  isLoading,
+  isFetching,
   isError = false,
-  isSuccess = false,
   children,
 }) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -21,14 +20,10 @@ const FetchingState: React.FunctionComponent<FetchingStateProps> = ({
     return <></>;
   }
 
-  if (isLoading) {
+  if (isFetching) {
     return <Spinner />;
   }
 
-  if (isSuccess) {
-    return <>{children}</>;
-  }
-  enqueueSnackbar("Something bad happened!", { variant: "error" });
-  return <></>;
+  return <>{children}</>;
 };
 export default FetchingState;
