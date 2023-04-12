@@ -1,3 +1,4 @@
+import "./config/dotenv-init";
 import { createServer } from "node:http";
 import { createYoga } from "graphql-yoga";
 import getSchema from "./graphql/shcema";

@@ -14,6 +14,8 @@
   "author": "SafeTheDate",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.0.3",
+    "dotenv-expand": "^10.0.0",
     "graphql": "^16.6.0",
     "graphql-yoga": "^3.8.0",
     "mongoose": "^7.0.3",

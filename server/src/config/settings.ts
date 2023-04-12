@@ -1,16 +1,10 @@
-import {configProd} from "./config.prod";
-import {configDev} from "./config.dev";
+import dotenv from "dotenv";
 
-export interface ConfigType {
-    port: number,
+dotenv.config();
+
+export default {
+    port: Number(process.env.PORT),
     mongoSettings: {
-        mongoConnectionString: string,
-    }
+        mongoConnectionString: process.env.DB_CONNECTION_STRING,
+    },
 }
-
-const getSettings = (): ConfigType =>  {
-    const nodeEnv = process.env.NODE_ENV || 'dev';
-    return nodeEnv.includes('prod')? configProd: configDev
-}
-
-export default getSettings();
