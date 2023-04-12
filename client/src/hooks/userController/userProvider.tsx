@@ -1,5 +1,6 @@
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { UserContext, IUserContext } from "./userContext";
+import React, { Component }  from 'react'; 
 
 export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
   const [user, setUser] = useState<IUserContext["user"] | undefined>();
@@ -15,6 +16,6 @@ export const UserProvider = ({ children }: PropsWithChildren<{}>) => {
     [user, setUser, isLoading, setIsLoading]
   );
   return (
-    <UserContext.Provider value={memoValue}>{children}</UserContext.Provider>
+    <UserContext.Provider value = {memoValue}>{children}</UserContext.Provider>
   );
 };
