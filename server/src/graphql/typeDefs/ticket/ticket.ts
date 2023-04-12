@@ -10,4 +10,8 @@ export default  `
     type Query {
         ticket(id: [String]): [Ticket]!
     }
+    
+    type Mutation {
+        createTicket: String!
+    }
 `

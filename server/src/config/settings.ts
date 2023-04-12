@@ -2,7 +2,10 @@ import {configProd} from "./config.prod";
 import {configDev} from "./config.dev";
 
 export interface ConfigType {
-    port: number
+    port: number,
+    mongoSettings: {
+        mongoConnectionString: string,
+    }
 }
 
 const getSettings = (): ConfigType =>  {
