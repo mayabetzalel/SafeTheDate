@@ -10,7 +10,6 @@ const REST_API = {
 const backendAPI = {
     auth: {
       async signInWithEmailAndPassword(email : string, password : string) {
-        console.log("00011")
         return await axios.post(REST_API.auth.signInWithEmailAndPassword, {
           email,
           username: "username",

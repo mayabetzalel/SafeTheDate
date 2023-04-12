@@ -80,13 +80,13 @@ class AuthService {
       if (dbUser.email === userToRegister.email) {
         errors.push({
           fieldName: "email",
-          message: "קיים משתמש עם המייל הזה, נסה אחד אחר",
+          message: "Email address already in use, please try another",
         });
       }
       if (dbUser.username === userToRegister.username) {
         errors.push({
           fieldName: "username",
-          message: "קיים משתמש עם שם משתמש זה, נסה אחד אחר",
+          message: "Username already in use, please try another",
         });
       }
     }
@@ -97,10 +97,9 @@ class AuthService {
 
     // All good, create the user(
     let createdUser: any = null;
-    const idToInsert = new mongoose.Types.ObjectId();
+    const generatedId = new mongoose.Types.ObjectId();
     const userConfirmation = await this.userConfirmationTableIntegrator.create({
-      _id: idToInsert,
-      id: 1,
+      _id: generatedId,
       user: userToRegister.username,
       email: userToRegister.email,
     });
@@ -163,7 +162,6 @@ class AuthService {
     );
 
     if (!updUser){
-      console.log("here1")
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
     }
 
@@ -227,7 +225,6 @@ class AuthService {
     );
 
     if (!result) {
-      console.log("here2")
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
     }
 
@@ -235,12 +232,12 @@ class AuthService {
   }
   private createAccessToken(tokenPayload: AccessTokenPayload): Promise<string> {
     return new Promise((resolve, reject) => {
-      const JWT_SECRET = process.env.JWT_SECRET ?? "";
+      const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET ?? "";
       const JWT_EXPIRATION = +(process.env.JWT_EXPIRATION ?? 0);
 
       jwt.sign(
         tokenPayload,
-        JWT_SECRET,
+        ACCESS_TOKEN_SECRET,
         {
           expiresIn: JWT_EXPIRATION,
           audience: process.env.JWT_AUDIENCE,

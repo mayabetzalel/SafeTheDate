@@ -4,7 +4,7 @@ export interface ILogger {
 }
 
 export enum Events {
-  CONFIRMATION_EMAIL_SENT = "מייל אישור תהליך רישום נשלח",
+  CONFIRMATION_EMAIL_SENT = "confirmation email has been sent to your email address",
 }
 
 export class ConsoleLogger implements ILogger {

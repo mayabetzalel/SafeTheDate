@@ -7,7 +7,6 @@ import {
   Button,
   Typography,
   Link,
-  Alert,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/Lock";
 import { useTheme } from "@mui/material/styles";
@@ -17,7 +16,6 @@ import GoogleButton from "react-google-button";
 import { RoutePaths } from "../App";
 import { loginUserWithGoogle } from "./Login";
 import { useAuth } from "../controller/userController/userContext"
-import { last } from "lodash";
 
 
 const Signup = () => {
@@ -33,7 +31,7 @@ const Signup = () => {
   const theme = useTheme();
   const paperStyle = {
     padding: 20,
-    height: "52vh",
+    height: "57vh",
     width: "40vh",
     margin: "auto",
     backgroundColor: theme.palette.background.paper,
@@ -73,7 +71,7 @@ const Signup = () => {
 
   return (
     <Grid>
-      <Paper elevation={10} style={paperStyle}>
+      <Paper elevation={14} style={paperStyle}>
         <Grid>
           <Avatar style={avatarStyle}>
             <LockOutlinedIcon />
