@@ -1,13 +1,16 @@
 import {Query} from "../../typeDefs";
 import Ticket from "../../../db/models/ticketModel/ticketModel";
 import mongoose from "mongoose";
+import ticket from "../../typeDefs/ticket/ticket";
 
 export default {
   Query: {
-    ticket: (): Query["ticket"] => {
-      return [
-        { id: "", areaNumber: 3213213, sitNumber: 231, eventName: "rihanna" },
-      ];
+    ticket: async (): Promise<Query["ticket"]> => {
+      const tickets = await Ticket.find({}).then((tickets) => {
+        return tickets
+      });
+
+      return tickets as Query["ticket"]
     },
   },
   Mutation: {
