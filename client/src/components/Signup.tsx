@@ -51,13 +51,6 @@ const Signup = () => {
     navigate: any
   ) => {
     try {
-      console.log("-------------------------------")
-
-      console.log("email: " +email.current.value.trim())
-      console.log("user: " + username.current.value.trim())
-      console.log("pass: " +password.current.value.trim())
-      console.log("-------------------------------")
-
       signUp(email.current.value.trim(), username.current.value.trim(), firstName.current.value.trim(),
       lastName.current.value.trim(), password.current.value.trim())
       enqueueSnackbar("Successful sign up!", { variant: "success" });

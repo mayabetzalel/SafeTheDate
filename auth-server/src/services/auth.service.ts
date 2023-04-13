@@ -185,7 +185,6 @@ class AuthService {
       })
       .lean();
 
-    console.log("user? " + user)
     // User does not exist
     if (!user) {
       throw new FunctionalityError(
@@ -194,9 +193,6 @@ class AuthService {
         HttpStatus.FORBIDDEN
       );
     }
-    console.log(emailOrUsername)
-    console.log(password)
-    console.log(user.password)
 
     if (!(await compare(password, user.password))) {
       throw new FunctionalityError(

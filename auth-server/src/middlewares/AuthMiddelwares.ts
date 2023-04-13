@@ -60,28 +60,6 @@ export const useAuthorizationParser: (logger?: ILogger) => RequestHandler =
       });
   };
 
-// export const authenticate :RequestHandler = (req, res, next) => {
-//   console.log(req)
-
-
-//   const authHeadres = req.headers['authorization']
-//   || req.body.token || req.query.token || req.headers["x-access-token"]
-
-//   const token = authHeadres && authHeadres.split(" ")[1]
-
-//   if (token == null) {
-//     return res.status(HttpStatus.UNAUTHORIZED)
-//   } else {
-//     verify(token, process.env.ACCESS_TOKEN_SECRET as string , (err, user: any) => {
-//       if(err) return res.status(HttpStatus.UNAUTHORIZED)
-//       else {
-//         req.user = user
-//         return next()
-//       }
-//     })
-//     return res.status(HttpStatus.UNAUTHORIZED)
-//   }
-// }
 
 export const createToken = (userId: string, userEmail: string) => {
   const token: string = sign(

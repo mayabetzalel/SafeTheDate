@@ -14,26 +14,20 @@ const backendAPI = {
           emailOrUsername,
           password
         },{
-          //AxiosRequestConfig parameter
-          withCredentials: true //correct
+          withCredentials: true 
         });
       },
 
       async signUpWithEmailAndPassword(email: string, username: string, firstName: string, 
         lastName: string, password: string) {
-          console.log({
-            email: email,
-            username: username,
-            firstName: firstName,
-            lastName: lastName,
-            password: password
-          })
         return await axios.post(REST_API.auth.signUpWithEmailAndPassword, {
           email: email,
           username: username,
           firstName: firstName,
           lastName: lastName,
           password: password
+        },{
+          withCredentials: true 
         });
       },
     }

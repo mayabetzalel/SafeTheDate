@@ -38,7 +38,6 @@ function configureTokensCookie(res: Response, tokens: TokensPack) {
 const router = express.Router();
 
 router.post("/register", useValidateBodyDto(RegisterDTO), (req, res, next) => {
-  console.log(req.body)
   authService
     .register(req.body as RegisterDTO)
     .then((response) => {
@@ -48,6 +47,11 @@ router.post("/register", useValidateBodyDto(RegisterDTO), (req, res, next) => {
         res.status(HttpStatus.BAD_REQUEST).send(errors);
       } else {
         configureTokensCookie(res, tokens);
+        res.header({ "withCredentials" : true })
+        res.header({ "Access-Control-Allow-Credentials": true });
+        res.header('Access-Control-Allow-Origin', req.headers.origin);
+        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
         res.cookie("access_token2", tokens, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
@@ -83,23 +87,17 @@ router.post("/token", (req, res, next) => {
 });
 
 router.post("/login", useValidateBodyDto(LoginDTO), (req, res, next) => {
-  console.log("in login from router")
-  console.log(req.body)
   authService
     .login(req.body)
     .then((tokens) => {
       configureTokensCookie(res, tokens);
-      res.header({"withCredentials" : true})
-      res.header({"Access-Control-Allow-Credentials": true});
+      res.header({ "withCredentials" : true })
+      res.header({ "Access-Control-Allow-Credentials": true });
       res.header('Access-Control-Allow-Origin', req.headers.origin);
       res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
       res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
       
-      res.cookie("access_token2", tokens, {
-        path: "/",
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      }).cookie("check=test", "check=test; Path='/'").sendStatus(HttpStatus.OK);
+      res.sendStatus(HttpStatus.OK);
     })
     .catch(next);
 });
