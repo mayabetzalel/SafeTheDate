@@ -14,9 +14,9 @@ import {
 } from "react-router-dom";
 import PrivateRoute from "./utils/PrivateRoute";
 import { useUserContext } from "./hooks/userController/userContext";
-import {CreateEvent} from "./components/CreateEvent";
-import {ImportTicket} from "./components/ImportTicket";
-import {Profile} from "./components/Profile";
+import { CreateEvent } from "./components/CreateEvent";
+import { ImportTicket } from "./components/ImportTicket";
+import { Profile } from "./components/profile/Profile";
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
       <>
         <Navbar />
         <Box height="90%">
-          <Container sx={{ height: "inherit"}} maxWidth={"xl"}>
+          <Container sx={{ height: "inherit" }} maxWidth={"xl"}>
             <Outlet />
           </Container>
         </Box>
