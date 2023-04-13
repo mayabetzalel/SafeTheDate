@@ -1,4 +1,4 @@
-import { Query } from "../../typeDefs";
+import { MutationResolvers, Query, QueryResolvers } from "../../typeDefs";
 import Ticket from "../../../db/models/ticketModel/ticketModel";
 import mongoose from "mongoose";
 import ticket from "../../typeDefs/ticket/ticket";

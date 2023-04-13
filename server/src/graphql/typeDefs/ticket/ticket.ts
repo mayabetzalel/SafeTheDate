@@ -1,6 +1,6 @@
 export default  `
     type Ticket {
-        _id: String 
+        _id: ID! 
         eventId: String
         ownerName: String
         seat: Int
