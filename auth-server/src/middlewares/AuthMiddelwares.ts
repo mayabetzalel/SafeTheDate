@@ -30,8 +30,6 @@ export function verifyJWTToken(
 export const useAuthorizationParser: (logger?: ILogger) => RequestHandler =
   (logger: ILogger = appLogger()) =>
   async (req, res, next) => {
-
-    console.log(req)
     
     const authToken = (req.cookies ?? {})[ACCESS_TOKEN_COOKIE_NAME];
 

@@ -44,7 +44,6 @@ class AuthService {
   ) {
     console.log("sendConfirmationMail to " + registeredUserEmail)
     const id = confirmationId.valueOf();
-    console.log("Id is: " + id)
     const url = `${process.env.FRONTEND_ENDPOINT}/user-confirmation?confirmation=${id}`;
 
     MailSender.getInstance()
@@ -67,8 +66,6 @@ class AuthService {
   ) {
 
     const errors: FormFieldError<RegisterDTO>[] = [];
-    console.log("----------------------------")
-    console.log(userToRegister)
     
     // Check if email or username already exists
     const dbUser = await this.userTableIntegrator
@@ -107,7 +104,7 @@ class AuthService {
       _id: generatedId,
       user: userToRegister.username,
       email: userToRegister.email,
-    });
+    }); 
 
     if (userConfirmation) {
       createdUser = await this.userTableIntegrator.create({
@@ -116,7 +113,7 @@ class AuthService {
         lastName: userToRegister.lastName,
         password: await hash(
           userToRegister.password,
-          +(process.env.PASSWORD_HASH_SALTS ?? 8)
+          10
         ),
         username: userToRegister.username,
         userConfirmation: userConfirmation._id.valueOf(),
@@ -131,7 +128,6 @@ class AuthService {
     if (!createdUser) {
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
     } 
-    
     // Create access token
     else {
       token = await this.createTokensPack(createdUser)
@@ -183,13 +179,13 @@ class AuthService {
 
   async login({ emailOrUsername, password }: LoginDTO): Promise<TokensPack> {
     // Try selecting by email or username
-    console.log("in login")
     const user: IUser | null = await this.userTableIntegrator
       .findOne({
         $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
       })
       .lean();
 
+    console.log("user? " + user)
     // User does not exist
     if (!user) {
       throw new FunctionalityError(
@@ -198,6 +194,9 @@ class AuthService {
         HttpStatus.FORBIDDEN
       );
     }
+    console.log(emailOrUsername)
+    console.log(password)
+    console.log(user.password)
 
     if (!(await compare(password, user.password))) {
       throw new FunctionalityError(
@@ -284,7 +283,11 @@ class AuthService {
     const accessToken = await this.createAccessToken(tokenPayload);
     return {
       accessToken: accessToken,
-      expiresIn: +(process.env.JWT_EXPIRATION ?? 0),
+      expiresIn: 3600,
+      // // Secure: process.env.NODE_ENV === "production",
+      // sameSite: "None",
+      // httpOnly: true,
+      // cookie_samesite:"none",
       refreshExpiryDate: refreshToken.expiryDate,
       refreshToken: refreshToken.token,
     };

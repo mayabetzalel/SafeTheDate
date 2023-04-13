@@ -42,24 +42,22 @@ const Signup = () => {
 
   const signUpUser = async (
     email: React.MutableRefObject<any>,
-    password: React.MutableRefObject<any>,
     username: React.MutableRefObject<any>,
-    lastName: React.MutableRefObject<any>,
     firstName: React.MutableRefObject<any>,
+    lastName: React.MutableRefObject<any>,
+    password: React.MutableRefObject<any>,
+
     enqueueSnackbar: any,
     navigate: any
   ) => {
     try {
       console.log("-------------------------------")
 
-      console.log(email.current.value.trim())
-      console.log(password.current.value.trim())
+      console.log("email: " +email.current.value.trim())
+      console.log("user: " + username.current.value.trim())
+      console.log("pass: " +password.current.value.trim())
       console.log("-------------------------------")
-      // await createUserWithEmailAndPassword(
-      //   auth,
-      //   email.current.value,
-      //   password.current.value
-      // );
+
       signUp(email.current.value.trim(), username.current.value.trim(), firstName.current.value.trim(),
       lastName.current.value.trim(), password.current.value.trim())
       enqueueSnackbar("Successful sign up!", { variant: "success" });
@@ -88,8 +86,16 @@ const Signup = () => {
         />
         <TextField
           sx={{ margin: "8px 0" }}
+          inputRef={username}
+          label="Username"
+          placeholder="Enter username"
+          fullWidth
+          required
+        />
+        <TextField
+          sx={{ margin: "8px 0" }}
           inputRef={firstName}
-          label="FirstName"
+          label="First name"
           placeholder="Enter first name"
           fullWidth
           required
@@ -97,16 +103,8 @@ const Signup = () => {
         <TextField
           sx={{ margin: "8px 0" }}
           inputRef={lastName}
-          label="LastName"
+          label="Last name"
           placeholder="Enter last name"
-          fullWidth
-          required
-        />
-        <TextField
-          sx={{ margin: "8px 0" }}
-          inputRef={username}
-          label="Username"
-          placeholder="Enter username"
           fullWidth
           required
         />
