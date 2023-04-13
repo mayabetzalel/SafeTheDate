@@ -18,7 +18,7 @@ import { HttpStatus } from "../utils/types";
 function configureTokensCookie(res: Response, tokens: TokensPack) {
   res.cookie(REFRESH_TOKEN_COOKIE_NAME, tokens.refreshToken, {
     httpOnly: true,
-    path: "/api/auth/token",
+    path: "/",
     domain: process.env.COOKIE_DOMAIN,
     expires: tokens.refreshExpiryDate,
     // secure: process.env.COOKIE_DOMAIN !== "localhost",
@@ -52,15 +52,12 @@ router.post("/register", useValidateBodyDto(RegisterDTO), (req, res, next) => {
         res.header('Access-Control-Allow-Origin', req.headers.origin);
         res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
         res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-        res.cookie("access_token2", tokens, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-        })
-        .sendStatus(HttpStatus.CREATED);
+        res.sendStatus(HttpStatus.CREATED);
       }
     })
     .catch(next);
 });
+
 
 router.post("/token", (req, res, next) => {
   try {

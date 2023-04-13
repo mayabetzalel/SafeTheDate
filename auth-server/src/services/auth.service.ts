@@ -205,21 +205,12 @@ class AuthService {
     return this.createTokensPack(user);
   }
 
-  private generateRefreshToken(): IToken {
-    const REFRESH_TOKEN_EXPIRATION = +(
-      process.env.REFRESH_TOKEN_EXPIRATION ?? 0
-    );
-
-    let expiredAt = new Date();
-    expiredAt.setSeconds(expiredAt.getSeconds() + REFRESH_TOKEN_EXPIRATION);
-
-    const token = v4();
-
-    return { expiryDate: expiredAt, token };
-  }
-
   private async createRefreshToken(user: IUser): Promise<IToken> {
-    const token = this.generateRefreshToken();
+
+    const token = await jwt.sign({'_id': user._id}, process.env.REFRESH_TOKEN_SECRET)
+    let experationDate: Date = new Date()
+    experationDate.setSeconds(new Date().getSeconds() + +process.env.REFRESH_TOKEN_EXPIRATION)
+
     console.log(user._id.valueOf());
     
     const result = await this.refreshTokenTableIntegrator.updateOne(
@@ -228,8 +219,8 @@ class AuthService {
       },
       {
         $set: {
-          expiryDate: token.expiryDate,
-          token: token.token,
+          expiryDate: experationDate,
+          token: token,
           user: { _id: user._id },
         },
       },
@@ -238,7 +229,7 @@ class AuthService {
     if (!result) {
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
     }
-    return token;
+    return {token,  expiryDate: experationDate};
   }
 
   private createAccessToken(tokenPayload: AccessTokenPayload): Promise<string> {
@@ -277,9 +268,10 @@ class AuthService {
     const { password, ...tokenPayload } = user;
     const refreshToken = await this.createRefreshToken(user);
     const accessToken = await this.createAccessToken(tokenPayload);
+
     return {
       accessToken: accessToken,
-      expiresIn: 3600,
+      expiresIn:  +process.env.JWT_EXPIRATION,
       // // Secure: process.env.NODE_ENV === "production",
       // sameSite: "None",
       // httpOnly: true,

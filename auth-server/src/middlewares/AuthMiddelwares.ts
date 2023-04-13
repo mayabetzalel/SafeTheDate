@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { Jwt, JwtPayload, TokenExpiredError, verify, sign } from "jsonwebtoken";
-import { ACCESS_TOKEN_COOKIE_NAME } from "../constants";
+import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } from "../constants";
 import appLogger from "../lib/app-logger";
 import {
   FunctionalityError,
@@ -31,9 +31,9 @@ export const useAuthorizationParser: (logger?: ILogger) => RequestHandler =
   (logger: ILogger = appLogger()) =>
   async (req, res, next) => {
     
-    const authToken = (req.cookies ?? {})[ACCESS_TOKEN_COOKIE_NAME];
+    console.log(req.cookies)
+    const authToken = (req.cookies ?? {})[REFRESH_TOKEN_COOKIE_NAME];
 
-    // TODO: only on register
     if (!authToken) {
       logger.error(
         new FunctionalityError(
@@ -46,10 +46,7 @@ export const useAuthorizationParser: (logger?: ILogger) => RequestHandler =
     }
 
     // If bearer token has been sent, send to client if its invalid or expired
-    verifyJWTToken(authToken, process.env.ACCESS_TOKEN_SECRET ?? "", {
-      audience: process.env.JWT_AUDIENCE,
-      issuer: process.env.JWT_ISSUER ?? "",
-    })
+    verifyJWTToken(authToken, process.env.REFRESH_TOKEN_SECRET ?? "", {})
       .then((jwtPayload) => {
         req.user = jwtPayload as AccessTokenPayload;
         return next();
