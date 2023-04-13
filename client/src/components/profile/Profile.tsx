@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Box, Paper, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Grid, Tab, Tabs, Typography } from "@mui/material";
+import TicketCard from "../TicketCard/TicketCard";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -58,7 +59,7 @@ export const Profile = () => {
         sx={(theme) => ({
           borderRight: 1, borderColor: 'divider',
           color: theme.palette.secondary.main,
-          height: '100%'
+          height: '100%', width: '20%', minWidth: '10rem'
         })}
       >
         <Tab sx={(theme) => ({ p: 3, color: theme.palette.secondary.main })} label="My Tickets" {...a11yProps(0)} />
@@ -66,10 +67,24 @@ export const Profile = () => {
         <Tab sx={(theme) => ({ p: 3, color: theme.palette.secondary.main })} label="Account Details" {...a11yProps(2)} />
       </Tabs>
       <TabPanel value={currTab} index={0}>
-        My Tickets
+        {/* get events by user tickets */}
+        <Grid container spacing={3}>
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+            <Grid key={i} item sm={4} md={3}>
+              <TicketCard />
+            </Grid>
+          ))}
+        </Grid>
       </TabPanel>
       <TabPanel value={currTab} index={1}>
-        My Events
+        {/* get events by user */}
+        <Grid container spacing={3}>
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+            <Grid key={i} item sm={4} md={3}>
+              <TicketCard />
+            </Grid>
+          ))}
+        </Grid>
       </TabPanel>
       <TabPanel value={currTab} index={2}>
         Account Details
