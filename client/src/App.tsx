@@ -17,12 +17,14 @@ import { useUserContext } from "./hooks/userController/userContext";
 import {CreateEvent} from "./components/CreateEvent";
 import {ImportTicket} from "./components/ImportTicket";
 import {Profile} from "./components/Profile";
+import Captain from "./components/Captain";
 
 // use this enum to make links to pages
 export enum RoutePaths {
   LOGIN = "/login",
   SIGNUP = "/signup",
   EVENTS = "/",
+  CAPTAIN = "/captain",
   CREATE_EVENT = "/create-event",
   IMPORT_TICKET = "/import-ticket",
   PROFILE = "/profile",
@@ -56,6 +58,14 @@ const router = createBrowserRouter([
             <Events />
           </PrivateRoute>
         ),
+      },
+      {
+        path: RoutePaths.CAPTAIN,
+        element: (
+          <PrivateRoute>
+            <Captain />
+          </PrivateRoute>
+        )
       },
       {
         path: RoutePaths.CREATE_EVENT,
