@@ -19,7 +19,7 @@ function TabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={(theme) => ({ p: 3, color: theme.palette.secondary.main, height: '100%' })}>
+        <Box sx={(theme) => ({ p: 3, color: theme.palette.secondary.main, height: '100%', overflow: 'auto' })}>
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -52,14 +52,12 @@ export const Profile = () => {
     >
       <Tabs
         orientation="vertical"
-        variant="scrollable"
         value={currTab}
         onChange={handleChange}
-        aria-label="Vertical tabs example"
         sx={(theme) => ({
           borderRight: 1, borderColor: 'divider',
           color: theme.palette.secondary.main,
-          height: '100%', width: '20%', minWidth: '10rem'
+          height: '100%', Width: '15rem'
         })}
       >
         <Tab sx={(theme) => ({ p: 3, color: theme.palette.secondary.main })} label="My Tickets" {...a11yProps(0)} />
