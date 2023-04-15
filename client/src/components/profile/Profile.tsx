@@ -1,6 +1,8 @@
-import { useState } from "react";
-import { Box, Grid, Tab, Tabs, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Box, CircularProgress, Grid, Tab, Tabs, Typography } from "@mui/material";
 import TicketCard from "../TicketCard/TicketCard";
+import { graphql } from "../../graphql";
+import { useQuery } from "urql";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -19,11 +21,14 @@ function TabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={(theme) => ({ p: 3, color: theme.palette.secondary.main, height: '100%', overflow: 'auto' })}>
+        <Box sx={(theme) => ({
+          color: theme.palette.secondary.main, height: '100%', overflow: 'auto', padding: '0px'
+        })}>
           <Typography>{children}</Typography>
         </Box>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }
 
@@ -36,6 +41,39 @@ function a11yProps(index: number) {
 
 export const Profile = () => {
   const [currTab, setCurrTab] = useState(1)
+  // const [myEvents, setMyEvents] = useState<any[]>([])
+  const [isLoadingMyEvents, setIsLoadingMyEvents] = useState(false)
+  // const [myTicketsEvents, setMyTicketsEvents] = useState<any[]>([])
+  const [isLoadingmyTicketsEvents, setIsLoadingMyTicketsEvents] = useState(false)
+
+  const ticketQuery = graphql(`
+  query ticketQuery {
+    ticket {
+      id
+      areaNumber
+    }
+  }
+`);
+
+  const [{ data: myTicketsEvents, fetching: fetchingTicketsEvents, error: getTicketsErroe }, reexecuteTicketQuery] = useQuery({
+    query: ticketQuery,
+  });
+  console.log(myTicketsEvents)
+
+  const eventsQuery = graphql(`
+  query ticketQuery {
+    ticket {
+      id
+      areaNumber
+    }
+  }
+`);
+
+  const [{ data: myEvents, fetching: fetchingEvents, error: getEventsErroe }, reexecuteEventQuery] = useQuery({
+    query: eventsQuery,
+  });
+  console.log(myEvents)
+
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setCurrTab(newValue);
@@ -44,7 +82,6 @@ export const Profile = () => {
   return (
     <Box
       sx={(theme) => ({
-        flexGrow: 1,
         bgcolor: theme.palette.background.default,
         display: 'flex',
         height: '100%'
@@ -57,32 +94,42 @@ export const Profile = () => {
         sx={(theme) => ({
           borderRight: 1, borderColor: 'divider',
           color: theme.palette.secondary.main,
-          height: '100%', Width: '15rem'
+          height: '100%', minWidth: '13rem'
         })}
       >
-        <Tab sx={(theme) => ({ p: 3, color: theme.palette.secondary.main })} label="My Tickets" {...a11yProps(0)} />
-        <Tab sx={(theme) => ({ p: 3, color: theme.palette.secondary.main })} label="My Events" {...a11yProps(1)} />
-        <Tab sx={(theme) => ({ p: 3, color: theme.palette.secondary.main })} label="Account Details" {...a11yProps(2)} />
+        <Tab sx={(theme) => ({ padding: '2rem 0rem', color: theme.palette.secondary.main })} label="My Tickets" {...a11yProps(0)} />
+        <Tab sx={(theme) => ({ padding: '2rem 0rem', color: theme.palette.secondary.main })} label="My Events" {...a11yProps(1)} />
+        <Tab sx={(theme) => ({ padding: '2rem 0rem', color: theme.palette.secondary.main })} label="Account Details" {...a11yProps(2)} />
       </Tabs>
       <TabPanel value={currTab} index={0}>
         {/* get events by user tickets */}
-        <Grid container spacing={3}>
-          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
-            <Grid key={i} item sm={4} md={3}>
-              <TicketCard />
-            </Grid>
-          ))}
-        </Grid>
+        {fetchingEvents ?
+          <CircularProgress />
+          :
+          <Grid container spacing={3}>
+            {/* {myTicketsEvents && myTicketsEvents?.ticket.map((i) => (
+              <Grid key={i?.id} item sm={4} md={3}> */}
+            {[1, 2, 3, 4, 5, 6, 7,].map((i) => (
+              <Grid key={i} item sm={4} md={3}>
+                <TicketCard />
+              </Grid>
+            ))}
+          </Grid>}
       </TabPanel>
       <TabPanel value={currTab} index={1}>
         {/* get events by user */}
-        <Grid container spacing={3}>
-          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
-            <Grid key={i} item sm={4} md={3}>
-              <TicketCard />
-            </Grid>
-          ))}
-        </Grid>
+        {fetchingTicketsEvents ?
+          <CircularProgress />
+          :
+          <Grid container spacing={3}>
+            {/* {myTicketsEvents && myTicketsEvents?.ticket.map((i) => (
+              <Grid key={i?.id} item sm={4} md={3}> */}
+            {[1, 2, 3, 4, 5, 6, 7,].map((i) => (
+              <Grid key={i} item sm={4} md={3}>
+                <TicketCard />
+              </Grid>
+            ))}
+          </Grid>}
       </TabPanel>
       <TabPanel value={currTab} index={2}>
         Account Details
