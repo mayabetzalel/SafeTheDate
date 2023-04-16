@@ -128,6 +128,21 @@ const Login = () => {
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
               />
+              <GoogleButton
+                type="light"
+                style={{ width: "100%", margin: "1px 0", color:"inherit" }}
+                onClick={() =>
+                  loginUserWithGoogle(
+                    () => {
+                      enqueueSnackbar("Successful login!", { variant: "success" });
+                      navigate(RoutePaths.EVENTS);
+                    },
+                    (error) => {
+                      enqueueSnackbar(error.message, { variant: "error" });
+                    }
+                  )
+                }
+              />
               <Button
                 type="submit"
                 fullWidth
@@ -136,6 +151,7 @@ const Login = () => {
               >
                 Sign In
               </Button>
+              
               <Grid container>
                 <Grid item xs>
                   <Link href="#" variant="body1" underline="hover" color="inherit">

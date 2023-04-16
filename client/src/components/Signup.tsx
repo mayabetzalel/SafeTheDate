@@ -124,28 +124,34 @@ const Signup = () => {
                 autoComplete="username"
                 autoFocus
               />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="firstName"
-                name="firstName"
-                label="First name"
-                placeholder="Enter first name"
-                autoComplete="first name"
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="lastName"
-                name="lastName"
-                label="Last name"
-                placeholder="Enter last name"
-                autoComplete="last name"
-                autoFocus
-              />
+              <Grid container spacing={2}>
+                <Grid item xs>
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="firstName"
+                    name="firstName"
+                    label="First name"
+                    placeholder="Enter first name"
+                    autoComplete="first name"
+                    autoFocus
+                  />
+                </Grid>
+                <Grid item>
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="lastName"
+                    name="lastName"
+                    label="Last name"
+                    placeholder="Enter last name"
+                    autoComplete="last name"
+                    autoFocus
+                  />
+                </Grid>
+              </Grid>
               <TextField
                 margin="normal"
                 required
@@ -158,9 +164,21 @@ const Signup = () => {
                 id="password"
                 autoComplete="current-password"
               />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
+              
+              <GoogleButton
+                type="light"
+                style={{ width: "100%", margin: "4px 0", color:"inherit" }}
+                onClick={() =>
+                  loginUserWithGoogle(
+                    () => {
+                      enqueueSnackbar("Successful login!", { variant: "success" });
+                      navigate(RoutePaths.EVENTS);
+                    },
+                    (error) => {
+                      enqueueSnackbar(error.message, { variant: "error" });
+                    }
+                  )
+                }
               />
               <Button
                 type="submit"
@@ -168,7 +186,7 @@ const Signup = () => {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Sign Un
+                Sign Up
               </Button>
               <Grid container>
               <Grid item xs>
