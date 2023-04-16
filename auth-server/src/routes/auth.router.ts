@@ -100,18 +100,18 @@ router.post("/login", useValidateBodyDto(LoginDTO), (req, res, next) => {
 });
 
 router.post("/logout", (req, res, next) => {
-  if (!req.user?._id) {
-    res.sendStatus(HttpStatus.ACCEPTED);
-  } else {
-    authService
-      .logout(req.user!._id)
-      .then((_) => {
-        res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
-        res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);
-        res.sendStatus(HttpStatus.ACCEPTED);
-      })
-      .catch(next);
-  }
+  // if (!req.user?._id) {
+  //   res.sendStatus(HttpStatus.ACCEPTED);
+  // } else {
+  //   authService
+  //     .logout(req.user!._id)
+  //     .then((_) => {
+  //       res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
+  //       res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);
+  //       res.sendStatus(HttpStatus.ACCEPTED);
+  //     })
+  //     .catch(next);
+  // }
 });
 
 router.put("/confirm", useValidateBodyDto(ConfirmDTO), (req, res, next) => {
@@ -121,8 +121,8 @@ router.put("/confirm", useValidateBodyDto(ConfirmDTO), (req, res, next) => {
     .catch(next);
 });
 
-router.get("/session", useAuth, (req, res, next) => {
-  res.send(req.user);
-});
+// router.get("/session", useAuth, (req, res, next) => {
+//   res.send(req.user);
+// });
 
 export default router;
