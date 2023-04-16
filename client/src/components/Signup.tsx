@@ -1,146 +1,191 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Grid,
-  Paper,
-  Avatar,
-  TextField,
-  Button,
-  Typography,
-  Link,
-} from "@mui/material";
+import * as React from 'react';
+import { useRef } from "react";
 import LockOutlinedIcon from "@mui/icons-material/Lock";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 import { useTheme } from "@mui/material/styles";
-import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
-import GoogleButton from "react-google-button";
+import { useSnackbar } from "notistack";
 import { RoutePaths } from "../App";
-import { loginUserWithGoogle } from "./Login";
-import {useAuth} from "../hooks/userController/userContext";
+import GoogleButton from "react-google-button";
+import { useAuth } from "../hooks/userController/userContext";
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import Link from '@mui/material/Link';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+export const loginUserWithGoogle = async (
+  // onSuccess: (user: User) => void,
+  onSuccess: (user: any) => void,
+  onError: (error: any) => void
+) => {
+  try {
+    // const user = await signInWithGoogle();
+    // onSuccess(user);
+  } catch (error: any) {
+    onError(error);
+  }
+};
 
 const Signup = () => {
-  const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
-  const { signUp } = useAuth();
-
   const email: React.MutableRefObject<any> = useRef(null);
   const password: React.MutableRefObject<any> = useRef(null);
-  const username: React.MutableRefObject<any> = useRef(null);
-  const lastName: React.MutableRefObject<any> = useRef(null);
-  const firstName: React.MutableRefObject<any> = useRef(null);
+  const { signUp } = useAuth();
   const theme = useTheme();
-  const paperStyle = {
-    padding: 20,
-    height: "57vh",
-    width: "40vh",
-    margin: "auto",
-    backgroundColor: theme.palette.background.paper,
-  };
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
-  const avatarStyle = { backgroundColor: theme.palette.primary.main };
-  const btnstyle = { margin: "8px 0" };
-
-  const signUpUser = async (
-    email: React.MutableRefObject<any>,
-    username: React.MutableRefObject<any>,
-    firstName: React.MutableRefObject<any>,
-    lastName: React.MutableRefObject<any>,
-    password: React.MutableRefObject<any>,
-
-    enqueueSnackbar: any,
-    navigate: any
-  ) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
     try {
-      signUp(email.current.value.trim(), username.current.value.trim(), firstName.current.value.trim(),
-      lastName.current.value.trim(), password.current.value.trim())
-      enqueueSnackbar("Successful sign up!", { variant: "success" });
-      navigate("/");
+      signUp(
+        data.get('email') as string, data.get('username') as string, 
+        data.get('firstName') as string, data.get('lastName') as string,
+        data.get('password') as string
+        )
+        enqueueSnackbar("Successful sign up!", { variant: "success" });
+        navigate("/");
     } catch (error: any) {
-      enqueueSnackbar(error.message, { variant: "error" });
+      console.log(error);
     }
   };
 
   return (
-    <Grid>
-      <Paper elevation={14} style={paperStyle}>
-        <Grid>
-          <Avatar style={avatarStyle}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <h2>Sign Up</h2>
+    <ThemeProvider theme={theme}>
+      <Grid container component="main"  sx={{ height: '100vh' }} >
+        <CssBaseline />
+        <Grid
+          item
+          xs={false}
+          sm={4}
+          md={7}
+          sx={{
+            backgroundImage: 'url(https://source.unsplash.com/c5_eQi4rrjA)',
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: (t) =>
+              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6}  square
+         sx={{
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: (t) =>
+            t.palette.mode === 'light' ? t.palette.grey[100] : t.palette.grey[900],
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          }}>
+          <Box
+            sx={{
+              my: 8,
+              mx: 4,
+              m: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <h1>Lets Start The Party !</h1>
+            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign Up
+            </Typography>
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                inputRef={email}
+                label="Email Address"
+                name="email"
+                placeholder="Enter email"
+                autoComplete="email"
+                autoFocus
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="username"
+                label="Username"
+                name="username"
+                placeholder="Enter username"
+                autoComplete="username"
+                autoFocus
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="firstName"
+                name="firstName"
+                label="First name"
+                placeholder="Enter first name"
+                autoComplete="first name"
+                autoFocus
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="lastName"
+                name="lastName"
+                label="Last name"
+                placeholder="Enter last name"
+                autoComplete="last name"
+                autoFocus
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                inputRef={password}
+                name="password"
+                label="Password"
+                type="password"
+                placeholder="Enter password"
+                id="password"
+                autoComplete="current-password"
+              />
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign Un
+              </Button>
+              <Grid container>
+              <Grid item xs>
+                  <Link href="#" variant="body1" underline="hover" color="inherit">
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link href="/Login" underline="hover" color="inherit" variant="body1">
+                    {"Already have an account? Sign In"}
+                  </Link>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
         </Grid>
-        <TextField
-          sx={{ margin: "8px 0" }}
-          inputRef={email}
-          label="Email"
-          placeholder="Enter email"
-          fullWidth
-          required
-        />
-        <TextField
-          sx={{ margin: "8px 0" }}
-          inputRef={username}
-          label="Username"
-          placeholder="Enter username"
-          fullWidth
-          required
-        />
-        <TextField
-          sx={{ margin: "8px 0" }}
-          inputRef={firstName}
-          label="First name"
-          placeholder="Enter first name"
-          fullWidth
-          required
-        />
-        <TextField
-          sx={{ margin: "8px 0" }}
-          inputRef={lastName}
-          label="Last name"
-          placeholder="Enter last name"
-          fullWidth
-          required
-        />
-        <TextField
-          sx={{ margin: "8px 0" }}
-          inputRef={password}
-          label="Password"
-          placeholder="Enter password"
-          type="password"
-          fullWidth
-          required
-        />
-        <Button
-          color="primary"
-          variant="contained"
-          style={btnstyle}
-          fullWidth
-          onClick={() => signUpUser(email, username, firstName, lastName, password, enqueueSnackbar, navigate)}
-        >
-          Sign up
-        </Button>
-        <GoogleButton
-          label="Sign up with google"
-          color="primary"
-          style={{ width: "100%", margin: "8px 0" }}
-          onClick={() =>
-            loginUserWithGoogle(
-              () => {
-                enqueueSnackbar("Successful login!", { variant: "success" });
-                navigate(RoutePaths.EVENTS);
-              },
-              (error: { message: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; }) => {
-                enqueueSnackbar(error.message, { variant: "error" });
-              }
-            )
-          }
-        />
-        <Typography>
-          {" "}
-          Already have an account ?<Link href="/Login">Login</Link>
-        </Typography>
-      </Paper>
-    </Grid>
+      </Grid>
+    </ThemeProvider>
   );
 };
 
