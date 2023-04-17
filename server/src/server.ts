@@ -1,4 +1,4 @@
-import { createServer } from "node:http";
+import { createServer } from "http";
 import { createYoga } from "graphql-yoga";
 import getSchema from "./graphql/shcema";
 import settings from "./config/settings";

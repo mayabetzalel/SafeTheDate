@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
-import { Jwt, JwtPayload, TokenExpiredError, verify } from "jsonwebtoken";
-import { ACCESS_TOKEN_COOKIE_NAME } from "../constants";
+import { Jwt, JwtPayload, TokenExpiredError, verify, sign } from "jsonwebtoken";
+import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } from "../constants";
 import appLogger from "../lib/app-logger";
 import {
   FunctionalityError,
@@ -9,7 +9,6 @@ import {
 } from "../utils/error";
 import { ILogger } from "../utils/logger";
 import { AccessTokenPayload, HttpStatus } from "../utils/types";
-import User from "mongo/models/User";
 
 
 export function verifyJWTToken(
@@ -31,9 +30,10 @@ export function verifyJWTToken(
 export const useAuthorizationParser: (logger?: ILogger) => RequestHandler =
   (logger: ILogger = appLogger()) =>
   async (req, res, next) => {
-    const authToken = (req.cookies ?? {})[ACCESS_TOKEN_COOKIE_NAME];
-    console.log("Checking useAuthorizationParser")
-    // TODO: only on register
+    
+    console.log(req.cookies)
+    const authToken = (req.cookies ?? {})[REFRESH_TOKEN_COOKIE_NAME];
+
     if (!authToken) {
       logger.error(
         new FunctionalityError(
@@ -46,10 +46,7 @@ export const useAuthorizationParser: (logger?: ILogger) => RequestHandler =
     }
 
     // If bearer token has been sent, send to client if its invalid or expired
-    verifyJWTToken(authToken, process.env.ACCESS_TOKEN_SECRET ?? "", {
-      audience: process.env.JWT_AUDIENCE,
-      issuer: process.env.JWT_ISSUER ?? "",
-    })
+    verifyJWTToken(authToken, process.env.REFRESH_TOKEN_SECRET ?? "", {})
       .then((jwtPayload) => {
         req.user = jwtPayload as AccessTokenPayload;
         return next();
@@ -60,24 +57,16 @@ export const useAuthorizationParser: (logger?: ILogger) => RequestHandler =
       });
   };
 
-export const authenticate :RequestHandler = (req, res, next) => {
-  const authHeadres = req.headers['authorization']
-  const token = authHeadres && authHeadres.split(" ")[1]
-  if (token == null) {
-    return res.status(HttpStatus.UNAUTHORIZED)
-  } else {
-    if (process.env.ACCESS_TOKEN_SECRET) {
-      verify(token, process.env.ACCESS_TOKEN_SECRET , (err, user: any) => {
-        if(err) return res.status(HttpStatus.UNAUTHORIZED)
-        else {
-          req.user = user
-          return next()
-        }
-      })
-    }
-    return res.status(HttpStatus.UNAUTHORIZED)
-  }
-}
+
+export const createToken = (userId: string, userEmail: string) => {
+  const token: string = sign(
+  { user_id: userId, userEmail }, 
+  process.env.ACCESS_TOKEN_SECRET as string,
+  {
+    expiresIn: process.env.JWT_EXPIRATION,
+  })
+  return token
+};
 
 export const useAuth: RequestHandler = (req, res, next) => {
   if (!req.user || !req.user.username) {

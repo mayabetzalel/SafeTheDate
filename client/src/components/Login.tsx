@@ -20,7 +20,6 @@ import {useAuth} from "../hooks/userController/userContext";
 
 
 export const loginUserWithGoogle = async (
-  // onSuccess: (user: User) => void,
   onSuccess: (user: any) => void,
   onError: (error: any) => void
 ) => {
@@ -56,12 +55,6 @@ const Login = () => {
     onError: (error: any) => void
   ) => {
     try {
-      console.log("-------------------------------")
-
-      console.log(email.current.value.trim())
-      console.log(password.current.value.trim())
-      console.log("-------------------------------")
-
       signIn(email.current.value.trim(), password.current.value.trim())
       // const user = await signInWithEmailAndPassword(
       //   email.current.value,
@@ -70,7 +63,6 @@ const Login = () => {
       // if (user == null) throw new Error();
       // onSuccess(user);
     } catch (error: any) {
-      console.log("Ine rrorororor")
       onError(error);
     }
   };
