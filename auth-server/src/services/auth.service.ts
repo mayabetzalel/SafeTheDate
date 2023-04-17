@@ -210,8 +210,6 @@ class AuthService {
     const token = await jwt.sign({'_id': user._id}, process.env.REFRESH_TOKEN_SECRET)
     let experationDate: Date = new Date()
     experationDate.setSeconds(new Date().getSeconds() + +process.env.REFRESH_TOKEN_EXPIRATION)
-
-    console.log(user._id.valueOf());
     
     const result = await this.refreshTokenTableIntegrator.updateOne(
       {
@@ -272,10 +270,6 @@ class AuthService {
     return {
       accessToken: accessToken,
       expiresIn:  +process.env.JWT_EXPIRATION,
-      // // Secure: process.env.NODE_ENV === "production",
-      // sameSite: "None",
-      // httpOnly: true,
-      // cookie_samesite:"none",
       refreshExpiryDate: refreshToken.expiryDate,
       refreshToken: refreshToken.token,
     };

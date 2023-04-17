@@ -21,7 +21,6 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 export const loginUserWithGoogle = async (
-  // onSuccess: (user: User) => void,
   onSuccess: (user: any) => void,
   onError: (error: any) => void
 ) => {
