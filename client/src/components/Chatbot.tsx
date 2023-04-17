@@ -7,7 +7,13 @@ import {
     MessageInput,
 } from "@chatscope/chat-ui-kit-react";
 
-export default function Chatbot() {
+interface chatbotProps {
+    handleMessageComplete: (message: string) => void; 
+}
+
+export function Chatbot(props: chatbotProps) {
+    const {handleMessageComplete} = props;
+
     return (
         <div style={{ position: "relative", height: "500px" }}>
             <MainContainer>
@@ -20,7 +26,7 @@ export default function Chatbot() {
                             model={{ message: "234", direction: "outgoing", position: "first"}}
                         />
                     </MessageList>
-                    <MessageInput placeholder="Type message here" />
+                    <MessageInput placeholder="Type message here" onSend={handleMessageComplete}/>
                 </ChatContainer>
             </MainContainer>
         </div>
