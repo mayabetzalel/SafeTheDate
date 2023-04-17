@@ -17,7 +17,6 @@ export default function Captain() {
   return (
     <BootstrapDialog
       onClose={handleClose}
-      aria-labelledby="customized-dialog-title"
       open={true}
     >
       <BootstrapDialogTitle id="customized-dialog-title"

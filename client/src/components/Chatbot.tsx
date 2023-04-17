@@ -1,4 +1,3 @@
-import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {
     MainContainer,
     ChatContainer,
@@ -6,6 +5,8 @@ import {
     Message,
     MessageInput,
 } from "@chatscope/chat-ui-kit-react";
+
+import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 
 interface chatbotProps {
     handleMessageComplete: (message: string) => void; 
