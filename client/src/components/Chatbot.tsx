@@ -16,7 +16,7 @@ export function Chatbot(props: chatbotProps) {
     const {handleMessageComplete} = props;
 
     return (
-        <div style={{ position: "relative", height: "500px" }}>
+        <div style={{ position: "relative", height: "20rem" }}>
             <MainContainer>
                 <ChatContainer>
                     <MessageList>

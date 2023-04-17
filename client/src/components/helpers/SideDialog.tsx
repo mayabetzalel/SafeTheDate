@@ -1,6 +1,4 @@
 import { Dialog, DialogTitle, IconButton, styled } from '@mui/material';
-import * as React from 'react';
-
 
 export const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
