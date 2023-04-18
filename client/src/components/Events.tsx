@@ -14,8 +14,6 @@ import { Grid } from "@mui/material";
 //   }
 // `);
 
-
-
 const Events = () => {
   const { user } = useUserContext();
   // const [{ data, fetching, error }, reexecuteQuery] = useQuery({

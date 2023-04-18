@@ -70,7 +70,6 @@ const Navbar = () => {
         <IconButton
           size="large"
           edge="start"
-          aria-label="menu"
           onClick={logout}
         >
           <Logout />

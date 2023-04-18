@@ -1,10 +1,9 @@
-import { Card, CardContent, Typography, TextField, Button, Grid, InputAdornment } from '@mui/material';
-import { InputEvent, Event } from "../graphql/graphql";
 import { useRef } from 'react';
-import { gql, useMutation } from "urql";
 import { useNavigate } from "react-router-dom";
 
-import { RoutePaths } from "../App";
+import { gql, useMutation } from "urql";
+import { InputEvent, Event } from "../graphql/graphql";
+import { Card, CardContent, Typography, TextField, Button, Grid, InputAdornment } from '@mui/material';
 
 const CREATE_EVENT_MUTATION = gql`
   mutation CreateEvent($inputEvent: InputEvent!) {
@@ -41,7 +40,6 @@ export const CreateEvent = () => {
 
     // Call the createEvent mutation with the inputEvent object
     createEvent({inputEvent}).then((result: any) => {
-      
       if (result.error) {
         console.error("Error creating event:", result.error);
       } else {
