@@ -28,9 +28,6 @@ export function Chatbot(props: chatbotProps) {
                                 model={{ message: message.messageData, direction: message.direction, position: "first" }}
                             />
                         )}
-                        <Message
-                            model={{ message: "234", direction: "outgoing", position: "first" }}
-                        />
                     </MessageList>
                     <MessageInput placeholder="Type message here" onSend={handleMessageComplete} />
                 </ChatContainer>
