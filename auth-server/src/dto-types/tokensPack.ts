@@ -3,4 +3,7 @@ export class TokensPack {
   refreshExpiryDate: Date;
   accessToken: string;
   expiresIn: number;
+  // sameSite: string;
+  // httpOnly: true;
+  // cookie_samesite:string;
 }

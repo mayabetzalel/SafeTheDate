@@ -1,5 +1,4 @@
 import mongoose, { Schema, Types } from "mongoose";
-import { ObjectID } from "../../src/utils/types";
 import User, { IUser } from "./User";
 
 const RefreshTokenSchema = new mongoose.Schema<IRefreshToken>({

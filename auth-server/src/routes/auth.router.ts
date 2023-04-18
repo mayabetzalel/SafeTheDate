@@ -18,10 +18,9 @@ import { HttpStatus } from "../utils/types";
 function configureTokensCookie(res: Response, tokens: TokensPack) {
   res.cookie(REFRESH_TOKEN_COOKIE_NAME, tokens.refreshToken, {
     httpOnly: true,
-    path: "/api/auth/token",
+    path: "/",
     domain: process.env.COOKIE_DOMAIN,
     expires: tokens.refreshExpiryDate,
-    // secure: process.env.COOKIE_DOMAIN !== "localhost",
     sameSite: "strict",
   });
 
@@ -29,8 +28,8 @@ function configureTokensCookie(res: Response, tokens: TokensPack) {
     httpOnly: true,
     domain: process.env.COOKIE_DOMAIN,
     maxAge: tokens.expiresIn * 1000,
-    // secure: process.env.COOKIE_DOMAIN !== "localhost",
     sameSite: "strict",
+    path: "/"
   });
 }
 
@@ -39,15 +38,24 @@ const router = express.Router();
 router.post("/register", useValidateBodyDto(RegisterDTO), (req, res, next) => {
   authService
     .register(req.body as RegisterDTO)
-    .then((errors) => {
+    .then((response) => {
+      const errors: any[] = response[0]? [] : response[0]
+      const tokens = response[1]
       if (errors.length > 0) {
         res.status(HttpStatus.BAD_REQUEST).send(errors);
       } else {
+        configureTokensCookie(res, tokens);
+        res.header({ "withCredentials" : true })
+        res.header({ "Access-Control-Allow-Credentials": true });
+        res.header('Access-Control-Allow-Origin', req.headers.origin);
+        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
         res.sendStatus(HttpStatus.CREATED);
       }
     })
     .catch(next);
 });
+
 
 router.post("/token", (req, res, next) => {
   try {
@@ -78,24 +86,18 @@ router.post("/login", useValidateBodyDto(LoginDTO), (req, res, next) => {
     .login(req.body)
     .then((tokens) => {
       configureTokensCookie(res, tokens);
+      res.header({ "withCredentials" : true })
+      res.header({ "Access-Control-Allow-Credentials": true });
+      res.header('Access-Control-Allow-Origin', req.headers.origin);
+      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+      
       res.sendStatus(HttpStatus.OK);
     })
     .catch(next);
 });
 
 router.post("/logout", (req, res, next) => {
-  if (!req.user?._id) {
-    res.sendStatus(HttpStatus.ACCEPTED);
-  } else {
-    authService
-      .logout(req.user!._id)
-      .then((_) => {
-        res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
-        res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);
-        res.sendStatus(HttpStatus.ACCEPTED);
-      })
-      .catch(next);
-  }
 });
 
 router.put("/confirm", useValidateBodyDto(ConfirmDTO), (req, res, next) => {
@@ -105,8 +107,5 @@ router.put("/confirm", useValidateBodyDto(ConfirmDTO), (req, res, next) => {
     .catch(next);
 });
 
-router.get("/session", useAuth, (req, res, next) => {
-  res.send(req.user);
-});
 
 export default router;
