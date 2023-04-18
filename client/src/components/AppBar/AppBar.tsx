@@ -47,6 +47,11 @@ const Navbar = () => {
         </NavigationTypography>
       </Grid>
       <Grid item xs>
+        <NavigationTypography route={RoutePaths.CAPTAIN}>
+          Captain
+        </NavigationTypography>
+      </Grid>
+      <Grid item xs>
         <NavigationTypography route={RoutePaths.CREATE_EVENT}>
           Create Events
         </NavigationTypography>
@@ -65,7 +70,6 @@ const Navbar = () => {
         <IconButton
           size="large"
           edge="start"
-          aria-label="menu"
           onClick={logout}
         >
           <Logout />

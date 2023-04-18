@@ -14,12 +14,14 @@ import { ImportTicket } from "./components/ImportTicket";
 import { Profile } from "./components/profile/Profile";
 import { MyEvents } from "./components/profile/MyEvents";
 import { MyTickets } from "./components/profile/MyTickets";
+import Captain from "./components/Captain";
 
 // use this enum to make links to pages
 export enum RoutePaths {
   LOGIN = "/login",
   SIGNUP = "/signup",
   EVENTS = "/",
+  CAPTAIN = "/captain",
   CREATE_EVENT = "/create-event",
   IMPORT_TICKET = "/import-ticket",
   PROFILE = "/profile",
@@ -56,6 +58,14 @@ const router = createBrowserRouter([
             <Events />
           </PrivateRoute>
         ),
+      },
+      {
+        path: RoutePaths.CAPTAIN,
+        element: (
+          <PrivateRoute>
+            <Captain />
+          </PrivateRoute>
+        )
       },
       {
         path: RoutePaths.CREATE_EVENT,
