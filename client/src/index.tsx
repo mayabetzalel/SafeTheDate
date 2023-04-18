@@ -4,9 +4,10 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { SnackbarProvider } from "notistack";
 import theme from "./overrieds/MuiTheme";
-import { ThemeProvider } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { UserProvider } from "./hooks/userController/userProvider";
 import GraphqlClientProvider from "./hooks/GraphqlClientProvider/GraphqlClientProvider";
+import "./index.css";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -18,6 +19,7 @@ root.render(
       <UserProvider>
         <SnackbarProvider maxSnack={3}>
           <ThemeProvider theme={theme}>
+            <CssBaseline />
             <App />
           </ThemeProvider>
         </SnackbarProvider>

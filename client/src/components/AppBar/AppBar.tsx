@@ -1,9 +1,9 @@
+import * as React from "react";
 import { Grid, IconButton } from "@mui/material";
 import { RoutePaths } from "../../App";
 import { Logout } from "@mui/icons-material";
 import logo from "../../assets/logo.png";
 import { useNavigate, useNavigation } from "react-router-dom";
-import * as React from "react";
 import NavigationTypography from "./NavigationTypography/NavigationTypography";
 
 const Navbar = () => {
