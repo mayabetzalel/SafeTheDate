@@ -4,19 +4,16 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Navbar from "./components/AppBar/AppBar";
 import {
-  Route,
-  BrowserRouter as Router,
-  Routes,
   RouterProvider,
   createBrowserRouter,
-  createRoutesFromElements,
   Outlet,
 } from "react-router-dom";
 import PrivateRoute from "./utils/PrivateRoute";
-import { useUserContext } from "./hooks/userController/userContext";
-import {CreateEvent} from "./components/CreateEvent";
-import {ImportTicket} from "./components/ImportTicket";
-import {Profile} from "./components/Profile";
+import { CreateEvent } from "./components/CreateEvent";
+import { ImportTicket } from "./components/ImportTicket";
+import { Profile } from "./components/profile/Profile";
+import { MyEvents } from "./components/profile/MyEvents";
+import { MyTickets } from "./components/profile/MyTickets";
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -26,6 +23,9 @@ export enum RoutePaths {
   CREATE_EVENT = "/create-event",
   IMPORT_TICKET = "/import-ticket",
   PROFILE = "/profile",
+  MY_EVENTS = "/profile/events",
+  MY_TICKETS = "/profile/tickets",
+  MY_DETAILS = "/profile/details",
 }
 
 const router = createBrowserRouter([
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
       <>
         <Navbar />
         <Box height="90%">
-          <Container sx={{ height: "inherit"}} maxWidth={"xl"}>
+          <Container sx={{ height: "inherit" }} maxWidth={"xl"}>
             <Outlet />
           </Container>
         </Box>
@@ -78,6 +78,57 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <Profile />
+          </PrivateRoute>
+        ),
+        children: [
+          {
+            path: RoutePaths.MY_EVENTS,
+            element: (
+              <PrivateRoute>
+                <MyEvents />
+              </PrivateRoute>
+            )
+          },
+          {
+            path: RoutePaths.MY_TICKETS,
+            element: (
+              <PrivateRoute>
+                <MyTickets />
+              </PrivateRoute>
+            )
+          },
+          {
+            path: RoutePaths.MY_DETAILS,
+            element: (
+              <PrivateRoute>
+                <ImportTicket />
+              </PrivateRoute>
+            )
+          },
+
+        ]
+      },
+      {
+        path: RoutePaths.MY_EVENTS,
+        element: (
+          <PrivateRoute>
+            <MyEvents />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: RoutePaths.MY_EVENTS,
+        element: (
+          <PrivateRoute>
+            <MyTickets />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: RoutePaths.MY_EVENTS,
+        element: (
+          <PrivateRoute>
+            <ImportTicket />
           </PrivateRoute>
         ),
       },
