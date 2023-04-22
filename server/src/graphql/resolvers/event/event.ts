@@ -1,33 +1,37 @@
-import { Query, InputEvent } from "../../typeDefs";
+import {
+  QueryResolvers,
+  MutationResolvers,
+} from "../../typeDefs";
 import { Event } from "../../../../mongo/models/Event";
-import { GraphQLResolveInfo } from "graphql";
 
-export default {
-    Query: {
-        event: async () => {
+const eventResolvers: {
+  Query: Pick<QueryResolvers, "event">;
+  Mutation: Pick<MutationResolvers, "createEvent">;
+} = {
+  Query: {
+    event: (parent, args, context, info) => {
+      const { substringName, page } = args;
 
-        }
+      return [];
     },
-    Mutation: {
-        createEvent: async (parent: any,
-            { inputEvent }: { inputEvent: InputEvent }, // Specify the type of inputEvent argument
-            context: any,
-            info: GraphQLResolveInfo) => {
-            // Extract values from the inputEvent object
-            const { name, location, timeAndDate, type } = inputEvent;
-            // Create a new event using the extracted values
-            const newEvent = await Event.create({
-                name,
-                location,
-                timeAndDate,
-                type
-            });
+  },
+  Mutation: {
+    createEvent: async (parent, { inputEvent }, context, info) => {
+      const { name, location, timeAndDate, type } = inputEvent;
 
-            return {
-                ...newEvent.toObject(),
-                id: newEvent._id
-            };
-        }
-    }
+      const newEvent = await Event.create({
+        name,
+        location,
+        timeAndDate,
+        type,
+      });
 
-}
+      return {
+        ...newEvent.toObject(),
+        id: newEvent._id,
+      };
+    },
+  },
+};
+
+export default eventResolvers;
