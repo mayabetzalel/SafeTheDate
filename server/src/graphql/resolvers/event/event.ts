@@ -3,6 +3,11 @@ import { Event } from "../../../../mongo/models/Event";
 import { GraphQLResolveInfo } from "graphql";
 
 export default {
+    Query: {
+        event: async () => {
+
+        }
+    },
     Mutation: {
         createEvent: async (parent: any,
             { inputEvent }: { inputEvent: InputEvent }, // Specify the type of inputEvent argument
