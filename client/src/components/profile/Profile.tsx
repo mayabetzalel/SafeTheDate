@@ -1,55 +1,29 @@
-import { Outlet } from "react-router-dom";
-import { Box, Divider, Grid } from "@mui/material";
+import { Outlet, redirect } from "react-router-dom";
+import { Box, Divider, Grid, Stack } from "@mui/material";
 import NavigationTypography from "../AppBar/NavigationTypography/NavigationTypography";
 import { RoutePaths } from "../../App";
 
 export const Profile = () => {
+  redirect(RoutePaths.MY_DETAILS);
+
   return (
-    <Box
-      sx={(theme) => ({
-        bgcolor: theme.palette.background.default,
-        display: 'flex',
-        height: '100%'
-      })}
-    >
-      <Grid
-        container
-        columns={1}
-        sx={(theme) => ({
-          placeItems: 'center',
-          color: theme.palette.primary.main,
-          flexDirection: 'row',
-          width: '9rem',
-          height: '50%',
-          zIndex: 100,
-        })}
-      >
-        <Grid item xs={1} >
+    <Grid container>
+      <Grid item xs={3}>
+        <Stack alignItems={"center"} spacing={3}>
           <NavigationTypography route={RoutePaths.MY_EVENTS}>
             My Events
           </NavigationTypography>
-        </Grid>
-        <Grid item xs={1}>
           <NavigationTypography route={RoutePaths.MY_TICKETS}>
             My Tickets
           </NavigationTypography>
-        </Grid>
-        <Grid item xs={1}>
           <NavigationTypography route={RoutePaths.MY_DETAILS}>
             Account Details
           </NavigationTypography>
-        </Grid>
+        </Stack>
       </Grid>
-
-      <Divider orientation="vertical" flexItem light sx={(theme) => ({
-        borderColor: theme.palette.secondary.main,
-        marginRight: '1rem'
-      })} />
-
-      <div id="detail">
+      <Grid item xs={9}>
         <Outlet />
-      </div>
-
-    </Box >
+      </Grid>
+    </Grid>
   );
-}
+};
