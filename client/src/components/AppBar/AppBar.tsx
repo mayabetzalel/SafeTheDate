@@ -1,9 +1,9 @@
+import * as React from "react";
 import { Grid, IconButton } from "@mui/material";
 import { RoutePaths } from "../../App";
 import { Logout } from "@mui/icons-material";
 import logo from "../../assets/logo.png";
 import { useNavigate, useNavigation } from "react-router-dom";
-import * as React from "react";
 import NavigationTypography from "./NavigationTypography/NavigationTypography";
 
 const Navbar = () => {
@@ -47,6 +47,11 @@ const Navbar = () => {
         </NavigationTypography>
       </Grid>
       <Grid item xs>
+        <NavigationTypography route={RoutePaths.CAPTAIN}>
+          Captain
+        </NavigationTypography>
+      </Grid>
+      <Grid item xs>
         <NavigationTypography route={RoutePaths.CREATE_EVENT}>
           Create Events
         </NavigationTypography>
@@ -65,7 +70,6 @@ const Navbar = () => {
         <IconButton
           size="large"
           edge="start"
-          aria-label="menu"
           onClick={logout}
         >
           <Logout />
