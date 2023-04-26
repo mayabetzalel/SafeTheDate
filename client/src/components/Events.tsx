@@ -1,4 +1,4 @@
-import { useUserContext } from "../hooks/userController/userContext";
+import { useAuth } from "../hooks/userController/userContext";
 import TicketCard from "./TicketCard/TicketCard";
 import { gql, useQuery } from "urql";
 import FetchingState from "../utils/fetchingState";
@@ -15,7 +15,7 @@ import { Grid } from "@mui/material";
 // `);
 
 const Events = () => {
-  const { user } = useUserContext();
+  const { currentUser } = useAuth();
   // const [{ data, fetching, error }, reexecuteQuery] = useQuery({
   //   query: ticketQuery,
   // });

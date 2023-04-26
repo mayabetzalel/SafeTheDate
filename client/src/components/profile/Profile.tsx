@@ -2,9 +2,33 @@ import { Outlet } from "react-router-dom";
 import { Box, Divider, Grid } from "@mui/material";
 import NavigationTypography from "../AppBar/NavigationTypography/NavigationTypography";
 import { RoutePaths } from "../../App";
+import { useAuth } from "../../hooks/userController/userContext"  
 
 export const Profile = () => {
+
+  const { currentUser } = useAuth();
+  
   return (
+    !currentUser ?
+    <div style={{ color:"white", marginTop:"200sx" }}>
+      <h1>   You Have To Sign In To Watch Your Profile</h1>
+      <Grid container component="main"  sx={{ height: '75vh' }} >
+        <Grid
+          item
+          sm={9}
+          md={15}
+          sx={{
+            backgroundImage: 'url(https://source.unsplash.com/ZnLprInKM7s)',
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: (t) =>
+              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+        </Grid>
+    </div>
+    :
     <Box
       sx={(theme) => ({
         bgcolor: theme.palette.background.default,
