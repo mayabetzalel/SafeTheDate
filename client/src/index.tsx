@@ -5,7 +5,7 @@ import reportWebVitals from "./reportWebVitals";
 import { SnackbarProvider } from "notistack";
 import theme from "./overrieds/MuiTheme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { UserProvider } from "./hooks/userController/userProvider";
+import { AuthContextProvider } from "./hooks/userController/userContext";
 import GraphqlClientProvider from "./hooks/GraphqlClientProvider/GraphqlClientProvider";
 import "./index.css";
 
@@ -16,14 +16,14 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <GraphqlClientProvider>
-      <UserProvider>
+      <AuthContextProvider>
         <SnackbarProvider maxSnack={3}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <App />
           </ThemeProvider>
         </SnackbarProvider>
-      </UserProvider>
+      </AuthContextProvider>
     </GraphqlClientProvider>
   </React.StrictMode>
 );

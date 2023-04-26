@@ -14,6 +14,7 @@ import { useValidateBodyDto } from "../middlewares/useValidation";
 import { authService } from "../services/auth.service";
 import { FunctionalityError, serverErrorCodes } from "../utils/error";
 import { HttpStatus } from "../utils/types";
+import { IUser } from "mongo/models/User";
 
 function configureTokensCookie(res: Response, tokens: TokensPack) {
   res.cookie(REFRESH_TOKEN_COOKIE_NAME, tokens.refreshToken, {
@@ -41,6 +42,7 @@ router.post("/register", useValidateBodyDto(RegisterDTO), (req, res, next) => {
     .then((response) => {
       const errors: any[] = response[0]? [] : response[0]
       const tokens = response[1]
+      const user = response[2]
       if (errors.length > 0) {
         res.status(HttpStatus.BAD_REQUEST).send(errors);
       } else {
@@ -50,7 +52,7 @@ router.post("/register", useValidateBodyDto(RegisterDTO), (req, res, next) => {
         res.header('Access-Control-Allow-Origin', req.headers.origin);
         res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
         res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-        res.sendStatus(HttpStatus.CREATED);
+        res.status(HttpStatus.CREATED).json(user);
       }
     })
     .catch(next);
@@ -84,15 +86,16 @@ router.post("/token", (req, res, next) => {
 router.post("/login", useValidateBodyDto(LoginDTO), (req, res, next) => {
   authService
     .login(req.body)
-    .then((tokens) => {
+    .then((response) => {
+      const tokens = response[0]
+      const user = response[1]
       configureTokensCookie(res, tokens);
       res.header({ "withCredentials" : true })
       res.header({ "Access-Control-Allow-Credentials": true });
       res.header('Access-Control-Allow-Origin', req.headers.origin);
       res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
       res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-      
-      res.sendStatus(HttpStatus.OK);
+      res.status(HttpStatus.CREATED).json(user);
     })
     .catch(next);
 });
