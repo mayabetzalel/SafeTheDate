@@ -15,7 +15,7 @@ export default  `
     }
 
     type Query {
-        event(inputSearchQuery: InputEvent): [Event]!
+        event(substringName: String, page: Int): [Event]!
     }
 
     type Mutation {
