@@ -3,7 +3,8 @@ import axios from 'axios';
 const REST_API = {
     auth: {
         signInWithEmailAndPassword:'http://localhost:5000/api/auth/login',
-        signUpWithEmailAndPassword: 'http://localhost:5000/api/auth/register'
+        signUpWithEmailAndPassword: 'http://localhost:5000/api/auth/register',
+        logout: 'http://localhost:5000/api/auth/logout'
     }
 }
 
@@ -30,6 +31,10 @@ const backendAPI = {
           withCredentials: true 
         });
       },
+
+      async logOut() {
+        return await axios.post(REST_API.auth.logout)
+      }
     }
 }
 
