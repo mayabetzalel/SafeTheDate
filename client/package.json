@@ -16,18 +16,21 @@
     "@types/react-dom": "^18.0.10",
     "@typescript-eslint/eslint-plugin": "^5.57.0",
     "@typescript-eslint/parser": "^5.57.0",
+    "concurrently": "^8.0.1",
     "eslint": "^8.36.0",
     "eslint-plugin-react": "^7.32.2",
-    "ts-node": "^10.9.1",
-    "concurrently": "^8.0.1"
+    "ts-node": "^10.9.1"
   },
   "dependencies": {
+    "@chatscope/chat-ui-kit-react": "^1.10.1",
+    "@chatscope/chat-ui-kit-styles": "^1.4.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.3",
     "axios": "^1.2.3",
     "bcrypt": "^5.1.0",
+    "graphql": "^16.6.0",
     "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
