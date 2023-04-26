@@ -7,7 +7,8 @@ import { useAuth } from "../../hooks/userController/userContext"
 export const Profile = () => {
 
   const { currentUser } = useAuth();
-  
+  console.log(currentUser)
+
   return (
     !currentUser ?
     <div style={{ color:"white", marginTop:"200sx" }}>
@@ -72,6 +73,12 @@ export const Profile = () => {
 
       <div id="detail">
         <Outlet />
+      </div>
+      <div style={{ marginLeft:"5%", color:"white", }}>
+        <img src="https://source.unsplash.com/xpTsS9PJMXQ" width="500" height="300"></img>
+        <h1> { currentUser['firstName']} &nbsp; {currentUser['lastName'] }</h1>
+        <h1> { currentUser['username'] } </h1>
+        <h1> { currentUser['email'] }</h1>
       </div>
 
     </Box >
