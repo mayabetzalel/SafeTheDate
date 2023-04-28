@@ -15,6 +15,7 @@ import { Profile } from "./components/profile/Profile";
 import { MyEvents } from "./components/profile/MyEvents";
 import { MyTickets } from "./components/profile/MyTickets";
 import Captain from "./components/Captain";
+import EventProvider from "./hooks/context/EventContext";
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -34,12 +35,14 @@ const router = createBrowserRouter([
   {
     element: (
       <>
-        <Navbar />
-        <Box height="90%">
-          <Container sx={{ height: "inherit" }} maxWidth={"xl"}>
-            <Outlet />
-          </Container>
-        </Box>
+        <EventProvider>
+          <Navbar />
+          <Box height="90%">
+            <Container sx={{ height: "inherit" }} maxWidth={"xl"}>
+              <Outlet />
+            </Container>
+          </Box>
+        </EventProvider>
       </>
     ),
     children: [
