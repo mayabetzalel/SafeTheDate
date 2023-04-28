@@ -15,7 +15,7 @@ export default  `
     }
 
     type Query {
-        event(substringName: String, page: Int): [Event]!
+        event(substringName: String, skip: Int, limit: Int): [Event]!
     }
 
     type Mutation {

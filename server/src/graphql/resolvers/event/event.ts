@@ -1,20 +1,17 @@
 import { QueryResolvers, MutationResolvers, Event } from "../../typeDefs";
 import { Event as EventModel } from "../../../../mongo/models/Event";
-
-const PAGE_SIZE = 10;
-
 const eventResolvers: {
   Query: Pick<QueryResolvers, "event">;
   Mutation: Pick<MutationResolvers, "createEvent">;
 } = {
   Query: {
     event: async (parent, args, context, info) => {
-      const { substringName, page } = args;
+      const { substringName, skip = 0, limit = 50 } = args;
       const filter = substringName ? { name: `/${substringName}/` } : {};
-
+      // const
       const events = await EventModel.find(filter)
-        .skip(PAGE_SIZE * page)
-        .limit(PAGE_SIZE)
+        .skip(skip)
+        .limit(limit)
         .then((events) =>
           events.map<Event>(({ name, location, timeAndDate, type, _id }) => ({
             name,

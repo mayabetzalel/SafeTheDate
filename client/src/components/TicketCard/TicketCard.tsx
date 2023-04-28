@@ -7,6 +7,8 @@ import {
   Typography,
 } from "@mui/material";
 
+const TICKET_HEIGHT = 250;
+
 // TODO: replace this type after graphql comes in
 interface TicketType {
   eventName: string;
@@ -38,7 +40,7 @@ const TicketCard = ({ ticket }: TicketCardProps) => {
         </Typography>
       </CardContent>
       <CardMedia
-        sx={{ height: 200 }}
+        sx={{ height: TICKET_HEIGHT }}
         image="https://thumbs.dreamstime.com/b/nightclub-party-lightshow-18331890.jpg"
       />
     </Card>
