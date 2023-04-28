@@ -36,7 +36,10 @@ const router = createBrowserRouter([
       <>
         <Navbar />
         <Box height="90%">
-          <Container sx={{ height: "inherit" }} maxWidth={"xl"}>
+          <Container
+            sx={{ height: "inherit", paddingTop: "50px" }}
+            maxWidth={"xl"}
+          >
             <Outlet />
           </Container>
         </Box>
@@ -65,7 +68,7 @@ const router = createBrowserRouter([
           <PrivateRoute>
             <Captain />
           </PrivateRoute>
-        )
+        ),
       },
       {
         path: RoutePaths.CREATE_EVENT,
@@ -92,12 +95,13 @@ const router = createBrowserRouter([
         ),
         children: [
           {
+            index: true,
             path: RoutePaths.MY_EVENTS,
             element: (
               <PrivateRoute>
                 <MyEvents />
               </PrivateRoute>
-            )
+            ),
           },
           {
             path: RoutePaths.MY_TICKETS,
@@ -105,7 +109,7 @@ const router = createBrowserRouter([
               <PrivateRoute>
                 <MyTickets />
               </PrivateRoute>
-            )
+            ),
           },
           {
             path: RoutePaths.MY_DETAILS,
@@ -113,10 +117,9 @@ const router = createBrowserRouter([
               <PrivateRoute>
                 <ImportTicket />
               </PrivateRoute>
-            )
+            ),
           },
-
-        ]
+        ],
       },
       {
         path: RoutePaths.MY_EVENTS,
