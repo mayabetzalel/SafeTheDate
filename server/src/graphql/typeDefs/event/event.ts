@@ -15,10 +15,10 @@ export default  `
     }
 
     type Query {
-        event(substringName: String, skip: Int, limit: Int): [Event]!
+        event(substringName: String, skip: Int, limit: Int): [Event!]!
     }
 
     type Mutation {
-        createEvent(inputEvent: InputEvent!): Event
+        createEvent(inputEvent: InputEvent!): MutationResponse!
     }
 `

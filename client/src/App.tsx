@@ -95,7 +95,6 @@ const router = createBrowserRouter([
         ),
         children: [
           {
-            index: true,
             path: RoutePaths.MY_EVENTS,
             element: (
               <PrivateRoute>
