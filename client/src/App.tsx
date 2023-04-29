@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 import PrivateRoute from "./utils/PrivateRoute";
 import { CreateEvent } from "./components/CreateEvent";
+import { Event } from "./components/Event/Event";
 import { ImportTicket } from "./components/ImportTicket";
 import { Profile } from "./components/profile/Profile";
 import { MyEvents } from "./components/profile/MyEvents";
@@ -28,6 +29,7 @@ export enum RoutePaths {
   MY_EVENTS = "/profile/events",
   MY_TICKETS = "/profile/tickets",
   MY_DETAILS = "/profile/details",
+  EVENT = '/event/'
 }
 
 const router = createBrowserRouter([
@@ -145,6 +147,14 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      {
+        path: RoutePaths.EVENT,
+        element: (
+            <PrivateRoute>
+              <Event />
+            </PrivateRoute>
+        ),
+      }
     ],
   },
 ]);
