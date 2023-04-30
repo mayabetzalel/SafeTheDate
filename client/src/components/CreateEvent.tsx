@@ -1,24 +1,28 @@
-import { useRef } from 'react';
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "urql";
+import { graphql } from "../graphql";
+import { InputEvent, MutationResponse } from "../graphql/graphql";
+import {
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  InputAdornment,
+} from "@mui/material";
 
-import { gql, useMutation } from "urql";
-import { InputEvent, Event } from "../graphql/graphql";
-import { Card, CardContent, Typography, TextField, Button, Grid, InputAdornment } from '@mui/material';
-
-const CREATE_EVENT_MUTATION = gql`
+const CREATE_EVENT_MUTATION = graphql(`
   mutation CreateEvent($inputEvent: InputEvent!) {
     createEvent(inputEvent: $inputEvent) {
-      id
-      name
-      location
-      timeAndDate
-      type
+      message
+      code
     }
   }
-`;
+`);
 
 export const CreateEvent = () => {
-
   const eventNameRef = useRef<HTMLInputElement | null>();
   const eventLocationRef = useRef<HTMLInputElement | null>();
   const eventTimeAndDateRef = useRef<HTMLInputElement | null>();
@@ -26,31 +30,34 @@ export const CreateEvent = () => {
 
   const navigate = useNavigate();
 
-  const [createEventResult, createEvent] = useMutation<{
-    createEvent: Event;
-  }>(CREATE_EVENT_MUTATION);
+  const [createEventResult, createEvent] = useMutation<
+    {
+      createEvent: MutationResponse;
+    },
+    InputEvent
+  >(CREATE_EVENT_MUTATION);
 
   function handleEventCreation() {
     const inputEvent: InputEvent = {
-      name: eventNameRef.current?.value || '',
-      location: eventLocationRef.current?.value || '',
-      timeAndDate: eventTimeAndDateRef.current?.value || '',
-      type: eventTypeRef.current?.value || ''
+      name: eventNameRef.current?.value || "",
+      location: eventLocationRef.current?.value || "",
+      timeAndDate: eventTimeAndDateRef.current?.value || "",
+      type: eventTypeRef.current?.value || "",
     };
 
     // Call the createEvent mutation with the inputEvent object
-    createEvent({inputEvent}).then((result: any) => {
+    createEvent(inputEvent).then((result) => {
       if (result.error) {
         console.error("Error creating event:", result.error);
       } else {
-        navigate("/")
-        console.log("Event created:", result.data.createEvent);
+        navigate("/");
+        console.log("Event created:", result.data?.createEvent);
       }
     });
   }
 
   return (
-    <Card sx={{ margin: 'auto', maxWidth: 400 }}>
+    <Card sx={{ margin: "auto", maxWidth: 400 }}>
       <CardContent>
         <Typography variant="h5" align="center" gutterBottom>
           Event Form
@@ -63,7 +70,9 @@ export const CreateEvent = () => {
               inputRef={eventNameRef}
               variant="outlined"
               InputProps={{
-                startAdornment: <InputAdornment position="start"></InputAdornment>,
+                startAdornment: (
+                  <InputAdornment position="start"></InputAdornment>
+                ),
               }}
             />
           </Grid>
@@ -74,7 +83,9 @@ export const CreateEvent = () => {
               inputRef={eventLocationRef}
               variant="outlined"
               InputProps={{
-                startAdornment: <InputAdornment position="start"></InputAdornment>,
+                startAdornment: (
+                  <InputAdornment position="start"></InputAdornment>
+                ),
               }}
             />
           </Grid>
@@ -86,7 +97,9 @@ export const CreateEvent = () => {
               variant="outlined"
               type="datetime-local"
               InputProps={{
-                startAdornment: <InputAdornment position="start"></InputAdornment>,
+                startAdornment: (
+                  <InputAdornment position="start"></InputAdornment>
+                ),
               }}
             />
           </Grid>
@@ -97,7 +110,9 @@ export const CreateEvent = () => {
               inputRef={eventTypeRef}
               variant="outlined"
               InputProps={{
-                startAdornment: <InputAdornment position="start"></InputAdornment>,
+                startAdornment: (
+                  <InputAdornment position="start"></InputAdornment>
+                ),
               }}
             />
           </Grid>
@@ -114,6 +129,5 @@ export const CreateEvent = () => {
         </Grid>
       </CardContent>
     </Card>
-
   );
 };

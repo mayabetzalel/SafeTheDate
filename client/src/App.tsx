@@ -16,12 +16,14 @@ import { MyEvents } from "./components/profile/MyEvents";
 import { MyTickets } from "./components/profile/MyTickets";
 import Captain from "./components/Captain";
 import EventProvider from "./hooks/context/EventContext";
+import CaptainEvents from "./components/CapatinEvents";
 
 // use this enum to make links to pages
 export enum RoutePaths {
   LOGIN = "/login",
   SIGNUP = "/signup",
   EVENTS = "/",
+  CAPTAIN_EVENTS = "/captain/events",
   CAPTAIN = "/captain",
   CREATE_EVENT = "/create-event",
   IMPORT_TICKET = "/import-ticket",
@@ -35,14 +37,15 @@ const router = createBrowserRouter([
   {
     element: (
       <>
-        <EventProvider>
-          <Navbar />
+        <Navbar />
           <Box height="90%">
-            <Container sx={{ height: "inherit" }} maxWidth={"xl"}>
+            <Container
+              sx={{ height: "100%", paddingTop: "50px" }}
+              maxWidth={"xl"}
+            >
               <Outlet />
             </Container>
           </Box>
-        </EventProvider>
       </>
     ),
     children: [
@@ -63,12 +66,20 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: RoutePaths.CAPTAIN_EVENTS,
+        element: (
+          <PrivateRoute>
+            <CaptainEvents />
+          </PrivateRoute>
+        ),
+      },
+      {
         path: RoutePaths.CAPTAIN,
         element: (
           <PrivateRoute>
             <Captain />
           </PrivateRoute>
-        )
+        ),
       },
       {
         path: RoutePaths.CREATE_EVENT,
@@ -100,7 +111,7 @@ const router = createBrowserRouter([
               <PrivateRoute>
                 <MyEvents />
               </PrivateRoute>
-            )
+            ),
           },
           {
             path: RoutePaths.MY_TICKETS,
@@ -108,7 +119,7 @@ const router = createBrowserRouter([
               <PrivateRoute>
                 <MyTickets />
               </PrivateRoute>
-            )
+            ),
           },
           {
             path: RoutePaths.MY_DETAILS,
@@ -116,10 +127,9 @@ const router = createBrowserRouter([
               <PrivateRoute>
                 <ImportTicket />
               </PrivateRoute>
-            )
+            ),
           },
-
-        ]
+        ],
       },
       {
         path: RoutePaths.MY_EVENTS,

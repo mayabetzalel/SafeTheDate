@@ -1,16 +1,16 @@
-import { createContext, useContext, useState } from 'react';
-import { ChatResponse } from '../../graphql/graphql';
+import { PropsWithChildren, createContext, useContext, useState } from 'react';
+import { ChatResponse, FilterEventParams } from '../../graphql/graphql';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 
 interface EventContextType {
-    eventFilters: ChatResponse | undefined;
-    setEventFilter: (eventFilters: ChatResponse) => void;
+    eventFilters: FilterEventParams | undefined;
+    setEventFilter: (eventFilters: FilterEventParams) => void;
 }
 
 export const EventContext = createContext<EventContextType | undefined>(undefined);
 
-export default function EventProvider({children}: {children: ReactJSXElement[]}) {
-    const [eventFilters, setEventFilter] = useState<ChatResponse | undefined>();
+export default function EventProvider({ children }: PropsWithChildren) {
+    const [eventFilters, setEventFilter] = useState<FilterEventParams | undefined>();
 
     return (
         <EventContext.Provider value={{ eventFilters, setEventFilter }}>

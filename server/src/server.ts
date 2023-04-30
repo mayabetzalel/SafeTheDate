@@ -16,22 +16,6 @@ import setUpMongo from "../mongo/mongoDbManager";
 
   setUpMongo();
 
-  app.use(cookieParser());
-  
-  app.use(cors({
-    origin: [process.env.FRONTEND_ENDPOINT!, process.env.BACKEND_ENDPOINT!, "http://localhost:3000"],
-    methods: "DELETE, PUT, POST, GET, OPTIONS",
-    allowedHeaders: [
-      "Access-Control-Allow-Origin",
-      "Content-Type",
-      "Access-Control-Allow-Headers",
-      "Access-Control-Allow-Methods",
-      "Set-Cookie",
-      "X-Requested-With",
-    ],
-    credentials: true,
-  }));
-
   app.use('/graphql', yoga);
 
   // Start the server and you're done!

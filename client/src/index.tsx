@@ -8,6 +8,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { UserProvider } from "./hooks/userController/userProvider";
 import GraphqlClientProvider from "./hooks/GraphqlClientProvider/GraphqlClientProvider";
 import "./index.css";
+import EventProvider from "./hooks/context/EventContext";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -16,6 +17,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <GraphqlClientProvider>
+    <EventProvider>
       <UserProvider>
         <SnackbarProvider maxSnack={3}>
           <ThemeProvider theme={theme}>
@@ -24,6 +26,7 @@ root.render(
           </ThemeProvider>
         </SnackbarProvider>
       </UserProvider>
+    </EventProvider>
     </GraphqlClientProvider>
   </React.StrictMode>
 );
