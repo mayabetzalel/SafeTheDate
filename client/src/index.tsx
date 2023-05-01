@@ -7,6 +7,7 @@ import theme from "./overrieds/MuiTheme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { AuthContextProvider } from "./hooks/userController/userContext";
 import GraphqlClientProvider from "./hooks/GraphqlClientProvider/GraphqlClientProvider";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import "./index.css";
 
 const root = ReactDOM.createRoot(
@@ -17,12 +18,14 @@ root.render(
   <React.StrictMode>
     <GraphqlClientProvider>
       <AuthContextProvider>
-        <SnackbarProvider maxSnack={3}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <App />
-          </ThemeProvider>
-        </SnackbarProvider>
+        <GoogleOAuthProvider clientId="609625376917-10s753e3lkot1414g4kolcphcihjtb0k.apps.googleusercontent.com">
+          <SnackbarProvider maxSnack={3}>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <App />
+            </ThemeProvider>
+          </SnackbarProvider>
+        </GoogleOAuthProvider>
       </AuthContextProvider>
     </GraphqlClientProvider>
   </React.StrictMode>

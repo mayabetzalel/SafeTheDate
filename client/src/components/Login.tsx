@@ -19,6 +19,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { GoogleLogin } from '@react-oauth/google';
 
 export const loginUserWithGoogle = async (
   // onSuccess: (user: User) => void,
@@ -32,6 +33,7 @@ export const loginUserWithGoogle = async (
     onError(error);
   }
 };
+
 
 const Login = () => {
   const email: React.MutableRefObject<any> = useRef(null);
@@ -128,10 +130,8 @@ const Login = () => {
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
               />
-              <GoogleButton
-                type="light"
-                style={{ width: "100%", margin: "1px 0", color:"inherit" }}
-                onClick={() =>
+              <GoogleLogin
+                onSuccess={() =>
                   loginUserWithGoogle(
                     () => {
                       enqueueSnackbar("Successful login!", { variant: "success" });
