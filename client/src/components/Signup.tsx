@@ -19,18 +19,8 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-export const loginUserWithGoogle = async (
-  onSuccess: (user: any) => void,
-  onError: (error: any) => void
-) => {
-  try {
-    // const user = await signInWithGoogle();
-    // onSuccess(user);
-  } catch (error: any) {
-    onError(error);
-  }
-};
+import { loginUserWithGoogle } from "./Login"
+import { GoogleLogin } from '@react-oauth/google';
 
 const Signup = () => {
   const email: React.MutableRefObject<any> = useRef(null);
@@ -164,10 +154,8 @@ const Signup = () => {
                 autoComplete="current-password"
               />
               
-              <GoogleButton
-                type="light"
-                style={{ width: "100%", margin: "4px 0", color:"inherit" }}
-                onClick={() =>
+              <GoogleLogin
+                onSuccess={() =>
                   loginUserWithGoogle(
                     () => {
                       enqueueSnackbar("Successful login!", { variant: "success" });
