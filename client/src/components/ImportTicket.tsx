@@ -4,6 +4,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import QrReader from 'react-qr-scanner'
 import { Box } from '@mui/system';
 import { useState } from 'react';
+import { Center } from '../utils/center';
 
 interface scanData {
   text: string
@@ -29,38 +30,27 @@ export const ImportTicket = () => {
   }
 
   return (
-    <Grid container rowSpacing={2} direction='column' sx={{ placeItems: 'center' }}>
+    <Center>
+      <QrReader
+        style={{ width: '20em', height: '20em', background: 'pink' }}
+        delay={delay}
+        onError={handleError}
+        onScan={handleScan}
+      />
+      <p>{result?.text}</p>
 
-      <Grid item>
-        <QrReader
-          style={{ width: '20em', height: '20em', background: 'pink' }}
-          delay={delay}
-          onError={handleError}
-          onScan={handleScan}
-        />
-        <p>{result?.text}</p>
-      </Grid>
+      <Button variant="outlined" color="secondary" startIcon={<ClearIcon />}>
+        Clear Code
+      </Button>
 
-      <Grid container item spacing={2} direction='row' sx={{ placeItems: 'center' }}>
-        <Grid item sx={{ placeItems: 'center' }}>
-          <Button variant="outlined" color="secondary" startIcon={<ClearIcon />}>
-            Clear Code
-          </Button>
-        </Grid>
+      <Button variant="contained" color="secondary" startIcon={<UploadIcon />}>
+        Upload Code
+      </Button>
 
-        <Grid item sx={{ placeItems: 'center' }}>
-          <Button variant="contained" color="secondary" startIcon={<UploadIcon />}>
-            Upload Code
-          </Button>
-        </Grid>
-      </Grid>
-
-      <Grid item justifyContent='center' alignItems='center'>
-        <Button variant="contained" color="secondary">
-          Validate
-        </Button>
-      </Grid>
-    </Grid>
+      <Button variant="contained" color="secondary">
+        Validate
+      </Button>
+    </Center>
   );
 }
 
