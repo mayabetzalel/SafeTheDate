@@ -30,7 +30,7 @@ export enum RoutePaths {
   MY_TICKETS = "/profile/tickets",
   MY_DETAILS = "/profile/details",
   EVENT_PAGE = "/event/:eventId",
-  SCAN_EVENT = "/event/:eventId/scan",
+  SCAN_EVENT = "/event/scan",
 }
 
 const router = createBrowserRouter([
