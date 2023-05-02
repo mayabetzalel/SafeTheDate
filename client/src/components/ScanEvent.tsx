@@ -70,17 +70,17 @@ export const ScanEvent = () => {
                     //  - ChecksumException
                     //  - FormatException
 
-                    if (err instanceof NotFoundException) {
-                        console.log("No QR code found.");
-                    }
+                    // if (err instanceof NotFoundException) {
+                    //     console.log("No QR code found.");
+                    // }
 
-                    if (err instanceof ChecksumException) {
-                        console.log("A code was found, but it's read value was not valid.");
-                    }
+                    // if (err instanceof ChecksumException) {
+                    //     console.log("A code was found, but it's read value was not valid.");
+                    // }
 
-                    if (err instanceof FormatException) {
-                        console.log("A code was found, but it was in a invalid format.");
-                    }
+                    // if (err instanceof FormatException) {
+                    //     console.log("A code was found, but it was in a invalid format.");
+                    // }
                 }
             }
         );
@@ -100,7 +100,7 @@ export const ScanEvent = () => {
             let valid = true
 
             setShowIsValid(true)
-            setTimeout(() => setShowIsValid(false), 10000);
+            setTimeout(() => setShowIsValid(false), 5000);
             setIsValid(valid)
 
             setIsValidating(false)
@@ -113,7 +113,7 @@ export const ScanEvent = () => {
                 <Spinner />
                 :
                 <>
-                    {!showIsValid ?
+                    {showIsValid ?
                         <Box sx={{ color: isValid ? 'success.main' : "error.main" }}>
                             <Center>
                                 {isValid ?
