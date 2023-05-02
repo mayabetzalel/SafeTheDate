@@ -33,8 +33,7 @@ export const CreateEvent = () => {
   const [createEventResult, createEvent] = useMutation<
     {
       createEvent: MutationResponse;
-    },
-    InputEvent
+    }
   >(CREATE_EVENT_MUTATION);
 
   function handleEventCreation() {
@@ -45,8 +44,11 @@ export const CreateEvent = () => {
       type: eventTypeRef.current?.value || "",
     };
 
+    console.log(inputEvent);
+    
+
     // Call the createEvent mutation with the inputEvent object
-    createEvent(inputEvent).then((result) => {
+    createEvent({inputEvent}).then((result) => {
       if (result.error) {
         console.error("Error creating event:", result.error);
       } else {

@@ -36,7 +36,7 @@ export function Chatbot(props: chatbotProps) {
                                     key={index + message.messageData}
                                     model={{ message: message.messageData, direction: message.direction, position: "first" }}
                                 />
-                                {message.direction == "incoming" && <Button onClick={handleClick}></Button>}
+                                {message.direction == "incoming" && <Button onClick={handleClick}>Press to see events</Button>}
                             </>
 
                         )}

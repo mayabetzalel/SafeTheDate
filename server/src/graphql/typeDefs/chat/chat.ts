@@ -6,7 +6,6 @@ export default  `
         from: String
         to: String
         type: String
-
     }
 
     input InputMessage {

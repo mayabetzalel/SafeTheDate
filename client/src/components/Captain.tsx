@@ -7,6 +7,7 @@ import { BootstrapDialog, BootstrapDialogTitle } from "./helpers/SideDialog";
 import { ChatResponse, InputMessage } from "../graphql/graphql";
 import { MessageDirection } from "@chatscope/chat-ui-kit-react/src/types/unions";
 import { useEventContext } from "../hooks/context/EventContext";
+import _ from "lodash";
 
 const GET_CHATBOT_RESPONSE = gql`
   mutation ChatCommand($inputMessage: InputMessage!) {
@@ -47,7 +48,11 @@ export default function Captain() {
       if (result.error) {
         console.error("Error generating chat reponse:", result.error);
       } else {
-        setEventFilter(result.data);
+        const {eventName: name, location, from, to} = result.data.chatCommand;
+
+        const eventFilters = {name, location, from, to};
+
+        setEventFilter(_.pickBy(eventFilters, _.isString));
         setMessages(prev => ([...prev, {messageData: result.data.chatCommand.responseMessage, direction: "incoming"}]));
       }
     });
