@@ -1,8 +1,9 @@
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "urql";
+import { useSnackbar } from "notistack";
 import { graphql } from "../graphql";
-import { InputEvent, MutationResponse } from "../graphql/graphql";
+import { InputEvent, MutationResponse, Event } from "../graphql/graphql";
 import {
   Card,
   CardContent,
@@ -10,6 +11,8 @@ import {
   TextField,
   Button,
   Grid,
+  Stack,
+  Paper,
   InputAdornment,
 } from "@mui/material";
 
@@ -27,7 +30,7 @@ export const CreateEvent = () => {
   const eventLocationRef = useRef<HTMLInputElement | null>();
   const eventTimeAndDateRef = useRef<HTMLInputElement | null>();
   const eventTypeRef = useRef<HTMLInputElement | null>();
-
+  const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
   const [createEventResult, createEvent] = useMutation<
@@ -49,85 +52,125 @@ export const CreateEvent = () => {
     createEvent(inputEvent).then((result) => {
       if (result.error) {
         console.error("Error creating event:", result.error);
+        enqueueSnackbar("An error occurred", { variant: "error" });
       } else {
         navigate("/");
+        enqueueSnackbar("Event created successfully", {variant: 'success'});
         console.log("Event created:", result.data?.createEvent);
       }
     });
   }
 
   return (
-    <Card sx={{ margin: "auto", maxWidth: 400 }}>
-      <CardContent>
-        <Typography variant="h5" align="center" gutterBottom>
-          Event Form
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Name of Event"
-              inputRef={eventNameRef}
-              variant="outlined"
-              InputProps={{
+    <Stack spacing={5}>
+      <Typography variant="h3" align="center" gutterBottom color={"white"}>
+        Event Form
+      </Typography>
+      <Paper>
+        <Grid container padding={10}>
+          <Grid item xs={9}>
+            <Stack spacing={3}>
+              <Grid container justifyContent={"center"}>
+                <Grid item xs={3}>
+                  <Typography variant="h4">Name of Event</Typography>
+                </Grid>
+                <Grid item xs={5}>
+                  <TextField
+                    fullWidth
+                    placeholder="Name of Event"
+                    color={'secondary'}
+                    inputRef={eventNameRef}
+                    variant="outlined"
+                    InputProps={{
                 startAdornment: (
                   <InputAdornment position="start"></InputAdornment>
                 ),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Location"
-              inputRef={eventLocationRef}
-              variant="outlined"
-              InputProps={{
+                    }}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container justifyContent={"center"}>
+                <Grid item xs={3}>
+                  <Typography variant="h4">Location</Typography>
+                </Grid>
+                <Grid item xs={5}>
+                  <TextField
+                    fullWidth
+                    placeholder="Location"
+                    color={'secondary'}
+                    inputRef={eventLocationRef}
+                    variant="outlined"
+                    InputProps={{
                 startAdornment: (
                   <InputAdornment position="start"></InputAdornment>
                 ),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Time and Date"
-              inputRef={eventTimeAndDateRef}
-              variant="outlined"
-              type="datetime-local"
-              InputProps={{
+                    }}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container justifyContent={"center"}>
+                <Grid item xs={3}>
+                  <Typography variant="h4">Time and Date</Typography>
+                </Grid>
+                <Grid item xs={5}>
+                  <TextField
+                    fullWidth
+                    placeholder="Time and Date"
+                    color={'secondary'}
+                    inputRef={eventTimeAndDateRef}
+                    variant="outlined"
+                    type="datetime-local"
+                    InputProps={{
+                      startAdornment: (
+                  <InputAdornment position="start"></InputAdornment>
+                ),
+                    }}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container justifyContent={"center"}>
+                <Grid item xs={3}>
+                  <Typography variant="h4">Type of Event</Typography>
+                </Grid>
+                <Grid item xs={5}>
+                  <TextField
+                    fullWidth
+                    color={'secondary'}
+                    placeholder="Type of Event"
+                    inputRef={eventTypeRef}
+                    variant="outlined"
+                    InputProps={{
                 startAdornment: (
                   <InputAdornment position="start"></InputAdornment>
                 ),
-              }}
-            />
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            </Stack>
           </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Type of Event"
-              inputRef={eventTypeRef}
-              variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start"></InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              onClick={handleEventCreation}
-            >
-              Submit
-            </Button>
+          <Grid item xs={3}>
+            image uploader
           </Grid>
         </Grid>
-      </CardContent>
-    </Card>
+      </Paper>
+      <Grid container justifyContent={"space-around"}>
+        <Grid item xs={1}>
+          <Button fullWidth variant="outlined" color="secondary">
+            Discard
+          </Button>
+        </Grid>
+        <Grid item xs={2}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="secondary"
+            onClick={handleEventCreation}
+          >
+            Submit
+          </Button>
+        </Grid>
+      </Grid>
+    </Stack>
   );
 };
