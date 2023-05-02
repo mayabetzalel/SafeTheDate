@@ -113,7 +113,11 @@ export const ScanEvent = () => {
                 <Spinner />
                 :
                 <>
-                    {showIsValid ?
+                    <div style={{ visibility: showIsValid ? 'hidden' : 'visible' }}>
+                        <video id="video" width="300" height="200" />
+                    </div>
+
+                    {showIsValid &&
                         <Box sx={{ color: isValid ? 'success.main' : "error.main" }}>
                             <Center>
                                 {isValid ?
@@ -133,10 +137,6 @@ export const ScanEvent = () => {
                                 }
                             </Center>
                         </Box>
-                        :
-                        <div>
-                            <video id="video" width="300" height="200" />
-                        </div>
                     }
                 </>
             }
