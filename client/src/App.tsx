@@ -40,7 +40,7 @@ const router = createBrowserRouter([
         <Navbar />
         <Box height="90%">
           <Container
-            sx={{ height: "inherit", paddingTop: "50px" }}
+            sx={{ height: "100%", paddingTop: "50px"}}
             maxWidth={"xl"}
           >
             <Outlet />
@@ -98,7 +98,6 @@ const router = createBrowserRouter([
         ),
         children: [
           {
-            index: true,
             path: RoutePaths.MY_EVENTS,
             element: (
               <PrivateRoute>

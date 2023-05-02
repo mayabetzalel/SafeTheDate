@@ -1,29 +1,29 @@
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "urql";
 import { useSnackbar } from "notistack";
-import { gql, useMutation } from "urql";
-import { InputEvent, Event } from "../graphql/graphql";
+import { graphql } from "../graphql";
+import { InputEvent, MutationResponse, Event } from "../graphql/graphql";
 import {
+  Card,
+  CardContent,
   Typography,
   TextField,
   Button,
   Grid,
-  InputAdornment,
-  Paper,
   Stack,
+  Paper,
+  InputAdornment,
 } from "@mui/material";
 
-const CREATE_EVENT_MUTATION = gql`
+const CREATE_EVENT_MUTATION = graphql(`
   mutation CreateEvent($inputEvent: InputEvent!) {
     createEvent(inputEvent: $inputEvent) {
-      id
-      name
-      location
-      timeAndDate
-      type
+      message
+      code
     }
   }
-`;
+`);
 
 export const CreateEvent = () => {
   const eventNameRef = useRef<HTMLInputElement | null>();
@@ -33,9 +33,12 @@ export const CreateEvent = () => {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
-  const [createEventResult, createEvent] = useMutation<{
-    createEvent: Event;
-  }>(CREATE_EVENT_MUTATION);
+  const [createEventResult, createEvent] = useMutation<
+    {
+      createEvent: MutationResponse;
+    },
+    InputEvent
+  >(CREATE_EVENT_MUTATION);
 
   function handleEventCreation() {
     const inputEvent: InputEvent = {
@@ -46,14 +49,14 @@ export const CreateEvent = () => {
     };
 
     // Call the createEvent mutation with the inputEvent object
-    createEvent({ inputEvent }).then((result: any) => {
+    createEvent(inputEvent).then((result) => {
       if (result.error) {
         console.error("Error creating event:", result.error);
         enqueueSnackbar("An error occurred", { variant: "error" });
       } else {
         navigate("/");
         enqueueSnackbar("Event created successfully", {variant: 'success'});
-        console.log("Event created:", result.data.createEvent);
+        console.log("Event created:", result.data?.createEvent);
       }
     });
   }
@@ -79,9 +82,9 @@ export const CreateEvent = () => {
                     inputRef={eventNameRef}
                     variant="outlined"
                     InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start"></InputAdornment>
-                      ),
+                startAdornment: (
+                  <InputAdornment position="start"></InputAdornment>
+                ),
                     }}
                   />
                 </Grid>
@@ -98,9 +101,9 @@ export const CreateEvent = () => {
                     inputRef={eventLocationRef}
                     variant="outlined"
                     InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start"></InputAdornment>
-                      ),
+                startAdornment: (
+                  <InputAdornment position="start"></InputAdornment>
+                ),
                     }}
                   />
                 </Grid>
@@ -119,9 +122,8 @@ export const CreateEvent = () => {
                     type="datetime-local"
                     InputProps={{
                       startAdornment: (
-                        <InputAdornment position="start"></InputAdornment>
-                      ),
-
+                  <InputAdornment position="start"></InputAdornment>
+                ),
                     }}
                   />
                 </Grid>
@@ -138,9 +140,9 @@ export const CreateEvent = () => {
                     inputRef={eventTypeRef}
                     variant="outlined"
                     InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start"></InputAdornment>
-                      ),
+                startAdornment: (
+                  <InputAdornment position="start"></InputAdornment>
+                ),
                     }}
                   />
                 </Grid>
