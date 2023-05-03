@@ -7,7 +7,6 @@ import { useAuth } from "../../hooks/userController/userContext"
 export const Profile = () => {
 
   const { currentUser } = useAuth();
-  console.log(currentUser)
 
   return (
     !currentUser ?
@@ -75,7 +74,20 @@ export const Profile = () => {
         <Outlet />
       </div>
       <div style={{ marginLeft:"5%", color:"white", }}>
-        <img src="https://source.unsplash.com/xpTsS9PJMXQ" width="500" height="300"></img>
+        <Grid
+          item
+          sm={9}
+          md={15}
+          sx={{
+            backgroundImage: `url(${currentUser['picture']})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: (t) =>
+              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+        <img src={currentUser['picture']} width="500" height="300"></img>
         <h1> { currentUser['firstName']} &nbsp; {currentUser['lastName'] }</h1>
         <h1> { currentUser['username'] } </h1>
         <h1> { currentUser['email'] }</h1>

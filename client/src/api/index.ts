@@ -34,6 +34,15 @@ const backendAPI = {
 
       async logOut() {
         return await axios.post(REST_API.auth.logout)
+      },
+
+      async signInWithGoogle(accessToken: string) {
+        return await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${accessToken}`, {
+          headers: {
+              Authorization: `Bearer ${accessToken}`,
+              Accept: 'application/json'
+          }
+        })
       }
     }
 }
