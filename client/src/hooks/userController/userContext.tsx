@@ -1,9 +1,10 @@
+/* eslint-disable no-useless-catch */
 /* eslint-disable @typescript-eslint/no-empty-function */
+
 import { AnyCnameRecord } from 'dns';
 import backendAPI from '../../api';
 import React, { useState, useContext, createContext, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
-
 
 const AuthContext = createContext({
   currentUser: null,
@@ -27,23 +28,27 @@ export const AuthContextProvider = ({ children }: { children: JSX.Element }) => 
     'https://source.unsplash.com/xpTsS9PJMXQ'
   );
 
-  async function  signUp(email: string, username: string, firstName: string, 
+  async function signUp(email: string, username: string, firstName: string, 
     lastName: string, password: string) {
+      // eslint-disable-next-line no-useless-catch
       try {
         const response = await backendAPI.auth.signUpWithEmailAndPassword(email, username, firstName, lastName, password)  
         setCurrentUser(response.data)
-
-      }  catch {
-        console.log()
+      } catch(error :any) {
+        console.log("in error from user context")
+        throw error
       }
     }
 
   async function signIn (email: string, password: string) {
+    // eslint-disable-next-line no-useless-catch
     try {
       const response = await backendAPI.auth.signInWithEmailAndPassword(email, password)
       setCurrentUser(response.data)
-    } catch {
-      console.log("erorr")
+    } catch (error: any) {
+      
+      console.log("in error from user context")
+      throw new Error(error.response.data.functionalityError.message)
     }
   }
 
@@ -79,6 +84,3 @@ export const AuthContextProvider = ({ children }: { children: JSX.Element }) => 
 }
 
 export default AuthContext;
-
-
-

@@ -30,11 +30,11 @@ const Signup = () => {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     try {
-      signUp(
+      await signUp(
         data.get('email') as string, data.get('username') as string, 
         data.get('firstName') as string, data.get('lastName') as string,
         data.get('password') as string
@@ -42,7 +42,10 @@ const Signup = () => {
         enqueueSnackbar("Successful sign up!", { variant: "success" });
         navigate("/");
     } catch (error: any) {
-      console.log(error);
+      console.log("error here in signup")
+      console.log(error)
+      enqueueSnackbar("Could not sign up " + JSON.stringify(error.response.data), { variant: "error" });
+      navigate("/Signup");
     }
   };
 
@@ -162,6 +165,7 @@ const Signup = () => {
                       navigate(RoutePaths.EVENTS);
                     },
                     (error) => {
+                      navigate("/Signup")
                       enqueueSnackbar(error.message, { variant: "error" });
                     }
                   )

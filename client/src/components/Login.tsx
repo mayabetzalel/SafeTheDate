@@ -7,7 +7,6 @@ import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { RoutePaths } from "../App";
-import GoogleButton from "react-google-button";
 import { useAuth } from "../hooks/userController/userContext";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -43,7 +42,7 @@ const Login = () => {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
@@ -51,11 +50,13 @@ const Login = () => {
       password: data.get('password'),
     });
     try {
-      signIn(data.get('email') as string, data.get('password') as string)
+      await signIn(data.get('email') as string, data.get('password') as string)
+      console.log("here again")
       enqueueSnackbar("Successful log in!", { variant: "success" });
       navigate("/");
     } catch (error: any) {
-      console.log(error);
+      enqueueSnackbar("Could not log in " + error.message, { variant: "error" });
+      navigate("/login");
     }
   };
 
@@ -138,6 +139,7 @@ const Login = () => {
                       navigate(RoutePaths.EVENTS);
                     },
                     (error) => {
+                      navigate("/Login")
                       enqueueSnackbar(error.message, { variant: "error" });
                     }
                   )
