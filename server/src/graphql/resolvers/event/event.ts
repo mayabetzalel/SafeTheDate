@@ -10,8 +10,20 @@ const eventResolvers: {
 } = {
   Query: {
     event: async (parent, args, context, info) => {
-      const { substringName, skip = 0, limit = DEFAULT_LIMIT } = args;
-      const filter = substringName ? { name: `/${substringName}/` } : {};
+
+      const { filterParams, skip = 0, limit = DEFAULT_LIMIT } = args;
+      
+      let { name, location, from, to } = filterParams;
+      let filter = {
+        ...(name && { name: { $regex: name } }),
+        ...(location && { location: { $regex: location } }),
+        ...((from || to) && {
+          timeAndDate: {
+            ...(from && { "$gte": new Date(from) }),
+            ...(to && { "$lt": new Date(to) })
+          }
+        }),
+      };
 
       const events = await EventModel.find(filter)
         .skip(skip)
@@ -40,6 +52,7 @@ const eventResolvers: {
           timeAndDate,
           type,
         });
+        return { message: "event created succesfully", code: 200 }
       } catch {
         return { message: FAILED_MUTATION_MESSAGE, code: 500 };
       }

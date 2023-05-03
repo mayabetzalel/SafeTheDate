@@ -48,6 +48,7 @@ export const CreateEvent = () => {
       type: eventTypeRef.current?.value || "",
     };
 
+
     // Call the createEvent mutation with the inputEvent object
     createEvent(inputEvent).then((result) => {
       if (result.error) {

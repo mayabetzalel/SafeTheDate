@@ -14,8 +14,15 @@ export default  `
         type: String!
     }
 
+    input FilterEventParams {
+        name: String
+        location: String
+        from: String
+        to: String
+    }
+
     type Query {
-        event(substringName: String, skip: Int, limit: Int): [Event!]!
+        event(filterParams: FilterEventParams, substringName: String, skip: Int, limit: Int): [Event!]!
     }
 
     type Mutation {

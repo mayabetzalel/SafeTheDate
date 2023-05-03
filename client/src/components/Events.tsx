@@ -1,7 +1,7 @@
 import EventCard from "./EventCard/EventCard";
 import { useQuery } from "urql";
 import { graphql } from "../graphql";
-import { Event, Exact } from "../graphql/graphql";
+import { Event, Exact, FilterEventParams } from "../graphql/graphql";
 import { Grid } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
@@ -13,8 +13,8 @@ const GridHiddenScroll = styled(Grid)({
 });
 
 const eventQuery = graphql(`
-  query eventPageQuery($skip: Int!, $limit: Int!) {
-    event(skip: $skip, limit: $limit) {
+  query eventPageQuery($filterParams: FilterEventParams, $skip: Int!, $limit: Int!) {
+    event(filterParams: $filterParams, skip: $skip, limit: $limit) {
       id
       name
       location
@@ -26,17 +26,22 @@ const eventQuery = graphql(`
 
 const EVENTS_PER_FETCH = 10;
 
-const Events = () => {
+interface EventsProps {
+  filterParams?: FilterEventParams
+}
+
+const Events = (props: EventsProps) => {
   const [skipNumber, setSkipNumber] = useState(0);
   const [maxHeight, setMaxHeight] = useState(0);
   const rootRef = useRef(null);
   const [events, setEvents] = useState<Exact<Event>[]>([]);
   const [{ data, fetching, error }, reexecuteQuery] = useQuery<
     { event: Exact<Event>[] },
-    { skip: number; limit: number }
+    { filterParams: FilterEventParams, skip: number; limit: number }
   >({
     query: eventQuery,
     variables: {
+      filterParams: props?.filterParams || {},
       skip: skipNumber,
       limit: EVENTS_PER_FETCH,
     },
