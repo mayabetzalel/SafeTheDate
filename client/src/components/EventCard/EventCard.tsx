@@ -14,6 +14,7 @@ interface TicketCardProps {
   subhrader: string;
   title: string;
   image?: string;
+  onClick?: () => void;
 }
 
 const EventCard = ({
@@ -21,13 +22,14 @@ const EventCard = ({
   title,
   image = "https://thumbs.dreamstime.com/b/nightclub-party-lightshow-18331890.jpg",
   subhrader,
+  onClick,
 }: TicketCardProps) => {
   return (
-    <Card>
+    <Card onClick={onClick} sx={{ cursor: onClick ? "pointer" : "default" }}>
       <CardHeader
         avatar={
           <Avatar sx={(theme) => ({ bgcolor: theme.palette.secondary.main })}>
-              {title.charAt(0)}
+            {title.charAt(0)}
           </Avatar>
         }
         title={header}

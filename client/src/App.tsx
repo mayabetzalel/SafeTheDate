@@ -8,12 +8,12 @@ import PrivateRoute from "./utils/PrivateRoute";
 import { CreateEvent } from "./components/CreateEvent";
 import { Event } from "./components/Event/Event";
 import { ImportTicket } from "./components/ImportTicket";
-import { Profile } from "./components/profile/Profile";
-import { MyEvents } from "./components/profile/MyEvents";
-import { MyTickets } from "./components/profile/MyTickets";
 import Captain from "./components/Captain";
 import CaptainEvents from "./components/CapatinEvents";
 import ScanEvent from "./components/ScanEvent";
+import {MyTickets} from "./components/Profile/MyTickets";
+import {Profile} from "./components/Profile/Profile";
+import {MyEvents} from "./components/Profile/MyEvents";
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -28,7 +28,7 @@ export enum RoutePaths {
   MY_EVENTS = "/profile/events",
   MY_TICKETS = "/profile/tickets",
   MY_DETAILS = "/profile/details",
-  EVENT_PAGE = "/event/:eventId",
+  EVENT = "/event",
   SCAN_EVENT = "/event/scan",
 }
 
@@ -162,7 +162,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: RoutePaths.EVENT,
+        path: `${RoutePaths.EVENT}/:id`,
         element: (
             <PrivateRoute>
               <Event />

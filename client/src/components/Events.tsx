@@ -8,6 +8,8 @@ import { Event, Exact, FilterEventParams } from "../graphql/graphql";
 import { Grid } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
+import {useNavigate} from "react-router-dom";
+import {RoutePaths} from "../App";
 
 const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
@@ -37,6 +39,7 @@ const Events = (props: EventsProps) => {
   const [skipNumber, setSkipNumber] = useState(0);
   const [maxHeight, setMaxHeight] = useState(0);
   const rootRef = useRef(null);
+  const navigate = useNavigate();
   const [events, setEvents] = useState<Exact<Event>[]>([]);
   const [{ data, fetching, error }, reexecuteQuery] = useQuery<
     { event: Exact<Event>[] },
@@ -72,7 +75,7 @@ const Events = (props: EventsProps) => {
       }
     }
   };
-      
+
   return (
     <GridHiddenScroll
       container
@@ -81,12 +84,13 @@ const Events = (props: EventsProps) => {
       onScroll={onScroll}
       sx={{ height: "inherit", overflowY: "auto" }}
     >
-      {events.map((event) => (
-        <Grid key={event.id} item sm={4} md={3}>
+      {events.map(({id, name, type, location}) => (
+        <Grid key={id!} item sm={4} md={3}>
           <EventCard
-            title={event.name!}
-            header={event.type!}
-            subhrader={event.location!}
+            title={name!}
+            header={type!}
+            subhrader={location!}
+            onClick={() => navigate(`${RoutePaths.EVENT}/${id}`,{})}
           />
         </Grid>
       ))}

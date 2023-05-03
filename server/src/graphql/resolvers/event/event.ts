@@ -10,18 +10,18 @@ const eventResolvers: {
 } = {
   Query: {
     event: async (parent, args, context, info) => {
+      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids } = args;
 
-      const { filterParams, skip = 0, limit = DEFAULT_LIMIT } = args;
-      
       let { name, location, from, to } = filterParams;
       let filter = {
+        ...(ids && { _id: { $in: ids } }),
         ...(name && { name: { $regex: name } }),
         ...(location && { location: { $regex: location } }),
         ...((from || to) && {
           timeAndDate: {
-            ...(from && { "$gte": new Date(from) }),
-            ...(to && { "$lt": new Date(to) })
-          }
+            ...(from && { $gte: new Date(from) }),
+            ...(to && { $lt: new Date(to) }),
+          },
         }),
       };
 
@@ -52,7 +52,7 @@ const eventResolvers: {
           timeAndDate,
           type,
         });
-        return { message: "event created succesfully", code: 200 }
+        return { message: "event created succesfully", code: 200 };
       } catch {
         return { message: FAILED_MUTATION_MESSAGE, code: 500 };
       }
