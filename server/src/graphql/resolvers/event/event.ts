@@ -52,10 +52,7 @@ const eventResolvers: {
           timeAndDate,
           type,
         });
-<<<<<<< HEAD
         return { message: "event created succesfully", code: 200 }
-=======
->>>>>>> dev
       } catch {
         return { message: FAILED_MUTATION_MESSAGE, code: 500 };
       }
