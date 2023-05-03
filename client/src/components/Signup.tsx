@@ -49,11 +49,16 @@ const Signup = () => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     try {
+      if(!data.get('email') || !data.get('username') || !data.get('firstName')
+      || !data.get('lastName') || !data.get('password'))
+        throw {response: { data: "Empty field are not allowed" }}
+
       await signUp(
         data.get('email') as string, data.get('username') as string, 
         data.get('firstName') as string, data.get('lastName') as string,
         data.get('password') as string
         )
+        enqueueSnackbar("Confirmation email sent to " + data.get('email'), { variant: "success" });
         enqueueSnackbar("Successful sign up!", { variant: "success" });
         navigate("/");
     } catch (error: any) {
