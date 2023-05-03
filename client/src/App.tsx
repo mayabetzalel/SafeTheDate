@@ -3,19 +3,15 @@ import { Box, Container } from "@mui/material";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Navbar from "./components/AppBar/AppBar";
-import {
-  RouterProvider,
-  createBrowserRouter,
-  Outlet,
-} from "react-router-dom";
+import { RouterProvider, createBrowserRouter, Outlet } from "react-router-dom";
 import PrivateRoute from "./utils/PrivateRoute";
 import { CreateEvent } from "./components/CreateEvent";
 import { ImportTicket } from "./components/ImportTicket";
-import { Profile } from "./components/Profile/Profile";
-import { MyEvents } from "./components/Profile/MyEvents";
-import { MyTickets } from "./components/Profile/MyTickets";
 import Captain from "./components/Captain";
 import ScanEvent from "./components/ScanEvent";
+import { Profile } from "./components/profile/Profile";
+import { MyTickets } from "./components/profile/MyTickets";
+import { MyEvents } from "./components/profile/MyEvents";
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -40,7 +36,7 @@ const router = createBrowserRouter([
         <Navbar />
         <Box height="90%">
           <Container
-            sx={{ height: "100%", paddingTop: "50px"}}
+            sx={{ height: "100%", paddingTop: "50px" }}
             maxWidth={"xl"}
           >
             <Outlet />
