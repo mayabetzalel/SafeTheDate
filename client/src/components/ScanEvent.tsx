@@ -75,7 +75,7 @@ export const ScanEvent = () => {
       let valid = true;
 
       setShowIsValid(true);
-      setTimeout(() => setShowIsValid(false), 5000);
+      setTimeout(() => setShowIsValid(false), 3000);
       setIsValid(valid);
 
       setIsValidating(false);
