@@ -21,14 +21,14 @@ root.render(
       <AuthContextProvider>
         <GoogleOAuthProvider clientId="609625376917-10s753e3lkot1414g4kolcphcihjtb0k.apps.googleusercontent.com">
           <EventProvider>
-            <UserProvider>
+            {/* <UserProvider> */}
               <SnackbarProvider maxSnack={3}>
                 <ThemeProvider theme={theme}>
                   <CssBaseline />
                   <App />
                 </ThemeProvider>
               </SnackbarProvider>
-            </UserProvider>
+            {/* </UserProvider> */}
           </EventProvider>
         </GoogleOAuthProvider>
       </AuthContextProvider>
