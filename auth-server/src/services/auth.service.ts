@@ -133,7 +133,7 @@ class AuthService {
       token = await this.createTokensPack(createdUser)
     }
 
-    return [[], token];
+    return [[], token, createdUser];
   }
 
   private verifyTokenExpiration(token: IToken) {
@@ -177,7 +177,7 @@ class AuthService {
     return updUser;
   }
 
-  async login({ emailOrUsername, password }: LoginDTO): Promise<TokensPack> {
+  async login({ emailOrUsername, password }: LoginDTO) {
     // Try selecting by email or username
     const user: IUser | null = await this.userTableIntegrator
       .findOne({
@@ -201,8 +201,9 @@ class AuthService {
         HttpStatus.FORBIDDEN
       );
     }
-
-    return this.createTokensPack(user);
+    let token: any = ""
+    token = await this.createTokensPack(user)
+    return [token, user];
   }
 
   private async createRefreshToken(user: IUser): Promise<IToken> {

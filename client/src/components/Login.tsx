@@ -1,5 +1,7 @@
+/* eslint-disable no-debugger */
 import * as React from 'react';
-import { useRef } from "react";
+import axios from 'axios';
+import { useRef, useState, useEffect } from "react";
 import LockOutlinedIcon from "@mui/icons-material/Lock";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
@@ -7,7 +9,6 @@ import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { RoutePaths } from "../App";
-import GoogleButton from "react-google-button";
 import { useAuth } from "../hooks/userController/userContext";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -19,19 +20,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-export const loginUserWithGoogle = async (
-  // onSuccess: (user: User) => void,
-  onSuccess: (user: any) => void,
-  onError: (error: any) => void
-) => {
-  try {
-    // const user = await signInWithGoogle();
-    // onSuccess(user);
-  } catch (error: any) {
-    onError(error);
-  }
-};
+import { GoogleLogin, useGoogleLogin  } from '@react-oauth/google';
 
 const Login = () => {
   const email: React.MutableRefObject<any> = useRef(null);
@@ -40,8 +29,22 @@ const Login = () => {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const { logWithGoogle } = useAuth()
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const loginUserWithGoogle = useGoogleLogin({
+    onSuccess: (codeResponse: any) => {
+      logWithGoogle(codeResponse.access_token)
+      enqueueSnackbar("Successful login!", { variant: "success" })
+      navigate(RoutePaths.EVENTS)
+    },
+    onError: (error: any) => {
+      navigate("/Login")
+      enqueueSnackbar(error.message, { variant: "error" })
+      console.log('Login Failed:', error)
+    }
+  });
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
@@ -49,11 +52,13 @@ const Login = () => {
       password: data.get('password'),
     });
     try {
-      signIn(data.get('email') as string, data.get('password') as string)
+      await signIn(data.get('email') as string, data.get('password') as string)
+      console.log("here again")
       enqueueSnackbar("Successful log in!", { variant: "success" });
       navigate("/");
     } catch (error: any) {
-      console.log(error);
+      enqueueSnackbar("Could not log in " + error.message, { variant: "error" });
+      navigate("/login");
     }
   };
 
@@ -128,20 +133,8 @@ const Login = () => {
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
               />
-              <GoogleButton
-                type="light"
-                style={{ width: "100%", margin: "1px 0", color:"inherit" }}
-                onClick={() =>
-                  loginUserWithGoogle(
-                    () => {
-                      enqueueSnackbar("Successful login!", { variant: "success" });
-                      navigate(RoutePaths.EVENTS);
-                    },
-                    (error) => {
-                      enqueueSnackbar(error.message, { variant: "error" });
-                    }
-                  )
-                }
+              <GoogleLogin
+                onSuccess={() => loginUserWithGoogle()}
               />
               <Button
                 type="submit"

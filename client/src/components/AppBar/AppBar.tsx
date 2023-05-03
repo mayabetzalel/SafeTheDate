@@ -5,15 +5,28 @@ import { Logout } from "@mui/icons-material";
 import logo from "../../assets/logo.png";
 import { useNavigate, useNavigation } from "react-router-dom";
 import NavigationTypography from "./NavigationTypography/NavigationTypography";
+import { useAuth  } from "../../hooks/userController/userContext";
+import { useSnackbar } from "notistack";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { location } = useNavigation();
+  const { currentUser, signOut } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
 
-  const logout = async () => {
+  const handleConnect = async () => {
     try {
-      // await signOut();
-      navigate(RoutePaths.LOGIN);
+      if(!currentUser)
+        navigate(RoutePaths.LOGIN);
+      else {
+        try {
+          await signOut()
+          enqueueSnackbar("Successful sign out!", { variant: "success" });
+          navigate("/");
+        } catch(err) {
+          enqueueSnackbar("could not sign out, please try again later!", { variant: "error" });
+        }
+      }
     } catch (err) {
       console.log(err);
     }
@@ -66,15 +79,17 @@ const Navbar = () => {
           Profile
         </NavigationTypography>
       </Grid>
-      <Grid item xs={2} container justifyContent={"center"}>
-        <IconButton
-          size="large"
-          edge="start"
-          onClick={logout}
-        >
-          <Logout />
-        </IconButton>
-      </Grid>
+
+        <Grid item xs={2} container justifyContent={"center"}>
+          <IconButton
+            size="medium"
+            edge="start"
+            onClick={handleConnect}
+          >
+            {currentUser? "Log Out": "Sign In"}
+            <Logout />
+          </IconButton>
+        </Grid>
     </Grid>
   );
 };
