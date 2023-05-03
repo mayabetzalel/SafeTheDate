@@ -9,6 +9,7 @@ import { AuthContextProvider } from "./hooks/userController/userContext";
 import GraphqlClientProvider from "./hooks/GraphqlClientProvider/GraphqlClientProvider";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import "./index.css";
+import EventProvider from "./hooks/context/EventContext";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -19,12 +20,16 @@ root.render(
     <GraphqlClientProvider>
       <AuthContextProvider>
         <GoogleOAuthProvider clientId="609625376917-10s753e3lkot1414g4kolcphcihjtb0k.apps.googleusercontent.com">
-          <SnackbarProvider maxSnack={3}>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              <App />
-            </ThemeProvider>
-          </SnackbarProvider>
+          <EventProvider>
+            <UserProvider>
+              <SnackbarProvider maxSnack={3}>
+                <ThemeProvider theme={theme}>
+                  <CssBaseline />
+                  <App />
+                </ThemeProvider>
+              </SnackbarProvider>
+            </UserProvider>
+          </EventProvider>
         </GoogleOAuthProvider>
       </AuthContextProvider>
     </GraphqlClientProvider>

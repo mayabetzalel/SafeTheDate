@@ -4,7 +4,7 @@ export const primary = "#D9D9D9";
 export const secondary = "#BE9E45";
 export const background = "#1A1A1A";
 
-const success = "#60A08E";
+const success = "#50dc63";
 const error = "#EB8282";
 const warning = "#f1c73f";
 

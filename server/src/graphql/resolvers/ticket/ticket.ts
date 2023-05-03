@@ -1,9 +1,13 @@
-import {Query} from "../../typeDefs";
+import {MutationResolvers, Query, QueryResolvers} from "../../typeDefs";
 
-export default {
+const ticketResolver: {
+    Query: Pick<QueryResolvers, "ticket">;
+} = {
     Query: {
-        ticket: (): Query['ticket'] => {
+        ticket: (parent, args, context, info) => {
             return [{id: "", areaNumber: 3213213,sitNumber: 231, eventName: "rihanna"}];
         }
     }
 }
+
+export default ticketResolver
