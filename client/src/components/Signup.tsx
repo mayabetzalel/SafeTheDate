@@ -19,18 +19,8 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-export const loginUserWithGoogle = async (
-  onSuccess: (user: any) => void,
-  onError: (error: any) => void
-) => {
-  try {
-    // const user = await signInWithGoogle();
-    // onSuccess(user);
-  } catch (error: any) {
-    onError(error);
-  }
-};
+// import { loginUserWithGoogle } from "./Login"
+import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
 
 const Signup = () => {
   const email: React.MutableRefObject<any> = useRef(null);
@@ -39,20 +29,43 @@ const Signup = () => {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const { logWithGoogle } = useAuth()
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const loginUserWithGoogle = useGoogleLogin({
+    onSuccess: (codeResponse: any) => {
+      logWithGoogle(codeResponse)
+      enqueueSnackbar("Successful login!", { variant: "success" })
+      navigate(RoutePaths.EVENTS)
+    },
+    onError: (error : any) => {
+      console.log("8")
+      navigate("/Login")
+      enqueueSnackbar(error.message, { variant: "error" })
+      console.log('Login Failed:', error)
+    }
+  });
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     try {
-      signUp(
+      if(!data.get('email') || !data.get('username') || !data.get('firstName')
+      || !data.get('lastName') || !data.get('password'))
+        throw {response: { data: "Empty field are not allowed" }}
+
+      await signUp(
         data.get('email') as string, data.get('username') as string, 
         data.get('firstName') as string, data.get('lastName') as string,
         data.get('password') as string
         )
+        enqueueSnackbar("Confirmation email sent to " + data.get('email'), { variant: "success" });
         enqueueSnackbar("Successful sign up!", { variant: "success" });
         navigate("/");
     } catch (error: any) {
-      console.log(error);
+      console.log("error here in signup")
+      console.log(error)
+      enqueueSnackbar("Could not sign up " + JSON.stringify(error.response.data), { variant: "error" });
+      navigate("/Signup");
     }
   };
 
@@ -164,19 +177,9 @@ const Signup = () => {
                 autoComplete="current-password"
               />
               
-              <GoogleButton
-                type="light"
-                style={{ width: "100%", margin: "4px 0", color:"inherit" }}
-                onClick={() =>
-                  loginUserWithGoogle(
-                    () => {
-                      enqueueSnackbar("Successful login!", { variant: "success" });
-                      navigate(RoutePaths.EVENTS);
-                    },
-                    (error) => {
-                      enqueueSnackbar(error.message, { variant: "error" });
-                    }
-                  )
+              <GoogleLogin
+                onSuccess={() =>
+                  loginUserWithGoogle()
                 }
               />
               <Button

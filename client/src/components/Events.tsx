@@ -1,32 +1,96 @@
-import { useUserContext } from "../hooks/userController/userContext";
-import TicketCard from "./TicketCard/TicketCard";
+
+import { useAuth } from "../hooks/userController/userContext";
 import { gql, useQuery } from "urql";
 import FetchingState from "../utils/fetchingState";
+import EventCard from "./EventCard/EventCard";
 import { graphql } from "../graphql";
+import { Event, Exact, FilterEventParams } from "../graphql/graphql";
 import { Grid } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import styled from "@emotion/styled";
 
-// const ticketQuery = graphql(`
-//   query ticketQuery {
-//     ticket {
-//       id
-//       areaNumber
-//     }
-//   }
-// `);
+const GridHiddenScroll = styled(Grid)({
+  "::-webkit-scrollbar": {
+    display: "none",
+  },
+});
 
-const Events = () => {
-  const { user } = useUserContext();
-  // const [{ data, fetching, error }, reexecuteQuery] = useQuery({
-  //   query: ticketQuery,
-  // });
+const eventQuery = graphql(`
+  query eventPageQuery($filterParams: FilterEventParams, $skip: Int!, $limit: Int!) {
+    event(filterParams: $filterParams, skip: $skip, limit: $limit) {
+      id
+      name
+      location
+      timeAndDate
+      type
+    }
+  }
+`);
+
+const EVENTS_PER_FETCH = 10;
+
+interface EventsProps {
+  filterParams?: FilterEventParams
+}
+
+const Events = (props: EventsProps) => {
+  const [skipNumber, setSkipNumber] = useState(0);
+  const [maxHeight, setMaxHeight] = useState(0);
+  const rootRef = useRef(null);
+  const [events, setEvents] = useState<Exact<Event>[]>([]);
+  const [{ data, fetching, error }, reexecuteQuery] = useQuery<
+    { event: Exact<Event>[] },
+    { filterParams: FilterEventParams, skip: number; limit: number }
+  >({
+    query: eventQuery,
+    variables: {
+      filterParams: props?.filterParams || {},
+      skip: skipNumber,
+      limit: EVENTS_PER_FETCH,
+    },
+  });
+
+  useEffect(() => {
+    if (data?.event) {
+      setEvents(() => [...events, ...data.event]);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    reexecuteQuery();
+  }, [skipNumber]);
+
+  const onScroll = () => {
+    if (rootRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = rootRef.current;
+      if (
+        maxHeight < scrollHeight &&
+        scrollTop + clientHeight > scrollHeight - 10
+      ) {
+        setSkipNumber((prev) => prev + EVENTS_PER_FETCH);
+        setMaxHeight(scrollHeight);
+      }
+    }
+  };
+      
   return (
-    <Grid container spacing={3}>
-      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
-        <Grid key={i} item sm={4} md={3}>
-          <TicketCard />
+    <GridHiddenScroll
+      container
+      spacing={3}
+      ref={rootRef}
+      onScroll={onScroll}
+      sx={{ height: "inherit", overflowY: "auto" }}
+    >
+      {events.map((event) => (
+        <Grid key={event.id} item sm={4} md={3}>
+          <EventCard
+            title={event.name!}
+            header={event.type!}
+            subhrader={event.location!}
+          />
         </Grid>
       ))}
-    </Grid>
+    </GridHiddenScroll>
   );
 };
 

@@ -3,19 +3,16 @@ import { Box, Container } from "@mui/material";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Navbar from "./components/AppBar/AppBar";
-import {
-  RouterProvider,
-  createBrowserRouter,
-  Outlet,
-} from "react-router-dom";
+import { RouterProvider, createBrowserRouter, Outlet } from "react-router-dom";
 import PrivateRoute from "./utils/PrivateRoute";
 import { CreateEvent } from "./components/CreateEvent";
 import { Event } from "./components/Event/Event";
 import { ImportTicket } from "./components/ImportTicket";
-import { Profile } from "./components/Profile/Profile";
-import { MyEvents } from "./components/Profile/MyEvents";
-import { MyTickets } from "./components/Profile/MyTickets";
+import { Profile } from "./components/profile/Profile";
+import { MyEvents } from "./components/profile/MyEvents";
+import { MyTickets } from "./components/profile/MyTickets";
 import Captain from "./components/Captain";
+import CaptainEvents from "./components/CapatinEvents";
 import ScanEvent from "./components/ScanEvent";
 
 // use this enum to make links to pages
@@ -23,6 +20,7 @@ export enum RoutePaths {
   LOGIN = "/login",
   SIGNUP = "/signup",
   EVENTS = "/",
+  CAPTAIN_EVENTS = "/captain/events",
   CAPTAIN = "/captain",
   CREATE_EVENT = "/create-event",
   IMPORT_TICKET = "/import-ticket",
@@ -30,8 +28,8 @@ export enum RoutePaths {
   MY_EVENTS = "/profile/events",
   MY_TICKETS = "/profile/tickets",
   MY_DETAILS = "/profile/details",
-  SCAN_EVENT = "/event/:eventId/scan",
-  EVENT = '/event/'
+  EVENT_PAGE = "/event/:eventId",
+  SCAN_EVENT = "/event/scan",
 }
 
 const router = createBrowserRouter([
@@ -39,11 +37,8 @@ const router = createBrowserRouter([
     element: (
       <>
         <Navbar />
-        <Box height="90%">
-          <Container
-            sx={{ height: "inherit", paddingTop: "50px" }}
-            maxWidth={"xl"}
-          >
+        <Box height="95%">
+          <Container sx={{ height: "inherit" }} maxWidth={"xl"}>
             <Outlet />
           </Container>
         </Box>
@@ -67,6 +62,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: RoutePaths.CAPTAIN_EVENTS,
+        element: (
+          <PrivateRoute>
+            <CaptainEvents />
+          </PrivateRoute>
+        ),
+      },
+      {
         path: RoutePaths.CAPTAIN,
         element: (
           <PrivateRoute>
@@ -86,7 +89,8 @@ const router = createBrowserRouter([
         path: RoutePaths.IMPORT_TICKET,
         element: (
           <PrivateRoute>
-            <ImportTicket />
+            {/* <ImportTicket /> */}
+            <ScanEvent />
           </PrivateRoute>
         ),
       },
@@ -99,7 +103,6 @@ const router = createBrowserRouter([
         ),
         children: [
           {
-            index: true,
             path: RoutePaths.MY_EVENTS,
             element: (
               <PrivateRoute>
@@ -145,7 +148,8 @@ const router = createBrowserRouter([
         path: RoutePaths.MY_DETAILS,
         element: (
           <PrivateRoute>
-            <ImportTicket />
+            {/* <ImportTicket /> */}
+            <ScanEvent />
           </PrivateRoute>
         ),
       },
