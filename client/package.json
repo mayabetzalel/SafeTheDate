@@ -28,6 +28,7 @@
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.3",
+    "@zxing/library": "^0.20.0",
     "axios": "^1.2.3",
     "bcrypt": "^5.1.0",
     "graphql": "^16.6.0",
