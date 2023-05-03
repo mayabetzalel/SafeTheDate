@@ -3,11 +3,7 @@ import { Box, Container } from "@mui/material";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Navbar from "./components/AppBar/AppBar";
-import {
-  RouterProvider,
-  createBrowserRouter,
-  Outlet,
-} from "react-router-dom";
+import { RouterProvider, createBrowserRouter, Outlet } from "react-router-dom";
 import PrivateRoute from "./utils/PrivateRoute";
 import { CreateEvent } from "./components/CreateEvent";
 import { ImportTicket } from "./components/ImportTicket";
@@ -40,7 +36,7 @@ const router = createBrowserRouter([
     element: (
       <>
         <Navbar />
-        <Box height="90%">
+        <Box height="95%">
           <Container sx={{ height: "inherit" }} maxWidth={"xl"}>
             <Outlet />
           </Container>
@@ -92,7 +88,8 @@ const router = createBrowserRouter([
         path: RoutePaths.IMPORT_TICKET,
         element: (
           <PrivateRoute>
-            <ImportTicket />
+            {/* <ImportTicket /> */}
+            <ScanEvent />
           </PrivateRoute>
         ),
       },
@@ -150,7 +147,8 @@ const router = createBrowserRouter([
         path: RoutePaths.MY_DETAILS,
         element: (
           <PrivateRoute>
-            <ImportTicket />
+            {/* <ImportTicket /> */}
+            <ScanEvent />
           </PrivateRoute>
         ),
       },
