@@ -22,7 +22,7 @@ export default  `
     }
 
     type Query {
-        event(filterParams: FilterEventParams, substringName: String, skip: Int, limit: Int): [Event!]!
+        event(filterParams: FilterEventParams, substringName: String, skip: Int, limit: Int, ids: [String]): [Event!]!
     }
 
     type Mutation {
