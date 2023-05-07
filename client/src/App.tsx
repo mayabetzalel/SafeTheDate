@@ -11,9 +11,9 @@ import { ImportTicket } from "./components/ImportTicket";
 import Captain from "./components/Captain";
 import CaptainEvents from "./components/CapatinEvents";
 import ScanEvent from "./components/ScanEvent";
-import {MyTickets} from "./components/Profile/MyTickets";
-import {Profile} from "./components/Profile/Profile";
-import {MyEvents} from "./components/Profile/MyEvents";
+import {MyTickets} from "./components/profile/MyTickets";
+import {Profile} from "./components/profile/Profile";
+import {MyEvents} from "./components/profile/MyEvents";
 
 // use this enum to make links to pages
 export enum RoutePaths {
