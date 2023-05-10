@@ -14,6 +14,7 @@ import ScanEvent from "./components/ScanEvent";
 import {MyTickets} from "./components/profile/MyTickets";
 import {Profile} from "./components/profile/Profile";
 import {MyEvents} from "./components/profile/MyEvents";
+import {MyDetails} from "./components/profile/MyDetails";
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -122,7 +123,7 @@ const router = createBrowserRouter([
             path: RoutePaths.MY_DETAILS,
             element: (
               <PrivateRoute>
-                <ImportTicket />
+                <MyDetails />
               </PrivateRoute>
             ),
           },
