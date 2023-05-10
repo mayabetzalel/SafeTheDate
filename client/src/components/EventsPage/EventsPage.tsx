@@ -20,13 +20,6 @@ enum Filters {
 const getDateFromToday = (days: number) =>
   new Date(new Date().getTime() + 60 * 60 * 24 * 1000 * days);
 
-const filterToValuesMap = new Map<Filters, string>([
-  [Filters.TODAY, ""],
-  [Filters.THIS_WEEK, ""],
-  [Filters.THIS_MONTH, ""],
-  [Filters.SECOND_HAND, ""],
-]);
-
 export const EventsPage = () => {
   const [searchText, setSearchText] = useState<string>("");
   const [selectedFilter, setSelectedFilter] = useState<Filters>();
@@ -57,7 +50,7 @@ export const EventsPage = () => {
       }
     }
 
-    setFilterParams((prevFilter) => ({ ...prevFilter, filterValues }));
+    setFilterParams((prevFilter) => ({ ...prevFilter, ...filterValues }));
   };
 
   useEffect(() => {
