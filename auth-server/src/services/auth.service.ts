@@ -19,7 +19,6 @@ import { v4 } from "uuid";
 import jwt from "jsonwebtoken";
 import { MailSender } from "../utils/mail.utils";
 import mongoose from "mongoose";
-import { response } from "express";
 
 class AuthService {
   private logger: ILogger;
@@ -37,12 +36,10 @@ class AuthService {
     this.userTableIntegrator = userTableIntegrator;
     this.userConfirmationTableIntegrator = userConfirmationTableIntegrator;
   }
-
   private sendConfirmationMail(
     confirmationId: IUserConfirmation["_id"],
     registeredUserEmail: IUser["email"]
   ) {
-    console.log("sendConfirmationMail to " + registeredUserEmail)
     const id = confirmationId.valueOf();
     const url = `${process.env.FRONTEND_ENDPOINT}/user-confirmation?confirmation=${id}`;
 
@@ -60,13 +57,11 @@ class AuthService {
       )
       .catch(this.logger.error);
   }
-
   async register(
     userToRegister: RegisterDTO
-  ) {
-
+  ): Promise<FormFieldError<RegisterDTO>[]> {
     const errors: FormFieldError<RegisterDTO>[] = [];
-    
+
     // Check if email or username already exists
     const dbUser = await this.userTableIntegrator
       .findOne({
@@ -76,7 +71,6 @@ class AuthService {
         ],
       })
       .lean();
-
     if (dbUser) {
       if (dbUser.email === userToRegister.email) {
         errors.push({
@@ -84,7 +78,6 @@ class AuthService {
           message: "Email address already in use, please try another",
         });
       }
-
       if (dbUser.username === userToRegister.username) {
         errors.push({
           fieldName: "username",
@@ -97,15 +90,11 @@ class AuthService {
       return errors;
     }
 
-    // All good, create the user(
+    // All good, create the user
     let createdUser: any = null;
-    const generatedId = new mongoose.Types.ObjectId();
     const userConfirmation = await this.userConfirmationTableIntegrator.create({
-      _id: generatedId,
-      user: userToRegister.username,
       email: userToRegister.email,
-    }); 
-
+    });
     if (userConfirmation) {
       createdUser = await this.userTableIntegrator.create({
         email: userToRegister.email,
@@ -113,27 +102,22 @@ class AuthService {
         lastName: userToRegister.lastName,
         password: await hash(
           userToRegister.password,
-          10
+          +(process.env.PASSWORD_HASH_SALTS ?? 8)
         ),
         username: userToRegister.username,
         userConfirmation: userConfirmation._id.valueOf(),
       });
       this.sendConfirmationMail(
-        createdUser?.firstName,
+        createdUser?.userConfirmation?._id!,
         createdUser?.email
       );
     }
-    let token: any = ""
 
     if (!createdUser) {
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
-    } 
-    // Create access token
-    else {
-      token = await this.createTokensPack(createdUser)
     }
 
-    return [[], token, createdUser];
+    return [];
   }
 
   private verifyTokenExpiration(token: IToken) {
@@ -153,7 +137,6 @@ class AuthService {
     }
     return this.createTokensPack(token.user);
   }
-
   async confirmUser(confirmationId: IUserConfirmation["_id"]) {
     const user = await this.userConfirmationTableIntegrator
       .findOne({
@@ -170,22 +153,20 @@ class AuthService {
       { $set: { isConfirmed: true } }
     );
 
-    if (!updUser){
+    if (!updUser)
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
-    }
 
     return updUser;
   }
-
-  async login({ emailOrUsername, password }: LoginDTO) {
-    // Try selecting by email or username
+  async login({ emailOrUsername, password }: LoginDTO): Promise<TokensPack> {
+    // Try selecting either by email or username
     const user: IUser | null = await this.userTableIntegrator
       .findOne({
         $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
       })
       .lean();
 
-    // User does not exist
+    // No such user with given email or username
     if (!user) {
       throw new FunctionalityError(
         serverErrorCodes.UserPasswordIncorrect,
@@ -201,44 +182,54 @@ class AuthService {
         HttpStatus.FORBIDDEN
       );
     }
-    let token: any = ""
-    token = await this.createTokensPack(user)
-    return [token, user];
+
+    return this.createTokensPack(user);
   }
+  private generateRefreshToken(): IToken {
+    const REFRESH_TOKEN_EXPIRATION = +(
+      process.env.REFRESH_TOKEN_EXPIRATION ?? 0
+    );
 
+    let expiredAt = new Date();
+    expiredAt.setSeconds(expiredAt.getSeconds() + REFRESH_TOKEN_EXPIRATION);
+
+    const token = v4();
+
+    return { expiryDate: expiredAt, token };
+  }
   private async createRefreshToken(user: IUser): Promise<IToken> {
-
-    const token = await jwt.sign({'_id': user._id}, process.env.REFRESH_TOKEN_SECRET)
-    let experationDate: Date = new Date()
-    experationDate.setSeconds(new Date().getSeconds() + +process.env.REFRESH_TOKEN_EXPIRATION)
-    
+    const token = this.generateRefreshToken();
+    console.log(user._id.valueOf());
+    console.log(user);
     const result = await this.refreshTokenTableIntegrator.updateOne(
       {
         user: user._id,
       },
       {
         $set: {
-          expiryDate: experationDate,
-          token: token,
+          expiryDate: token.expiryDate,
+          token: token.token,
           user: { _id: user._id },
         },
       },
       { upsert: true }
     );
+
     if (!result) {
+      // TODO:  change error
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
     }
-    return {token,  expiryDate: experationDate};
-  }
 
+    return token;
+  }
   private createAccessToken(tokenPayload: AccessTokenPayload): Promise<string> {
     return new Promise((resolve, reject) => {
-      const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET ?? "";
+      const JWT_SECRET = process.env.JWT_SECRET ?? "";
       const JWT_EXPIRATION = +(process.env.JWT_EXPIRATION ?? 0);
 
       jwt.sign(
         tokenPayload,
-        ACCESS_TOKEN_SECRET,
+        JWT_SECRET,
         {
           expiresIn: JWT_EXPIRATION,
           audience: process.env.JWT_AUDIENCE,
@@ -267,16 +258,14 @@ class AuthService {
     const { password, ...tokenPayload } = user;
     const refreshToken = await this.createRefreshToken(user);
     const accessToken = await this.createAccessToken(tokenPayload);
-
     return {
       accessToken: accessToken,
-      expiresIn:  +process.env.JWT_EXPIRATION,
+      expiresIn: +(process.env.JWT_EXPIRATION ?? 0),
       refreshExpiryDate: refreshToken.expiryDate,
       refreshToken: refreshToken.token,
     };
   }
 }
-
 export const authService = new AuthService(
   ConsoleLogger.getInstance(),
   RefreshToken,

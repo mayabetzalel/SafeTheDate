@@ -3,7 +3,7 @@ import { ObjectID } from "../../src/utils/types";
 import User, { IUser } from "./User";
 
 const UserConfirmationSchema = new mongoose.Schema({
-  user: { type: String, unique: true, required: true },
+  // user: { type: String, unique: true, required: true },
   email: { type: String, unique: true, required: true },
 });
 
@@ -14,7 +14,7 @@ const UserConfirmation = mongoose.model<IUserConfirmation>(
 
 export interface IUserConfirmation {
   _id: Types.ObjectId;
-  user: string;
+  // user: string;
   email: string;
 }
 
