@@ -10,7 +10,7 @@ const eventResolvers: {
 } = {
   Query: {
     event: async (parent, args, context, info) => {
-      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids } = args;
+      const { filterParams, skip = 0, limit = DEFAULT_LIMIT, ids } = args;
 
       let { name, location, from, to } = filterParams;
       let filter = {
@@ -32,7 +32,7 @@ const eventResolvers: {
           events.map<Event>(({ name, location, timeAndDate, type, _id }) => ({
             name,
             location,
-            timeAndDate: timeAndDate.toString(),
+            timeAndDate: new Date(timeAndDate).getTime(),
             type,
             id: _id.toString(),
           }))
@@ -49,7 +49,7 @@ const eventResolvers: {
         const newEvent = await EventModel.create({
           name,
           location,
-          timeAndDate,
+          timeAndDate: new Date(timeAndDate).toString(),
           type,
         });
         return { message: "event created succesfully", code: 200 };

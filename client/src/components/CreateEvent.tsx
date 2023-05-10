@@ -44,7 +44,7 @@ export const CreateEvent = () => {
     const inputEvent: InputEvent = {
       name: eventNameRef.current?.value || "",
       location: eventLocationRef.current?.value || "",
-      timeAndDate: eventTimeAndDateRef.current?.value || "",
+      timeAndDate: Date.parse(eventTimeAndDateRef.current?.value || ""),
       type: eventTypeRef.current?.value || "",
     };
 

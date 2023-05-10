@@ -3,22 +3,22 @@ export default  `
         id: String
         name: String
         location: String
-        timeAndDate: String
+        timeAndDate: Float
         type: String
     }
 
     input InputEvent {
         name: String!
         location: String!
-        timeAndDate: String!
+        timeAndDate: Float!
         type: String!
     }
 
     input FilterEventParams {
         name: String
         location: String
-        from: String
-        to: String
+        from: Float
+        to: Float
     }
 
     type Query {

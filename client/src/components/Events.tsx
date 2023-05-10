@@ -56,7 +56,7 @@ const Events = ({ filterParams = {} }: EventsProps) => {
 
   useEffect(() => {
     setEvents([]);
-  }, [filterParams.name]);
+  }, [filterParams]);
 
   useEffect(() => {
     if (data?.event) {
@@ -88,7 +88,7 @@ const Events = ({ filterParams = {} }: EventsProps) => {
       onScroll={onScroll}
       sx={{ height: "inherit", overflowY: "auto" }}
     >
-      {events.map(({ id, name, type, location }) => (
+      {events.map(({ id, name, type, location, timeAndDate }) => (
         <Grid key={id!} item sm={4} md={3}>
           <EventCard
             title={name!}

@@ -6,8 +6,9 @@ import {
   Typography,
 } from "@mui/material";
 import Events from "../Events";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TuneIcon from "@mui/icons-material/Tune";
+import { FilterEventParams } from "../../graphql/graphql";
 
 enum Filters {
   TODAY,
@@ -16,13 +17,52 @@ enum Filters {
   SECOND_HAND,
 }
 
+const getDateFromToday = (days: number) =>
+  new Date(new Date().getTime() + 60 * 60 * 24 * 1000 * days);
+
+const filterToValuesMap = new Map<Filters, string>([
+  [Filters.TODAY, ""],
+  [Filters.THIS_WEEK, ""],
+  [Filters.THIS_MONTH, ""],
+  [Filters.SECOND_HAND, ""],
+]);
+
 export const EventsPage = () => {
   const [searchText, setSearchText] = useState<string>("");
   const [selectedFilter, setSelectedFilter] = useState<Filters>();
+  const [filterParams, setFilterParams] = useState<FilterEventParams>({});
 
   const onFilterSelected = (filter: Filters) => {
     setSelectedFilter(filter);
+    let filterValues: FilterEventParams = {};
+
+    switch (filter) {
+      case Filters.TODAY: {
+        filterValues.from = new Date().getTime();
+        filterValues.to = getDateFromToday(1).getTime();
+        break;
+      }
+      case Filters.THIS_WEEK: {
+        filterValues.from = new Date().getTime();
+        filterValues.to = getDateFromToday(7).getTime();
+        break;
+      }
+      case Filters.THIS_MONTH: {
+        filterValues.from = new Date().getTime();
+        filterValues.to = getDateFromToday(30).getTime();
+        break;
+      }
+      case Filters.SECOND_HAND: {
+        break;
+      }
+    }
+
+    setFilterParams((prevFilter) => ({ ...prevFilter, filterValues }));
   };
+
+  useEffect(() => {
+    setFilterParams((prevFilter) => ({ ...prevFilter, name: searchText }));
+  }, [searchText]);
 
   return (
     <Stack spacing={3}>
@@ -56,7 +96,7 @@ export const EventsPage = () => {
           </ToggleButton>
         </ToggleButtonGroup>
       </Stack>
-      <Events filterParams={{ name: searchText }} />
+      <Events filterParams={filterParams} />
     </Stack>
   );
 };
