@@ -1,6 +1,7 @@
 import Events from "./components/Events";
 import { Box, Container } from "@mui/material";
 import Login from "./components/Login";
+import UserConfirmation from "./components/UserConfirmation";
 import Signup from "./components/Signup";
 import Navbar from "./components/AppBar/AppBar";
 import { RouterProvider, createBrowserRouter, Outlet } from "react-router-dom";
@@ -32,6 +33,7 @@ export enum RoutePaths {
   MY_DETAILS = "/profile/details",
   EVENT = "/event",
   SCAN_EVENT = "/event/scan",
+  USER_CONFIRMATION = "/user-confirmation",
 }
 
 const router = createBrowserRouter([
@@ -86,6 +88,10 @@ const router = createBrowserRouter([
             <CreateEvent />
           </PrivateRoute>
         ),
+      },
+      {
+        path: RoutePaths.USER_CONFIRMATION,
+        element: <UserConfirmation />,
       },
       {
         path: RoutePaths.IMPORT_TICKET,

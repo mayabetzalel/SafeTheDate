@@ -4,6 +4,7 @@ const REST_API = {
   auth: {
     signInWithEmailAndPassword: "http://localhost:5000/api/auth/login",
     getCurrentSession: "http://localhost:5000/api/auth/session",
+    confirmMail: "http://localhost:5000/api/auth/confirm",
     signUpWithEmailAndPassword: "http://localhost:5000/api/auth/register",
     logout: "http://localhost:5000/api/auth/logout",
   },
@@ -53,6 +54,15 @@ const backendAPI = {
       return await axios.get(REST_API.auth.getCurrentSession, {
         withCredentials: true,
       });
+    },
+    async confirmMail(confirmation: string) {
+      return await axios.put(
+        REST_API.auth.confirmMail,
+        { confirmId: confirmation },
+        {
+          withCredentials: true,
+        }
+      );
     },
 
     async logOut() {
