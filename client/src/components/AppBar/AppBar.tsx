@@ -13,13 +13,6 @@ const Navbar = () => {
   const { location } = useNavigation();
   const { currentUser, signOut, checkIfSessionValid } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
-  React.useEffect(() => {
-    const fetchData = async () => {
-      checkIfSessionValid();
-    };
-
-    fetchData();
-  }, []);
 
   const handleConnect = async () => {
     try {

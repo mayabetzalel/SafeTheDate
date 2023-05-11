@@ -11,9 +11,11 @@ import { ImportTicket } from "./components/ImportTicket";
 import Captain from "./components/Captain";
 import CaptainEvents from "./components/CapatinEvents";
 import ScanEvent from "./components/ScanEvent";
-import {MyTickets} from "./components/profile/MyTickets";
-import {Profile} from "./components/profile/Profile";
-import {MyEvents} from "./components/profile/MyEvents";
+import { MyTickets } from "./components/profile/MyTickets";
+import { Profile } from "./components/profile/Profile";
+import { MyEvents } from "./components/profile/MyEvents";
+import { useEffect } from "react";
+import { useAuth } from "./hooks/userController/userContext";
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -164,16 +166,24 @@ const router = createBrowserRouter([
       {
         path: `${RoutePaths.EVENT}/:id`,
         element: (
-            <PrivateRoute>
-              <Event />
-            </PrivateRoute>
+          <PrivateRoute>
+            <Event />
+          </PrivateRoute>
         ),
-      }
+      },
     ],
   },
 ]);
 
 const App = () => {
+  const { checkIfSessionValid } = useAuth();
+  useEffect(() => {
+    const fetchData = async () => {
+      checkIfSessionValid();
+    };
+
+    fetchData();
+  }, []);
   return <RouterProvider router={router} />;
 };
 
