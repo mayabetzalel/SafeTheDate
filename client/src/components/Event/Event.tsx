@@ -19,6 +19,7 @@ import { graphql } from "../../graphql";
 import FetchingState from "../../utils/fetchingState";
 import { useEffect, useState } from "react";
 import { Exact, Event as EventType } from "../../graphql/graphql";
+import PaymentForm from "../checkout/PaymentForm";
 
 const EVENT_QUERY = graphql(`
   query event($ids: [String]) {
@@ -102,14 +103,7 @@ export const Event = () => {
             </Typography>
           </Stack>
           <Grid>
-            <Button
-              size={"large"}
-              fullWidth
-              variant="contained"
-              color="secondary"
-            >
-              ORDER TICKET
-            </Button>
+            <PaymentForm amount={20} description={event?.name ?? "Event"} />
           </Grid>
         </Grid>
       </Grid>
