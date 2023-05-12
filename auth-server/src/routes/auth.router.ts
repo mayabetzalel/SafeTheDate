@@ -17,7 +17,7 @@ import { HttpStatus } from "../utils/types";
 function configureTokensCookie(res: Response, tokens: TokensPack) {
   res.cookie(REFRESH_TOKEN_COOKIE_NAME, tokens.refreshToken, {
     httpOnly: true,
-    path: "/",
+    path: "/api/auth/token",
     domain: process.env.COOKIE_DOMAIN,
     expires: tokens.refreshExpiryDate,
     // secure: process.env.COOKIE_DOMAIN !== "localhost",
