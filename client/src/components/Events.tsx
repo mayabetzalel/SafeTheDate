@@ -56,11 +56,13 @@ const Events = ({ filterParams = {} }: EventsProps) => {
 
   useEffect(() => {
     setEvents([]);
+    setSkipNumber(0);
+    setMaxHeight(0);
   }, [filterParams]);
 
   useEffect(() => {
     if (data?.event) {
-      setEvents([...events, ...data.event]);
+      setEvents([...data.event]);
     }
   }, [data]);
 

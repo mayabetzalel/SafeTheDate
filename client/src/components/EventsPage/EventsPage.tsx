@@ -50,7 +50,10 @@ export const EventsPage = () => {
       }
     }
 
-    setFilterParams((prevFilter) => ({ ...prevFilter, ...filterValues }));
+    setFilterParams((prevFilter) => ({
+      name: prevFilter.name,
+      ...filterValues,
+    }));
   };
 
   useEffect(() => {
