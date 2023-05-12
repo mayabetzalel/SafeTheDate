@@ -5,8 +5,6 @@ import { log } from "console";
 const { Wit } = require("node-wit");
 var _ = require("lodash");
 
-// Constants
-const ACCESS_TOKEN = "RMO6ITKXK5EE5IBFPO52WDWRDRM75PNZ";
 
 export default {
   Mutation: {
@@ -32,7 +30,7 @@ export default {
 
         let responseMessage;
 
-        if (IntentsStore?.[intent])
+        if (intent && IntentsStore?.[intent])
           responseMessage = IntentsStore[intent]?.responseMessage;
         else responseMessage = IntentsStore?.nothing?.responseMessage;
 
@@ -77,8 +75,8 @@ function matchWitToSearchedRequests(responseMessage: WitResponse): WitIntent {
 
   // Get the best hypothesis
   var intent = sortedIntents[0];
-
-  return intent.name as WitIntent;
+  
+  return intent ? intent.name as WitIntent : null;
 }
 
 function matchEntities(responseMessage: WitResponse): any {

@@ -26,9 +26,9 @@ export function Chatbot(props: chatbotProps) {
     }
 
     return (
-        <div style={{ position: "relative", height: "20rem" }}>
+        <div style={{ position: "relative", height: "20rem", width:"300px" }}>
             <MainContainer>
-                <ChatContainer>
+                <ChatContainer >
                     <MessageList>
                         {messages.map((message, index) =>
                             <>

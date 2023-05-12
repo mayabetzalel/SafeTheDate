@@ -7,6 +7,7 @@ export default  `
         type: String
     }
 
+
     input InputEvent {
         name: String!
         location: String!

@@ -14,6 +14,7 @@ import ScanEvent from "./components/ScanEvent";
 import {MyTickets} from "./components/profile/MyTickets";
 import {Profile} from "./components/profile/Profile";
 import {MyEvents} from "./components/profile/MyEvents";
+import SideChatbot from "./components/SideChatbot";
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
             <Outlet />
           </Container>
         </Box>
+        <SideChatbot/>
       </>
     ),
     children: [
@@ -66,14 +68,6 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <CaptainEvents />
-          </PrivateRoute>
-        ),
-      },
-      {
-        path: RoutePaths.CAPTAIN,
-        element: (
-          <PrivateRoute>
-            <Captain />
           </PrivateRoute>
         ),
       },

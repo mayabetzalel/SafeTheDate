@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "urql";
 import { useSnackbar } from "notistack";
@@ -15,6 +15,7 @@ import {
   Paper,
   InputAdornment,
 } from "@mui/material";
+import ImagePicker from "./ImagePicker";
 
 const CREATE_EVENT_MUTATION = graphql(`
   mutation CreateEvent($inputEvent: InputEvent!) {
@@ -23,14 +24,15 @@ const CREATE_EVENT_MUTATION = graphql(`
       code
     }
   }
-`);
-
-export const CreateEvent = () => {
-  const eventNameRef = useRef<HTMLInputElement | null>();
-  const eventLocationRef = useRef<HTMLInputElement | null>();
-  const eventTimeAndDateRef = useRef<HTMLInputElement | null>();
-  const eventTypeRef = useRef<HTMLInputElement | null>();
-  const { enqueueSnackbar } = useSnackbar();
+  `);
+  
+  export const CreateEvent = () => {
+    const eventNameRef = useRef<HTMLInputElement | null>();
+    const eventLocationRef = useRef<HTMLInputElement | null>();
+    const eventTimeAndDateRef = useRef<HTMLInputElement | null>();
+    const eventTypeRef = useRef<HTMLInputElement | null>();
+    const [image, setImage] = useState(undefined);
+    const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
   const [createEventResult, createEvent] = useMutation<
@@ -39,6 +41,14 @@ export const CreateEvent = () => {
     },
     InputEvent
   >(CREATE_EVENT_MUTATION);
+
+
+    const onChangeImage = (imageList) => {
+        // only allow one image to be uploaded
+        if (imageList.length === 1) {
+            setImage(imageList[0].data_url);
+        }
+    };
 
   function handleEventCreation() {
     const inputEvent: InputEvent = {
@@ -151,7 +161,7 @@ export const CreateEvent = () => {
             </Stack>
           </Grid>
           <Grid item xs={3}>
-            image uploader
+            <ImagePicker image={image} onChangeImage={onChangeImage}/>
           </Grid>
         </Grid>
       </Paper>
