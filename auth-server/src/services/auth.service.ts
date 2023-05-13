@@ -18,13 +18,17 @@ import User, { IUser } from "../../mongo/models/User";
 import { v4 } from "uuid";
 import jwt from "jsonwebtoken";
 import { MailSender } from "../utils/mail.utils";
-import mongoose from "mongoose";
+import axios from "axios";
 
+interface GoogleDto extends Omit<RegisterDTO, "password"> {
+  isConfirmed: boolean;
+}
 class AuthService {
   private logger: ILogger;
   private refreshTokenTableIntegrator: typeof RefreshToken;
   private userTableIntegrator: typeof User;
   private userConfirmationTableIntegrator: typeof UserConfirmation;
+
   constructor(
     logger: ILogger,
     RefreshTokenTableIntegrator: typeof RefreshToken,
@@ -184,6 +188,84 @@ class AuthService {
     }
 
     return this.createTokensPack(user);
+  }
+  async loginRegisterWithGoogle({
+    accessToken,
+  }: {
+    accessToken: string;
+  }): Promise<TokensPack> {
+    try {
+      console.log("accessToken");
+      console.log(accessToken);
+      // Send a request to Google API to validate the access token
+      const { data } = await axios.get(
+        `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${accessToken}`
+      );
+      const userToRegister: GoogleDto = {
+        email: data.email,
+        username: data.name,
+        firstName: data.given_name,
+        lastName: data.family_name,
+        isConfirmed: data.verified_email,
+      };
+      console.log(userToRegister);
+      // Check if email or username already exists
+      const dbUser = await this.userTableIntegrator
+        .findOne({
+          $or: [
+            { email: userToRegister.email },
+            { username: userToRegister.username },
+          ],
+        })
+        .lean();
+      if (dbUser) {
+        // we need to login
+        return this.createTokensPack(dbUser);
+      } else {
+        // we need to register
+        let createdUser: any = null;
+        let userConfirmation = null;
+        if (!userToRegister.isConfirmed) {
+          userConfirmation = await this.userConfirmationTableIntegrator.create({
+            email: userToRegister.email,
+          });
+          createdUser = await this.userTableIntegrator.create({
+            email: userToRegister.email,
+            firstName: userToRegister.firstName,
+            lastName: userToRegister.lastName,
+            username: userToRegister.username,
+            isConfirmed: userToRegister.isConfirmed,
+            userConfirmation: userConfirmation._id.valueOf(),
+          });
+        } else {
+          createdUser = await this.userTableIntegrator.create({
+            email: userToRegister.email,
+            firstName: userToRegister.firstName,
+            lastName: userToRegister.lastName,
+            username: userToRegister.username,
+            isConfirmed: userToRegister.isConfirmed,
+          });
+        }
+        if (userConfirmation) {
+          this.sendConfirmationMail(
+            createdUser?.userConfirmation?._id!,
+            createdUser?.email
+          );
+        }
+        console.log(createdUser);
+
+        if (!createdUser) {
+          throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
+        }
+        return this.createTokensPack(createdUser);
+      }
+    } catch (error) {
+      throw new FunctionalityError(
+        serverErrorCodes.InvalidAccessToken,
+        [],
+        HttpStatus.FORBIDDEN
+      );
+    }
   }
   private generateRefreshToken(): IToken {
     const REFRESH_TOKEN_EXPIRATION = +(

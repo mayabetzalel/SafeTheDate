@@ -24,17 +24,22 @@ import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 const Login = () => {
   const email: React.MutableRefObject<any> = useRef(null);
   const password: React.MutableRefObject<any> = useRef(null);
-  const { signIn } = useAuth();
+  const { signIn, logWithGoogle } = useAuth();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
-  const { logWithGoogle } = useAuth();
 
   const loginUserWithGoogle = useGoogleLogin({
-    onSuccess: (codeResponse: any) => {
-      logWithGoogle(codeResponse.access_token);
-      enqueueSnackbar("Successful login!", { variant: "success" });
-      navigate(RoutePaths.EVENTS);
+    onSuccess: async (codeResponse: any) => {
+      try {
+        await logWithGoogle(codeResponse.access_token);
+        enqueueSnackbar("Successful login!", { variant: "success" });
+        navigate(RoutePaths.EVENTS);
+      } catch (error: any) {
+        navigate("/Login");
+        enqueueSnackbar("Login failed... ", { variant: "error" });
+        console.log("Login Failed:", error);
+      }
     },
     onError: (error: any) => {
       navigate("/Login");
@@ -56,9 +61,8 @@ const Login = () => {
       enqueueSnackbar("Successful log in!", { variant: "success" });
       navigate("/");
     } catch (error: any) {
-      enqueueSnackbar("Could not log in " + error.message, {
-        variant: "error",
-      });
+      console.log(error);
+      enqueueSnackbar("Login failed...", { variant: "error" });
       navigate("/login");
     }
   };
@@ -146,10 +150,6 @@ const Login = () => {
                 placeholder="Enter password"
                 id="password"
                 autoComplete="current-password"
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
               />
               <GoogleLogin onSuccess={() => loginUserWithGoogle()} />
               <Button

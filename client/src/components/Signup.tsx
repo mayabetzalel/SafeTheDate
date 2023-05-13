@@ -38,9 +38,9 @@ const Signup = () => {
       navigate(RoutePaths.EVENTS);
     },
     onError: (error: any) => {
-      console.log("8");
       navigate("/Login");
-      enqueueSnackbar(error.message, { variant: "error" });
+      enqueueSnackbar("Login failed...", { variant: "error" });
+      // enqueueSnackbar(error.message, { variant: "error" });
       console.log("Login Failed:", error);
     },
   });

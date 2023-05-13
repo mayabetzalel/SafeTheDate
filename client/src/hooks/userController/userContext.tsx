@@ -28,7 +28,7 @@ const AuthContext = createContext({
   isUserSignedIn: () => {},
   getUser: () => {},
   getUserProfilePicture: () => {},
-  logWithGoogle: async (user: any) => {},
+  logWithGoogle: async (accessToken: string) => {},
   checkIfSessionValid: async () => {},
 });
 
@@ -49,20 +49,11 @@ export const AuthContextProvider = ({
 
   async function logWithGoogle(accessToken: string) {
     try {
-      const response: any = await backendAPI.auth.signInWithGoogle(accessToken);
-      console.log(response.data);
-
-      setCurrentUser({
-        email: response.data.email,
-        firstName: response.data.given_name,
-        isConfirmed: response.data.verified_email,
-        lastName: response.data.family_name,
-        password: "",
-        username: response.data.given_name,
-        picture: response.data.picture,
-      });
       setIsFromGoogle(true);
-      setUserProfilePicture(response.data.image);
+      await backendAPI.auth.loginAuthWithGoogle(accessToken);
+      await checkIfSessionValid();
+
+      // setUserProfilePicture(response.data.image);
     } catch (error) {
       throw error;
     }
@@ -121,7 +112,7 @@ export const AuthContextProvider = ({
   async function signOut() {
     setCurrentUser(null);
     if (isFromGoogle) googleLogout();
-    else backendAPI.auth.logOut();
+    backendAPI.auth.logOut();
   }
 
   function isUserSignedIn() {

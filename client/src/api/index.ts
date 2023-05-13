@@ -36,6 +36,7 @@ const REST_API = {
     confirmMail: "http://localhost:5000/api/auth/confirm",
     regenerateAccessToken: "http://localhost:5000/api/auth/token",
     signUpWithEmailAndPassword: "http://localhost:5000/api/auth/register",
+    loginAuthWithGoogle: "http://localhost:5000/api/auth/google/login",
     logout: "http://localhost:5000/api/auth/logout",
   },
 };
@@ -51,6 +52,18 @@ const backendAPI = {
         {
           emailOrUsername,
           password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+    },
+
+    async loginAuthWithGoogle(accessToken: string) {
+      return await axios.post(
+        REST_API.auth.loginAuthWithGoogle,
+        {
+          accessToken,
         },
         {
           withCredentials: true,
@@ -111,18 +124,6 @@ const backendAPI = {
         {},
         {
           withCredentials: true,
-        }
-      );
-    },
-
-    async signInWithGoogle(accessToken: string) {
-      return await axios.get(
-        `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${accessToken}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            Accept: "application/json",
-          },
         }
       );
     },

@@ -48,6 +48,15 @@ router.post("/register", useValidateBodyDto(RegisterDTO), (req, res, next) => {
     .catch(next);
 });
 
+router.post("/google/login", (req, res, next) => {
+  authService
+    .loginRegisterWithGoogle(req.body)
+    .then((tokens) => {
+      configureTokensCookie(res, tokens);
+      res.sendStatus(HttpStatus.OK);
+    })
+    .catch(next);
+});
 router.post("/token", (req, res, next) => {
   try {
     const refreshToken = (req.cookies ?? {})[REFRESH_TOKEN_COOKIE_NAME];
