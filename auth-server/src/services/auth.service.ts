@@ -65,63 +65,68 @@ class AuthService {
     userToRegister: RegisterDTO
   ): Promise<FormFieldError<RegisterDTO>[]> {
     const errors: FormFieldError<RegisterDTO>[] = [];
-
-    // Check if email or username already exists
-    const dbUser = await this.userTableIntegrator
-      .findOne({
-        $or: [
-          { email: userToRegister.email },
-          { username: userToRegister.username },
-        ],
-      })
-      .lean();
-    if (dbUser) {
-      if (dbUser.email === userToRegister.email) {
-        errors.push({
-          fieldName: "email",
-          message: "Email address already in use, please try another",
-        });
+    try {
+      // Check if email or username already exists
+      const dbUser = await this.userTableIntegrator
+        .findOne({
+          $or: [
+            { email: userToRegister.email },
+            { username: userToRegister.username },
+          ],
+        })
+        .lean();
+      if (dbUser) {
+        if (dbUser.email === userToRegister.email) {
+          errors.push({
+            fieldName: "email",
+            message: "Email address already in use, please try another",
+          });
+        }
+        if (dbUser.username === userToRegister.username) {
+          errors.push({
+            fieldName: "username",
+            message: "Username already in use, please try another",
+          });
+        }
       }
-      if (dbUser.username === userToRegister.username) {
-        errors.push({
-          fieldName: "username",
-          message: "Username already in use, please try another",
-        });
+
+      if (errors.length > 0) {
+        return errors;
       }
-    }
 
-    if (errors.length > 0) {
-      return errors;
-    }
+      // All good, create the user
+      let createdUser: any = null;
+      const userConfirmation =
+        await this.userConfirmationTableIntegrator.create({
+          email: userToRegister.email,
+        });
+      if (userConfirmation) {
+        createdUser = await this.userTableIntegrator.create({
+          email: userToRegister.email,
+          firstName: userToRegister.firstName,
+          lastName: userToRegister.lastName,
+          password: await hash(
+            userToRegister.password,
+            +(process.env.PASSWORD_HASH_SALTS ?? 8)
+          ),
+          username: userToRegister.username,
+          userConfirmation: userConfirmation._id.valueOf(),
+        });
+        this.sendConfirmationMail(
+          createdUser?.userConfirmation?._id!,
+          createdUser?.email
+        );
+      }
 
-    // All good, create the user
-    let createdUser: any = null;
-    const userConfirmation = await this.userConfirmationTableIntegrator.create({
-      email: userToRegister.email,
-    });
-    if (userConfirmation) {
-      createdUser = await this.userTableIntegrator.create({
-        email: userToRegister.email,
-        firstName: userToRegister.firstName,
-        lastName: userToRegister.lastName,
-        password: await hash(
-          userToRegister.password,
-          +(process.env.PASSWORD_HASH_SALTS ?? 8)
-        ),
-        username: userToRegister.username,
-        userConfirmation: userConfirmation._id.valueOf(),
-      });
-      this.sendConfirmationMail(
-        createdUser?.userConfirmation?._id!,
-        createdUser?.email
-      );
-    }
+      if (!createdUser) {
+        throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
+      }
 
-    if (!createdUser) {
+      return [];
+    } catch (error) {
+      console.log(error);
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
     }
-
-    return [];
   }
 
   private verifyTokenExpiration(token: IToken) {
