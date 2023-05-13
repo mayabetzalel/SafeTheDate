@@ -1,4 +1,6 @@
-import { useQuery } from "urql";
+import { useAuth } from "../hooks/authController/AuthContext";
+import { gql, useQuery } from "urql";
+import FetchingState from "../utils/fetchingState";
 import EventCard from "./EventCard/EventCard";
 import { graphql } from "../graphql";
 import { Event, Exact, FilterEventParams } from "../graphql/graphql";

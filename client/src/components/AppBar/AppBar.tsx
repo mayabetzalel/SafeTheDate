@@ -5,13 +5,13 @@ import { Logout } from "@mui/icons-material";
 import logo from "../../assets/logo.png";
 import { useNavigate, useNavigation } from "react-router-dom";
 import NavigationTypography from "./NavigationTypography/NavigationTypography";
-import { useAuth } from "../../hooks/userController/userContext";
+import { useAuth } from "../../hooks/authController/AuthContext";
 import { useSnackbar } from "notistack";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { location } = useNavigation();
-  const { currentUser, signOut } = useAuth();
+  const { currentUser, signOut, checkIfSessionValid } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleConnect = async () => {
