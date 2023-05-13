@@ -44,7 +44,7 @@ interface EventsProps {
   filterParams?: FilterEventParams;
 }
 
-const Events = ({ filterParams = {} }: EventsProps) => {
+const Events = ({ filterParams }: EventsProps) => {
   const [page, setPage] = useState(0);
   const navigate = useNavigate();
   const [{ data = { event: [] }, fetching, error }, reexecuteQuery] = useQuery<
@@ -53,7 +53,7 @@ const Events = ({ filterParams = {} }: EventsProps) => {
   >({
     query: eventQuery,
     variables: {
-      filterParams: filterParams,
+      filterParams: filterParams || {},
       skip: page * EVENTS_PER_FETCH,
       limit: EVENTS_PER_FETCH,
     },
@@ -65,7 +65,7 @@ const Events = ({ filterParams = {} }: EventsProps) => {
   >({
     query: eventCountQuery,
     variables: {
-      filterParams: filterParams,
+      filterParams: filterParams || {},
     },
   });
 
