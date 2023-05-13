@@ -61,7 +61,7 @@ export const EventsPage = () => {
   }, [searchText]);
 
   return (
-    <Stack spacing={3}>
+    <Stack spacing={3} sx={{height: "100%"}}>
       <TextField
         InputProps={{
           sx: (theme) => ({ backgroundColor: theme.palette.background.paper }),

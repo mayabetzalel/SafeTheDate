@@ -5,7 +5,7 @@ import { Logout } from "@mui/icons-material";
 import logo from "../../assets/logo.png";
 import { useNavigate, useNavigation } from "react-router-dom";
 import NavigationTypography from "./NavigationTypography/NavigationTypography";
-import { useAuth  } from "../../hooks/userController/userContext";
+import { useAuth } from "../../hooks/userController/userContext";
 import { useSnackbar } from "notistack";
 
 const Navbar = () => {
@@ -16,15 +16,16 @@ const Navbar = () => {
 
   const handleConnect = async () => {
     try {
-      if(!currentUser)
-        navigate(RoutePaths.LOGIN);
+      if (!currentUser) navigate(RoutePaths.LOGIN);
       else {
         try {
-          await signOut()
+          await signOut();
           enqueueSnackbar("Successful sign out!", { variant: "success" });
           navigate("/");
-        } catch(err) {
-          enqueueSnackbar("could not sign out, please try again later!", { variant: "error" });
+        } catch (err) {
+          enqueueSnackbar("could not sign out, please try again later!", {
+            variant: "error",
+          });
         }
       }
     } catch (err) {
@@ -37,7 +38,7 @@ const Navbar = () => {
       container
       justifyContent={"space-between"}
       alignItems={"center"}
-      textAlign={'center'}
+      textAlign={"center"}
       sx={(theme) => ({
         background: theme.palette.background.default,
         height: "10%",
@@ -80,16 +81,12 @@ const Navbar = () => {
         </NavigationTypography>
       </Grid>
 
-        <Grid item xs={2} container justifyContent={"center"}>
-          <IconButton
-            size="medium"
-            edge="start"
-            onClick={handleConnect}
-          >
-            {currentUser? "Log Out": "Sign In"}
-            <Logout />
-          </IconButton>
-        </Grid>
+      <Grid item xs={2} container justifyContent={"center"}>
+        <IconButton size="medium" edge="start" onClick={handleConnect}>
+          {currentUser ? "Log Out" : "Sign In"}
+          <Logout />
+        </IconButton>
+      </Grid>
     </Grid>
   );
 };

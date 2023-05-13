@@ -1,4 +1,3 @@
-import Events from "./components/Events";
 import { Box, Container } from "@mui/material";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
@@ -11,10 +10,10 @@ import { ImportTicket } from "./components/ImportTicket";
 import Captain from "./components/Captain";
 import CaptainEvents from "./components/CapatinEvents";
 import ScanEvent from "./components/ScanEvent";
-import {MyTickets} from "./components/profile/MyTickets";
-import {Profile} from "./components/profile/Profile";
-import {MyEvents} from "./components/profile/MyEvents";
-import {EventsPage} from "./components/EventsPage/EventsPage";
+import { MyTickets } from "./components/profile/MyTickets";
+import { Profile } from "./components/profile/Profile";
+import { MyEvents } from "./components/profile/MyEvents";
+import { EventsPage } from "./components/EventsPage/EventsPage";
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -38,11 +37,9 @@ const router = createBrowserRouter([
     element: (
       <>
         <Navbar />
-        <Box height="95%">
-          <Container sx={{ height: "inherit" }} maxWidth={"xl"}>
-            <Outlet />
-          </Container>
-        </Box>
+        <Container sx={{ height: "90%" }} maxWidth={"xl"}>
+          <Outlet />
+        </Container>
       </>
     ),
     children: [
@@ -165,11 +162,11 @@ const router = createBrowserRouter([
       {
         path: `${RoutePaths.EVENT}/:id`,
         element: (
-            <PrivateRoute>
-              <Event />
-            </PrivateRoute>
+          <PrivateRoute>
+            <Event />
+          </PrivateRoute>
         ),
-      }
+      },
     ],
   },
 ]);

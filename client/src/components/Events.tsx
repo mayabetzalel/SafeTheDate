@@ -2,11 +2,12 @@ import { useQuery } from "urql";
 import EventCard from "./EventCard/EventCard";
 import { graphql } from "../graphql";
 import { Event, Exact, FilterEventParams } from "../graphql/graphql";
-import { Grid } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { Grid, Pagination } from "@mui/material";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import { RoutePaths } from "../App";
+import FetchingState from "../utils/fetchingState";
 
 const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
@@ -30,16 +31,14 @@ const eventQuery = graphql(`
   }
 `);
 
-const EVENTS_PER_FETCH = 10;
+const EVENTS_PER_FETCH = 12;
 
 interface EventsProps {
   filterParams?: FilterEventParams;
 }
 
 const Events = ({ filterParams = {} }: EventsProps) => {
-  const [skipNumber, setSkipNumber] = useState(0);
-  const [maxHeight, setMaxHeight] = useState(0);
-  const rootRef = useRef(null);
+  const [page, setPage] = useState(1);
   const navigate = useNavigate();
   const [events, setEvents] = useState<Exact<Event>[]>([]);
   const [{ data, fetching, error }, reexecuteQuery] = useQuery<
@@ -49,15 +48,14 @@ const Events = ({ filterParams = {} }: EventsProps) => {
     query: eventQuery,
     variables: {
       filterParams: filterParams,
-      skip: skipNumber,
+      skip: (page - 1) * EVENTS_PER_FETCH,
       limit: EVENTS_PER_FETCH,
     },
   });
 
   useEffect(() => {
     setEvents([]);
-    setSkipNumber(0);
-    setMaxHeight(0);
+    setPage(0);
   }, [filterParams]);
 
   useEffect(() => {
@@ -66,41 +64,29 @@ const Events = ({ filterParams = {} }: EventsProps) => {
     }
   }, [data]);
 
-  useEffect(() => {
-    reexecuteQuery();
-  }, [skipNumber]);
-
-  const onScroll = () => {
-    if (rootRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = rootRef.current;
-      if (
-        maxHeight < scrollHeight &&
-        scrollTop + clientHeight > scrollHeight - 20
-      ) {
-        setSkipNumber((prev) => prev + EVENTS_PER_FETCH);
-        setMaxHeight(scrollHeight);
-      }
-    }
-  };
-
   return (
-    <GridHiddenScroll
-      container
-      ref={rootRef}
-      onScroll={onScroll}
-      sx={{ height: "inherit", overflowY: "auto" }}
-    >
-      {events.map(({ id, name, type, location, timeAndDate }) => (
-        <Grid key={id!} item sm={4} md={3}>
-          <EventCard
-            title={name!}
-            header={type!}
-            subheader={location!}
-            onClick={() => navigate(`${RoutePaths.EVENT}/${id}`, {})}
-          />
-        </Grid>
-      ))}
-    </GridHiddenScroll>
+    <FetchingState isFetching={fetching}>
+      <GridHiddenScroll container sx={{ height: "inherit", overflowY: "auto" }}>
+        {events.map(({ id, name, type, location, timeAndDate }) => (
+          <Grid key={id!} item sm={4} md={3}>
+            <EventCard
+              title={name!}
+              header={type!}
+              subheader={location!}
+              onClick={() => navigate(`${RoutePaths.EVENT}/${id}`, {})}
+            />
+          </Grid>
+        ))}
+      </GridHiddenScroll>
+      <Pagination
+        count={10}
+        page={page}
+        variant={"outlined"}
+        color={"primary"}
+        onChange={(e_, page) => setPage(page)}
+        shape="rounded"
+      />
+    </FetchingState>
   );
 };
 
