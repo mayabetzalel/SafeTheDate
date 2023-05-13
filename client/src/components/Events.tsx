@@ -1,5 +1,4 @@
-
-import { useAuth } from "../hooks/userController/userContext";
+import { useAuth } from "../hooks/authController/AuthContext";
 import { gql, useQuery } from "urql";
 import FetchingState from "../utils/fetchingState";
 import EventCard from "./EventCard/EventCard";
@@ -8,8 +7,8 @@ import { Event, Exact, FilterEventParams } from "../graphql/graphql";
 import { Grid } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
-import {useNavigate} from "react-router-dom";
-import {RoutePaths} from "../App";
+import { useNavigate } from "react-router-dom";
+import { RoutePaths } from "../App";
 
 const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
@@ -18,7 +17,11 @@ const GridHiddenScroll = styled(Grid)({
 });
 
 const eventQuery = graphql(`
-  query eventPageQuery($filterParams: FilterEventParams, $skip: Int!, $limit: Int!) {
+  query eventPageQuery(
+    $filterParams: FilterEventParams
+    $skip: Int!
+    $limit: Int!
+  ) {
     event(filterParams: $filterParams, skip: $skip, limit: $limit) {
       id
       name
@@ -32,7 +35,7 @@ const eventQuery = graphql(`
 const EVENTS_PER_FETCH = 10;
 
 interface EventsProps {
-  filterParams?: FilterEventParams
+  filterParams?: FilterEventParams;
 }
 
 const Events = (props: EventsProps) => {
@@ -43,7 +46,7 @@ const Events = (props: EventsProps) => {
   const [events, setEvents] = useState<Exact<Event>[]>([]);
   const [{ data, fetching, error }, reexecuteQuery] = useQuery<
     { event: Exact<Event>[] },
-    { filterParams: FilterEventParams, skip: number; limit: number }
+    { filterParams: FilterEventParams; skip: number; limit: number }
   >({
     query: eventQuery,
     variables: {
@@ -84,13 +87,13 @@ const Events = (props: EventsProps) => {
       onScroll={onScroll}
       sx={{ height: "inherit", overflowY: "auto" }}
     >
-      {events.map(({id, name, type, location}) => (
+      {events.map(({ id, name, type, location }) => (
         <Grid key={id!} item sm={4} md={3}>
           <EventCard
             title={name!}
             header={type!}
             subhrader={location!}
-            onClick={() => navigate(`${RoutePaths.EVENT}/${id}`,{})}
+            onClick={() => navigate(`${RoutePaths.EVENT}/${id}`, {})}
           />
         </Grid>
       ))}

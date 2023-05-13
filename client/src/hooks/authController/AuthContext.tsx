@@ -7,12 +7,10 @@ import React, { useState, useContext, createContext, useEffect } from "react";
 import { googleLogout } from "@react-oauth/google";
 interface IUser {
   email: string;
-  isConfirmed: boolean;
+  userConfirmation: boolean;
   username: string;
   firstName: string;
   lastName: string;
-  password: string;
-  picture: string;
 }
 const AuthContext = createContext({
   currentUser: null,
@@ -52,8 +50,6 @@ export const AuthContextProvider = ({
       setIsFromGoogle(true);
       await backendAPI.auth.loginAuthWithGoogle(accessToken);
       await checkIfSessionValid();
-
-      // setUserProfilePicture(response.data.image);
     } catch (error) {
       throw error;
     }
@@ -75,8 +71,6 @@ export const AuthContextProvider = ({
         lastName,
         password
       );
-      // response.data.picture = "https://source.unsplash.com/xpTsS9PJMXQ";
-      // setCurrentUser(response.data);
     } catch (error: any) {
       console.log(error);
       throw error;
@@ -90,7 +84,6 @@ export const AuthContextProvider = ({
         email,
         password
       );
-      // response.data.picture = "https://source.unsplash.com/xpTsS9PJMXQ";
       checkIfSessionValid();
     } catch (error: any) {
       console.log("in error from user context signIn");

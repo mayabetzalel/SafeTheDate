@@ -3,7 +3,6 @@ import { ObjectID } from "../../src/utils/types";
 import User, { IUser } from "./User";
 
 const UserConfirmationSchema = new mongoose.Schema({
-  // user: { type: String, unique: true, required: true },
   email: { type: String, unique: true, required: true },
 });
 

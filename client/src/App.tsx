@@ -16,7 +16,7 @@ import { MyTickets } from "./components/profile/MyTickets";
 import { Profile } from "./components/profile/Profile";
 import { MyEvents } from "./components/profile/MyEvents";
 import { useEffect } from "react";
-import { useAuth } from "./hooks/userController/userContext";
+import { useAuth } from "./hooks/authController/AuthContext";
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -184,11 +184,7 @@ const router = createBrowserRouter([
 const App = () => {
   const { checkIfSessionValid } = useAuth();
   useEffect(() => {
-    const fetchData = async () => {
-      checkIfSessionValid();
-    };
-
-    fetchData();
+    checkIfSessionValid();
   }, []);
   return <RouterProvider router={router} />;
 };

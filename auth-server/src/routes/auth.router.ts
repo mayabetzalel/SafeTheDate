@@ -20,7 +20,6 @@ function configureTokensCookie(res: Response, tokens: TokensPack) {
     path: "/api/auth/token",
     domain: process.env.COOKIE_DOMAIN,
     expires: tokens.refreshExpiryDate,
-    // secure: process.env.COOKIE_DOMAIN !== "localhost",
     sameSite: "strict",
   });
 
@@ -28,7 +27,6 @@ function configureTokensCookie(res: Response, tokens: TokensPack) {
     httpOnly: true,
     domain: process.env.COOKIE_DOMAIN,
     maxAge: tokens.expiresIn * 1000,
-    // secure: process.env.COOKIE_DOMAIN !== "localhost",
     sameSite: "strict",
   });
 }
