@@ -8,6 +8,7 @@ import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import { RoutePaths } from "../App";
 import FetchingState from "../utils/fetchingState";
+import {ceil, floor} from "lodash";
 
 const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
@@ -31,6 +32,12 @@ const eventQuery = graphql(`
   }
 `);
 
+const eventCountQuery = graphql(`
+  query eventCountQuery($filterParams: FilterEventParams) {
+    eventCount(filterParams: $filterParams)
+  }
+`);
+
 const EVENTS_PER_FETCH = 12;
 
 interface EventsProps {
@@ -38,36 +45,38 @@ interface EventsProps {
 }
 
 const Events = ({ filterParams = {} }: EventsProps) => {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const navigate = useNavigate();
-  const [events, setEvents] = useState<Exact<Event>[]>([]);
-  const [{ data, fetching, error }, reexecuteQuery] = useQuery<
+  const [{ data = { event: [] }, fetching, error }, reexecuteQuery] = useQuery<
     { event: Exact<Event>[] },
     { filterParams: FilterEventParams; skip: number; limit: number }
   >({
     query: eventQuery,
     variables: {
       filterParams: filterParams,
-      skip: (page - 1) * EVENTS_PER_FETCH,
+      skip: page * EVENTS_PER_FETCH,
       limit: EVENTS_PER_FETCH,
     },
   });
 
-  useEffect(() => {
-    setEvents([]);
-    setPage(0);
-  }, [filterParams]);
+  const [{ data: dataCount = {eventCount: 0} }] = useQuery<
+    { eventCount: number },
+    { filterParams: FilterEventParams }
+  >({
+    query: eventCountQuery,
+    variables: {
+      filterParams: filterParams,
+    },
+  });
 
   useEffect(() => {
-    if (data?.event) {
-      setEvents([...data.event]);
-    }
-  }, [data]);
+    setPage(0);
+  }, [filterParams]);
 
   return (
     <FetchingState isFetching={fetching}>
       <GridHiddenScroll container sx={{ height: "inherit", overflowY: "auto" }}>
-        {events.map(({ id, name, type, location, timeAndDate }) => (
+        {data.event.map(({ id, name, type, location, timeAndDate }) => (
           <Grid key={id!} item sm={4} md={3}>
             <EventCard
               title={name!}
@@ -79,11 +88,11 @@ const Events = ({ filterParams = {} }: EventsProps) => {
         ))}
       </GridHiddenScroll>
       <Pagination
-        count={10}
-        page={page}
+        count={floor(dataCount.eventCount / EVENTS_PER_FETCH)}
+        page={page + 1}
         variant={"outlined"}
         color={"primary"}
-        onChange={(e_, page) => setPage(page)}
+        onChange={(e_, page) => setPage(page - 1)}
         shape="rounded"
       />
     </FetchingState>
