@@ -12,7 +12,9 @@ const eventResolvers: {
     event: async (parent, args, context, info) => {
       const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids } = args;
 
+      // Those are filters to query the mongo
       let { name, location, from, to } = filterParams;
+
       let filter = {
         ...(ids && { _id: { $in: ids } }),
         ...(name && { name: { $regex: name } }),
@@ -63,7 +65,7 @@ const eventResolvers: {
   },
   Mutation: {
     createEvent: async (parent, { inputEvent }, context, info) => {
-      const { name, location, timeAndDate, type } = inputEvent;
+      const { name, location, timeAndDate = 0, type } = inputEvent;
 
       try {
         const newEvent = await EventModel.create({

@@ -1,4 +1,3 @@
-import { useAuth } from "../hooks/authController/AuthContext";
 import { gql, useQuery } from "urql";
 import FetchingState from "../utils/fetchingState";
 import EventCard from "./EventCard/EventCard";
@@ -9,7 +8,6 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import { RoutePaths } from "../App";
-import FetchingState from "../utils/fetchingState";
 import {ceil, floor} from "lodash";
 
 const GridHiddenScroll = styled(Grid)({
