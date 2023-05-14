@@ -1,4 +1,3 @@
-import Events from "./components/Events";
 import { Box, Container } from "@mui/material";
 import Login from "./components/Login";
 import UserConfirmation from "./components/UserConfirmation";
@@ -17,6 +16,7 @@ import { Profile } from "./components/profile/Profile";
 import { MyEvents } from "./components/profile/MyEvents";
 import { useEffect } from "react";
 import { useAuth } from "./hooks/authController/AuthContext";
+import { EventsPage } from "./components/EventsPage/EventsPage";
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -41,11 +41,9 @@ const router = createBrowserRouter([
     element: (
       <>
         <Navbar />
-        <Box height="95%">
-          <Container sx={{ height: "inherit" }} maxWidth={"xl"}>
-            <Outlet />
-          </Container>
-        </Box>
+        <Container sx={{ height: "90%" }} maxWidth={"xl"}>
+          <Outlet />
+        </Container>
       </>
     ),
     children: [
@@ -61,7 +59,7 @@ const router = createBrowserRouter([
         path: RoutePaths.EVENTS,
         element: (
           <PrivateRoute>
-            <Events />
+            <EventsPage />
           </PrivateRoute>
         ),
       },

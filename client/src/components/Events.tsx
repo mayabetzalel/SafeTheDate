@@ -1,14 +1,14 @@
-import { useAuth } from "../hooks/authController/AuthContext";
 import { gql, useQuery } from "urql";
 import FetchingState from "../utils/fetchingState";
 import EventCard from "./EventCard/EventCard";
 import { graphql } from "../graphql";
 import { Event, Exact, FilterEventParams } from "../graphql/graphql";
-import { Grid } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { Grid, Pagination } from "@mui/material";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import { RoutePaths } from "../App";
+import {ceil, floor} from "lodash";
 
 const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
@@ -32,72 +32,70 @@ const eventQuery = graphql(`
   }
 `);
 
-const EVENTS_PER_FETCH = 10;
+const eventCountQuery = graphql(`
+  query eventCountQuery($filterParams: FilterEventParams) {
+    eventCount(filterParams: $filterParams)
+  }
+`);
+
+const EVENTS_PER_FETCH = 12;
 
 interface EventsProps {
   filterParams?: FilterEventParams;
 }
 
-const Events = (props: EventsProps) => {
-  const [skipNumber, setSkipNumber] = useState(0);
-  const [maxHeight, setMaxHeight] = useState(0);
-  const rootRef = useRef(null);
+const Events = ({ filterParams }: EventsProps) => {
+  const [page, setPage] = useState(0);
   const navigate = useNavigate();
-  const [events, setEvents] = useState<Exact<Event>[]>([]);
-  const [{ data, fetching, error }, reexecuteQuery] = useQuery<
+  const [{ data = { event: [] }, fetching, error }, reexecuteQuery] = useQuery<
     { event: Exact<Event>[] },
     { filterParams: FilterEventParams; skip: number; limit: number }
   >({
     query: eventQuery,
     variables: {
-      filterParams: props?.filterParams || {},
-      skip: skipNumber,
+      filterParams: filterParams || {},
+      skip: page * EVENTS_PER_FETCH,
       limit: EVENTS_PER_FETCH,
     },
   });
 
-  useEffect(() => {
-    if (data?.event) {
-      setEvents(() => [...events, ...data.event]);
-    }
-  }, [data]);
+  const [{ data: dataCount = {eventCount: 0} }] = useQuery<
+    { eventCount: number },
+    { filterParams: FilterEventParams }
+  >({
+    query: eventCountQuery,
+    variables: {
+      filterParams: filterParams || {},
+    },
+  });
 
   useEffect(() => {
-    reexecuteQuery();
-  }, [skipNumber]);
-
-  const onScroll = () => {
-    if (rootRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = rootRef.current;
-      if (
-        maxHeight < scrollHeight &&
-        scrollTop + clientHeight > scrollHeight - 10
-      ) {
-        setSkipNumber((prev) => prev + EVENTS_PER_FETCH);
-        setMaxHeight(scrollHeight);
-      }
-    }
-  };
+    setPage(0);
+  }, [filterParams]);
 
   return (
-    <GridHiddenScroll
-      container
-      spacing={3}
-      ref={rootRef}
-      onScroll={onScroll}
-      sx={{ height: "inherit", overflowY: "auto" }}
-    >
-      {events.map(({ id, name, type, location }) => (
-        <Grid key={id!} item sm={4} md={3}>
-          <EventCard
-            title={name!}
-            header={type!}
-            subhrader={location!}
-            onClick={() => navigate(`${RoutePaths.EVENT}/${id}`, {})}
-          />
-        </Grid>
-      ))}
-    </GridHiddenScroll>
+    <FetchingState isFetching={fetching}>
+      <GridHiddenScroll container sx={{ height: "inherit", overflowY: "auto" }}>
+        {data.event.map(({ id, name, type, location, timeAndDate }) => (
+          <Grid key={id!} item sm={4} md={3}>
+            <EventCard
+              title={name!}
+              header={type!}
+              subheader={location!}
+              onClick={() => navigate(`${RoutePaths.EVENT}/${id}`, {})}
+            />
+          </Grid>
+        ))}
+      </GridHiddenScroll>
+      <Pagination
+        count={floor(dataCount.eventCount / EVENTS_PER_FETCH)}
+        page={page + 1}
+        variant={"outlined"}
+        color={"primary"}
+        onChange={(e_, page) => setPage(page - 1)}
+        shape="rounded"
+      />
+    </FetchingState>
   );
 };
 
