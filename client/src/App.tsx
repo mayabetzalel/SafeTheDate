@@ -1,6 +1,6 @@
-import Events from "./components/Events";
 import { Box, Container } from "@mui/material";
 import Login from "./components/Login";
+import UserConfirmation from "./components/UserConfirmation";
 import Signup from "./components/Signup";
 import Navbar from "./components/AppBar/AppBar";
 import { RouterProvider, createBrowserRouter, Outlet } from "react-router-dom";
@@ -15,6 +15,9 @@ import {MyTickets} from "./components/profile/MyTickets";
 import {Profile} from "./components/profile/Profile";
 import {MyEvents} from "./components/profile/MyEvents";
 import SideChatbot from "./components/SideChatbot";
+import { EventsPage } from "./components/EventsPage/EventsPage";
+import { useAuth } from "./hooks/authController/AuthContext";
+import { useEffect } from "react";
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -31,6 +34,7 @@ export enum RoutePaths {
   MY_DETAILS = "/profile/details",
   EVENT = "/event",
   SCAN_EVENT = "/event/scan",
+  USER_CONFIRMATION = "/user-confirmation",
 }
 
 const router = createBrowserRouter([
@@ -38,11 +42,9 @@ const router = createBrowserRouter([
     element: (
       <>
         <Navbar />
-        <Box height="95%">
-          <Container sx={{ height: "inherit" }} maxWidth={"xl"}>
-            <Outlet />
-          </Container>
-        </Box>
+        <Container sx={{ height: "90%" }} maxWidth={"xl"}>
+          <Outlet />
+        </Container>
         <SideChatbot/>
       </>
     ),
@@ -59,7 +61,7 @@ const router = createBrowserRouter([
         path: RoutePaths.EVENTS,
         element: (
           <PrivateRoute>
-            <Events />
+            <EventsPage />
           </PrivateRoute>
         ),
       },
@@ -78,6 +80,10 @@ const router = createBrowserRouter([
             <CreateEvent />
           </PrivateRoute>
         ),
+      },
+      {
+        path: RoutePaths.USER_CONFIRMATION,
+        element: <UserConfirmation />,
       },
       {
         path: RoutePaths.IMPORT_TICKET,
@@ -158,16 +164,20 @@ const router = createBrowserRouter([
       {
         path: `${RoutePaths.EVENT}/:id`,
         element: (
-            <PrivateRoute>
-              <Event />
-            </PrivateRoute>
+          <PrivateRoute>
+            <Event />
+          </PrivateRoute>
         ),
-      }
+      },
     ],
   },
 ]);
 
 const App = () => {
+  const { checkIfSessionValid } = useAuth();
+  useEffect(() => {
+    checkIfSessionValid();
+  }, []);
   return <RouterProvider router={router} />;
 };
 

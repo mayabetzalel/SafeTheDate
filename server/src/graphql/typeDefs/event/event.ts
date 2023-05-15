@@ -3,7 +3,7 @@ export default  `
         id: String
         name: String
         location: String
-        timeAndDate: String
+        timeAndDate: Float
         type: String
         image: Upload
     }
@@ -13,7 +13,7 @@ export default  `
     input InputEvent {
         name: String!
         location: String!
-        timeAndDate: String!
+        timeAndDate: Float!
         type: String!
         image: Upload
     }
@@ -21,12 +21,16 @@ export default  `
     input FilterEventParams {
         name: String
         location: String
-        from: String
-        to: String
+        from: Float
+        to: Float
     }
 
     type Query {
-        event(filterParams: FilterEventParams, substringName: String, skip: Int, limit: Int, ids: [String]): [Event!]!
+        event(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String]): [Event!]!
+    }
+
+    type Query {
+        eventCount(filterParams: FilterEventParams, ids: [String]): Int!
     }
 
     type Mutation {

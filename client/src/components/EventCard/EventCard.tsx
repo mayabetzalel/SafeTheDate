@@ -1,6 +1,7 @@
 import Card from "@mui/material/Card";
 import {
   Avatar,
+  Box,
   CardContent,
   CardHeader,
   CardMedia,
@@ -11,7 +12,7 @@ const TICKET_HEIGHT = 250;
 
 interface TicketCardProps {
   header: string;
-  subhrader: string;
+  subheader: string;
   title: string;
   image?: string;
   onClick?: () => void;
@@ -21,27 +22,29 @@ const EventCard = ({
   header,
   title,
   image = "https://thumbs.dreamstime.com/b/nightclub-party-lightshow-18331890.jpg",
-  subhrader,
+  subheader,
   onClick,
 }: TicketCardProps) => {
   return (
-    <Card onClick={onClick} sx={{ cursor: onClick ? "pointer" : "default" }}>
-      <CardHeader
-        avatar={
-          <Avatar sx={(theme) => ({ bgcolor: theme.palette.secondary.main })}>
-            {title.charAt(0)}
-          </Avatar>
-        }
-        title={header}
-        subheader={subhrader}
-      />
-      <CardContent>
-        <Typography variant="h5" align={"center"}>
-          {title}
-        </Typography>
-      </CardContent>
-      <CardMedia sx={{ height: TICKET_HEIGHT }} image={image} />
-    </Card>
+    <Box padding={1}>
+      <Card onClick={onClick} sx={{ cursor: onClick ? "pointer" : "default" }}>
+        <CardHeader
+          avatar={
+            <Avatar sx={(theme) => ({ bgcolor: theme.palette.secondary.main })}>
+              {title.charAt(0)}
+            </Avatar>
+          }
+          title={header}
+          subheader={subheader}
+        />
+        <CardContent>
+          <Typography variant="h5" align={"center"}>
+            {title}
+          </Typography>
+        </CardContent>
+        <CardMedia sx={{ height: TICKET_HEIGHT }} image={image} />
+      </Card>
+    </Box>
   );
 };
 

@@ -5,14 +5,16 @@ const DEFAULT_LIMIT = 50;
 const FAILED_MUTATION_MESSAGE = "mutation createEvent failed";
 
 const eventResolvers: {
-  Query: Pick<QueryResolvers, "event">;
+  Query: Pick<QueryResolvers, "event" | "eventCount">;
   Mutation: Pick<MutationResolvers, "createEvent">;
 } = {
   Query: {
     event: async (parent, args, context, info) => {
       const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids } = args;
 
+      // Those are filters to query the mongo
       let { name, location, from, to } = filterParams;
+
       let filter = {
         ...(ids && { _id: { $in: ids } }),
         ...(name && { name: { $regex: name, $options : 'i' } }),
@@ -32,7 +34,7 @@ const eventResolvers: {
           events.map<Event>(({ name, location, timeAndDate, type, image, _id }) => ({
             name,
             location,
-            timeAndDate: timeAndDate.toString(),
+            timeAndDate: new Date(timeAndDate).getTime(),
             type,
             image,
             id: _id.toString(),
@@ -41,16 +43,36 @@ const eventResolvers: {
       
       return events;
     },
+    eventCount: async (parent, args, context, info) => {
+      const { filterParams = {}, ids } = args;
+
+      let { name, location, from, to } = filterParams;
+      let filter = {
+        ...(ids && { _id: { $in: ids } }),
+        ...(name && { name: { $regex: name } }),
+        ...(location && { location: { $regex: location } }),
+        ...((from || to) && {
+          timeAndDate: {
+            ...(from && { $gte: new Date(from) }),
+            ...(to && { $lt: new Date(to) }),
+          },
+        }),
+      };
+
+      return await EventModel.find(filter)
+        .count()
+        .exec();
+    },
   },
   Mutation: {
     createEvent: async (parent, { inputEvent }, context, info) => {
-      const { name, location, timeAndDate, type, image } = inputEvent;
+      const { name, location, timeAndDate = 0, type, image } = inputEvent;
 
       try {
         const newEvent = await EventModel.create({
           name,
           location,
-          timeAndDate,
+          timeAndDate: new Date(timeAndDate).toString(),
           type,
           image
         });

@@ -5,7 +5,6 @@ import { log } from "console";
 const { Wit } = require("node-wit");
 var _ = require("lodash");
 
-
 export default {
   Mutation: {
     chatCommand: async (

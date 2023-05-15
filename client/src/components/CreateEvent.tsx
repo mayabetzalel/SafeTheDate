@@ -53,11 +53,10 @@ const CREATE_EVENT_MUTATION = graphql(`
     const inputEvent: InputEvent = {
       name: eventNameRef.current?.value || "",
       location: eventLocationRef.current?.value || "",
-      timeAndDate: eventTimeAndDateRef.current?.value || "",
+      timeAndDate: Date.parse(eventTimeAndDateRef.current?.value || new Date().toString()),
       type: eventTypeRef.current?.value || "",
       image: image || ""
     };
-
 
     // Call the createEvent mutation with the inputEvent object
     createEvent({inputEvent}).then((result) => {
@@ -66,7 +65,7 @@ const CREATE_EVENT_MUTATION = graphql(`
         enqueueSnackbar("An error occurred", { variant: "error" });
       } else {
         navigate("/");
-        enqueueSnackbar("Event created successfully", {variant: 'success'});
+        enqueueSnackbar("Event created successfully", { variant: "success" });
         console.log("Event created:", result.data?.createEvent);
       }
     });
@@ -89,13 +88,13 @@ const CREATE_EVENT_MUTATION = graphql(`
                   <TextField
                     fullWidth
                     placeholder="Name of Event"
-                    color={'secondary'}
+                    color={"secondary"}
                     inputRef={eventNameRef}
                     variant="outlined"
                     InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start"></InputAdornment>
-                ),
+                      startAdornment: (
+                        <InputAdornment position="start"></InputAdornment>
+                      ),
                     }}
                   />
                 </Grid>
@@ -108,13 +107,13 @@ const CREATE_EVENT_MUTATION = graphql(`
                   <TextField
                     fullWidth
                     placeholder="Location"
-                    color={'secondary'}
+                    color={"secondary"}
                     inputRef={eventLocationRef}
                     variant="outlined"
                     InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start"></InputAdornment>
-                ),
+                      startAdornment: (
+                        <InputAdornment position="start"></InputAdornment>
+                      ),
                     }}
                   />
                 </Grid>
@@ -127,14 +126,14 @@ const CREATE_EVENT_MUTATION = graphql(`
                   <TextField
                     fullWidth
                     placeholder="Time and Date"
-                    color={'secondary'}
+                    color={"secondary"}
                     inputRef={eventTimeAndDateRef}
                     variant="outlined"
                     type="datetime-local"
                     InputProps={{
                       startAdornment: (
-                  <InputAdornment position="start"></InputAdornment>
-                ),
+                        <InputAdornment position="start"></InputAdornment>
+                      ),
                     }}
                   />
                 </Grid>
@@ -146,14 +145,14 @@ const CREATE_EVENT_MUTATION = graphql(`
                 <Grid item xs={5}>
                   <TextField
                     fullWidth
-                    color={'secondary'}
+                    color={"secondary"}
                     placeholder="Type of Event"
                     inputRef={eventTypeRef}
                     variant="outlined"
                     InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start"></InputAdornment>
-                ),
+                      startAdornment: (
+                        <InputAdornment position="start"></InputAdornment>
+                      ),
                     }}
                   />
                 </Grid>
