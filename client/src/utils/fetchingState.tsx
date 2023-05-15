@@ -1,3 +1,4 @@
+'@typescript-eslint/no-explicit-any'
 import { useSnackbar } from "notistack"
 import React from "react"
 import Spinner from "./spinner"

@@ -47,7 +47,7 @@ const PaymentForm = ({
         }, function(err, data) {
           debugger
             if (err) throw err
-
+          
             const inputTicket: InputTicket = {
               _id: "1",
               userId: "1",

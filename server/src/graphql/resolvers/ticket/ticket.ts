@@ -1,5 +1,6 @@
 import { QueryResolvers, MutationResolvers, Ticket } from "../../typeDefs"
 import { Ticket as TicketModel } from "../../../../mongo/models/Ticket"
+import mongoose from 'mongoose';
 
 const DEFAULT_LIMIT = 50
 const FAILED_MUTATION_MESSAGE = "mutation createTicket failed"
@@ -13,17 +14,24 @@ const ticketResolvers: {
         userId,
         eventId,
         barcode } = inputTicket
-        console.log("here in server")
       try {
-        console.log("hererererererere")
-        const newTicket = await TicketModel.create({
-            _id,
-            userId,
-            eventId,
-            barcode
+
+        const ticket = {
+          _id: 1,
+          userId: 1,
+          eventId: 1,
+          barcode: barcode 
+        }
+        const newTicket = await TicketModel.create({ _id: new mongoose.Types.ObjectId(),
+          userId: new mongoose.Types.ObjectId(),
+          eventId: new mongoose.Types.ObjectId(),
+          barcode: barcode
         })
+        console.log("Ticket created: " + newTicket)
         return { message: "ticket created succesfully", code: 200 }
-      } catch {
+      } catch(error) {
+        debugger
+        console.log("failed with " + error)
         return { message: FAILED_MUTATION_MESSAGE, code: 500 }
       }
     },
