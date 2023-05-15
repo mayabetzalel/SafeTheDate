@@ -31,6 +31,8 @@ const PaymentForm = ({
   const [success, setSuccess] = useState(false)
   const [createTicket, setCreateTicket] = useState(false)
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
+  const [ user, setCurrentUser] = useState<any[]>([])
   const [CreateTicketResult, CreateTicket] = useMutation<
         {
             CreateTicket: MutationResponse
@@ -39,22 +41,25 @@ const PaymentForm = ({
       >(CREATE_TICKET_MUTATION)
 
   useEffect(() => {
-    if(createTicket) {
-      debugger;
+    if(createTicket && currentUser) {
+      setCurrentUser(currentUser || [])
       QRCode.toString("value", {
         errorCorrectionLevel: 'H',
         type: 'svg'
         }, function(err, data) {
-          debugger
             if (err) throw err
           
+            const url = window.location.href
+            const splittedUrl = url.lastIndexOf("/")
+            
             const inputTicket: InputTicket = {
               _id: "1",
-              userId: "1",
-              eventId: "1",
+              userId: currentUser['_id'] || "",
+              eventId: url.slice(splittedUrl + 1),
               barcode: data
             }
 
+            debugger
             console.log(data)
             CreateTicket({ inputTicket }).then((result) => {
               if (result.error) {
