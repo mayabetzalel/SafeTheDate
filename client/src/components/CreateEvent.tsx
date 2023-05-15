@@ -1,9 +1,9 @@
-import { useRef } from "react"
-import { useNavigate } from "react-router-dom"
-import { useMutation } from "urql"
-import { useSnackbar } from "notistack"
-import { graphql } from "../graphql"
-import { InputEvent, MutationResponse, Event } from "../graphql/graphql"
+import { useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "urql";
+import { useSnackbar } from "notistack";
+import { graphql } from "../graphql";
+import { InputEvent, MutationResponse, Event } from "../graphql/graphql";
 import {
   Card,
   CardContent,
@@ -14,7 +14,7 @@ import {
   Stack,
   Paper,
   InputAdornment,
-} from "@mui/material"
+} from "@mui/material";
 
 const CREATE_EVENT_MUTATION = graphql(`
   mutation CreateEvent($inputEvent: InputEvent!) {
@@ -23,19 +23,19 @@ const CREATE_EVENT_MUTATION = graphql(`
       code
     }
   }
-`)
+`);
 
 export const CreateEvent = () => {
-  const eventNameRef = useRef<HTMLInputElement | null>()
-  const eventLocationRef = useRef<HTMLInputElement | null>()
-  const eventTimeAndDateRef = useRef<HTMLInputElement | null>()
-  const eventTypeRef = useRef<HTMLInputElement | null>()
-  const { enqueueSnackbar } = useSnackbar()
-  const navigate = useNavigate()
+  const eventNameRef = useRef<HTMLInputElement | null>();
+  const eventLocationRef = useRef<HTMLInputElement | null>();
+  const eventTimeAndDateRef = useRef<HTMLInputElement | null>();
+  const eventTypeRef = useRef<HTMLInputElement | null>();
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const [createEventResult, createEvent] = useMutation<
     {
-      createEvent: MutationResponse
+      createEvent: MutationResponse;
     },
     { inputEvent: InputEvent }
   >(CREATE_EVENT_MUTATION);
@@ -46,19 +46,19 @@ export const CreateEvent = () => {
       location: eventLocationRef.current?.value || "",
       timeAndDate: Date.parse(eventTimeAndDateRef.current?.value || new Date().toString()),
       type: eventTypeRef.current?.value || "",
-    }
+    };
 
     // Call the createEvent mutation with the inputEvent object
     createEvent({ inputEvent }).then((result) => {
       if (result.error) {
-        console.error("Error creating event:", result.error)
-        enqueueSnackbar("An error occurred", { variant: "error" })
+        console.error("Error creating event:", result.error);
+        enqueueSnackbar("An error occurred", { variant: "error" });
       } else {
         navigate("/");
         enqueueSnackbar("Event created successfully", { variant: "success" });
         console.log("Event created:", result.data?.createEvent);
       }
-    })
+    });
   }
 
   return (
@@ -172,5 +172,5 @@ export const CreateEvent = () => {
         </Grid>
       </Grid>
     </Stack>
-  )
-}
+  );
+};

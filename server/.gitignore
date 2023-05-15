@@ -1,5 +1,5 @@
 # generated types file
-
+src/graphql/typeDefs/index.ts
 
 # dependencies
 /dist

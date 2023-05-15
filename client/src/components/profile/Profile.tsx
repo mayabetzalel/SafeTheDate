@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom"
 import { Box, Divider, Grid, Stack } from "@mui/material"
 import NavigationTypography from "../AppBar/NavigationTypography/NavigationTypography"
 import { RoutePaths } from "../../App"
-import { useAuth } from "../../hooks/userController/userContext"  
+import { useAuth } from "../../hooks/authController/AuthContext"  
 
 export const Profile = () => {
 

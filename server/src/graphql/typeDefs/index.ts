@@ -29,21 +29,21 @@ export type Event = {
   id?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
-  timeAndDate?: Maybe<Scalars['String']>;
+  timeAndDate?: Maybe<Scalars['Float']>;
   type?: Maybe<Scalars['String']>;
 };
 
 export type FilterEventParams = {
-  from?: InputMaybe<Scalars['String']>;
+  from?: InputMaybe<Scalars['Float']>;
   location?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
-  to?: InputMaybe<Scalars['String']>;
+  to?: InputMaybe<Scalars['Float']>;
 };
 
 export type InputEvent = {
   location: Scalars['String'];
   name: Scalars['String'];
-  timeAndDate: Scalars['String'];
+  timeAndDate: Scalars['Float'];
   type: Scalars['String'];
 };
 
@@ -89,6 +89,7 @@ export type MutationResponse = {
 export type Query = {
   __typename?: 'Query';
   event: Array<Event>;
+  eventCount: Scalars['Int'];
   query?: Maybe<Scalars['String']>;
 };
 
@@ -98,7 +99,12 @@ export type QueryEventArgs = {
   ids?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   limit?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
-  substringName?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryEventCountArgs = {
+  filterParams?: InputMaybe<FilterEventParams>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 export type Ticket = {
@@ -184,6 +190,7 @@ export type ResolversTypes = {
   ChatResponse: ResolverTypeWrapper<ChatResponse>;
   Event: ResolverTypeWrapper<Event>;
   FilterEventParams: FilterEventParams;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   InputEvent: InputEvent;
   InputMessage: InputMessage;
@@ -202,6 +209,7 @@ export type ResolversParentTypes = {
   ChatResponse: ChatResponse;
   Event: Event;
   FilterEventParams: FilterEventParams;
+  Float: Scalars['Float'];
   ID: Scalars['ID'];
   InputEvent: InputEvent;
   InputMessage: InputMessage;
@@ -228,7 +236,7 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  timeAndDate?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  timeAndDate?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -247,6 +255,7 @@ export type MutationResponseResolvers<ContextType = any, ParentType extends Reso
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   event?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventArgs>>;
+  eventCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<QueryEventCountArgs>>;
   query?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 };
 

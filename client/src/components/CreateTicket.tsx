@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import { graphql } from "../graphql"
 import QRCode from 'qrcode'
 import { useMutation } from "urql"
-import { useAuth } from "../hooks/userController/userContext"  
+import { useAuth } from "../hooks/authController/AuthContext"  
 import { InputTicket, MutationResponse, Ticket } from "../graphql/graphql"
 import { useSnackbar } from "notistack"
 import { useNavigate } from "react-router-dom"

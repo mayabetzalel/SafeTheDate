@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js"
 import { useSnackbar } from "notistack"
 // import CreateTicket from "../CreateTicket"
-import { useAuth } from "../../hooks/userController/userContext"  
+import { useAuth } from "../../hooks/authController/AuthContext"  
 /* eslint-disable no-debugger */
 import { useNavigate } from "react-router-dom"
 import { InputTicket, MutationResponse, Ticket } from "../../graphql/graphql"
@@ -35,7 +35,7 @@ const PaymentForm = ({
         {
             CreateTicket: MutationResponse
         },
-        InputTicket
+        { inputTicket: InputTicket }
       >(CREATE_TICKET_MUTATION)
 
   useEffect(() => {
