@@ -29,15 +29,17 @@ axios.interceptors.response.use(
   }
 );
 
+const prefix = process.env.REACT_APP_BACKEND_AUTH_URL + "/api/auth";
+
 const REST_API = {
   auth: {
-    signInWithEmailAndPassword: "http://localhost:5000/api/auth/login",
-    getCurrentSession: "http://localhost:5000/api/auth/session",
-    confirmMail: "http://localhost:5000/api/auth/confirm",
-    regenerateAccessToken: "http://localhost:5000/api/auth/token",
-    signUpWithEmailAndPassword: "http://localhost:5000/api/auth/register",
-    loginAuthWithGoogle: "http://localhost:5000/api/auth/google/login",
-    logout: "http://localhost:5000/api/auth/logout",
+    signInWithEmailAndPassword: prefix + "/login",
+    getCurrentSession: prefix + "/session",
+    confirmMail: prefix + "/confirm",
+    regenerateAccessToken: prefix + "/token",
+    signUpWithEmailAndPassword: prefix + "/register",
+    loginAuthWithGoogle: prefix + "/google/login",
+    logout: prefix + "/logout",
   },
 };
 
