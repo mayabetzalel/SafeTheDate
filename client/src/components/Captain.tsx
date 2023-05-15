@@ -61,7 +61,7 @@ export default function Captain() {
 
   return (
     <div>
-      <Typography variant="h4" style={{fontFamily: "bold"}}>Captian</Typography>
+      <Typography variant="h4" style={{fontFamily: "bold"}}>Captain</Typography>
       <Chatbot handleMessageComplete={handleComplete} messages={messages} />
     </div>
 
