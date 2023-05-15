@@ -49,12 +49,12 @@ export default function Captain() {
       if (result.error) {
         console.error("Error generating chat reponse:", result.error);
       } else {
-        const { eventName: name, location, from, to } = result.data.chatCommand;
+        const { eventName: name, location, from, to, type } = result.data.chatCommand;
 
         const eventFilters = { name, location, from, to };
 
         setEventFilter(_.pickBy(eventFilters, _.isString));
-        setMessages(prev => ([...prev, { messageData: result.data.chatCommand.responseMessage, direction: "incoming" }]));
+        setMessages(prev => ([...prev, {type, messageData: result.data.chatCommand.responseMessage, direction: "incoming" }]));
       }
     });
   }

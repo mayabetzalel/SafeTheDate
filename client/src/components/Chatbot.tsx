@@ -14,7 +14,7 @@ import { RoutePaths } from "../App";
 
 export interface chatbotProps {
     handleMessageComplete: (message: string) => void;
-    messages: { messageData: string, direction: MessageDirection }[]
+    messages: { messageData: string, direction: MessageDirection, type?: string }[]
 }
 //"incoming"
 export function Chatbot(props: chatbotProps) {
@@ -36,7 +36,7 @@ export function Chatbot(props: chatbotProps) {
                                     key={index + message.messageData}
                                     model={{ message: message.messageData, direction: message.direction, position: "first" }}
                                 />
-                                {message.direction == "incoming" && <Button onClick={handleClick}>Press to see events</Button>}
+                                {message.direction == "incoming" && message?.type === "get_event" && <Button onClick={handleClick}>Press to see events</Button>}
                             </>
 
                         )}
