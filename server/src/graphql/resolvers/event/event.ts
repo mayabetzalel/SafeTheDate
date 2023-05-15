@@ -1,18 +1,18 @@
-import { QueryResolvers, MutationResolvers, Event } from "../../typeDefs";
-import { Event as EventModel } from "../../../../mongo/models/Event";
+import { QueryResolvers, MutationResolvers, Event } from "../../typeDefs"
+import { Event as EventModel } from "../../../../mongo/models/Event"
 
-const DEFAULT_LIMIT = 50;
-const FAILED_MUTATION_MESSAGE = "mutation createEvent failed";
+const DEFAULT_LIMIT = 50
+const FAILED_MUTATION_MESSAGE = "mutation createEvent failed"
 
 const eventResolvers: {
-  Query: Pick<QueryResolvers, "event">;
-  Mutation: Pick<MutationResolvers, "createEvent">;
+  Query: Pick<QueryResolvers, "event">
+  Mutation: Pick<MutationResolvers, "createEvent">
 } = {
   Query: {
     event: async (parent, args, context, info) => {
-      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids } = args;
+      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids } = args
 
-      let { name, location, from, to } = filterParams;
+      let { name, location, from, to } = filterParams
       let filter = {
         ...(ids && { _id: { $in: ids } }),
         ...(name && { name: { $regex: name } }),
@@ -23,7 +23,7 @@ const eventResolvers: {
             ...(to && { $lt: new Date(to) }),
           },
         }),
-      };
+      }
 
       const events = await EventModel.find(filter)
         .skip(skip)
@@ -36,14 +36,14 @@ const eventResolvers: {
             type,
             id: _id.toString(),
           }))
-        );
+        )
 
-      return events;
+      return events
     },
   },
   Mutation: {
     createEvent: async (parent, { inputEvent }, context, info) => {
-      const { name, location, timeAndDate, type } = inputEvent;
+      const { name, location, timeAndDate, type } = inputEvent
 
       try {
         const newEvent = await EventModel.create({
@@ -51,13 +51,13 @@ const eventResolvers: {
           location,
           timeAndDate,
           type,
-        });
-        return { message: "event created succesfully", code: 200 };
+        })
+        return { message: "event created succesfully", code: 200 }
       } catch {
-        return { message: FAILED_MUTATION_MESSAGE, code: 500 };
+        return { message: FAILED_MUTATION_MESSAGE, code: 500 }
       }
     },
   },
-};
+}
 
-export default eventResolvers;
+export default eventResolvers

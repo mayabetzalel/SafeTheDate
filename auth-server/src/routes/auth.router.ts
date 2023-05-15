@@ -1,20 +1,20 @@
-import express, { Response } from "express";
-import { Types } from "mongoose";
+import express, { Response } from "express"
+import { Types } from "mongoose"
 import {
   ACCESS_TOKEN_COOKIE_NAME,
   REFRESH_TOKEN_COOKIE_NAME,
-} from "../constants";
-import { ConfirmDTO } from "../dto-types/confirm.req";
-import { LoginDTO } from "../dto-types/login.req";
-import { RegisterDTO } from "../dto-types/register.req";
-import { TokenRequestDTO } from "../dto-types/token.req";
-import { TokensPack } from "../dto-types/tokensPack";
-import { useAuth } from "../middlewares/AuthMiddelwares";
-import { useValidateBodyDto } from "../middlewares/useValidation";
-import { authService } from "../services/auth.service";
-import { FunctionalityError, serverErrorCodes } from "../utils/error";
-import { HttpStatus } from "../utils/types";
-import { IUser } from "mongo/models/User";
+} from "../constants"
+import { ConfirmDTO } from "../dto-types/confirm.req"
+import { LoginDTO } from "../dto-types/login.req"
+import { RegisterDTO } from "../dto-types/register.req"
+import { TokenRequestDTO } from "../dto-types/token.req"
+import { TokensPack } from "../dto-types/tokensPack"
+import { useAuth } from "../middlewares/AuthMiddelwares"
+import { useValidateBodyDto } from "../middlewares/useValidation"
+import { authService } from "../services/auth.service"
+import { FunctionalityError, serverErrorCodes } from "../utils/error"
+import { HttpStatus } from "../utils/types"
+import { IUser } from "mongo/models/User"
 
 function configureTokensCookie(res: Response, tokens: TokensPack) {
   res.cookie(REFRESH_TOKEN_COOKIE_NAME, tokens.refreshToken, {
@@ -23,7 +23,7 @@ function configureTokensCookie(res: Response, tokens: TokensPack) {
     domain: process.env.COOKIE_DOMAIN,
     expires: tokens.refreshExpiryDate,
     sameSite: "strict",
-  });
+  })
 
   res.cookie(ACCESS_TOKEN_COOKIE_NAME, tokens.accessToken, {
     httpOnly: true,
@@ -31,10 +31,10 @@ function configureTokensCookie(res: Response, tokens: TokensPack) {
     maxAge: tokens.expiresIn * 1000,
     sameSite: "strict",
     path: "/"
-  });
+  })
 }
 
-const router = express.Router();
+const router = express.Router()
 
 router.post("/register", useValidateBodyDto(RegisterDTO), (req, res, next) => {
   authService
@@ -44,44 +44,44 @@ router.post("/register", useValidateBodyDto(RegisterDTO), (req, res, next) => {
       const tokens = response[1]
       const user = response[2]
       if (errors.length > 0) {
-        res.status(HttpStatus.BAD_REQUEST).send(errors);
+        res.status(HttpStatus.BAD_REQUEST).send(errors)
       } else {
-        configureTokensCookie(res, tokens);
+        configureTokensCookie(res, tokens)
         res.header({ "withCredentials" : true })
-        res.header({ "Access-Control-Allow-Credentials": true });
-        res.header('Access-Control-Allow-Origin', req.headers.origin);
-        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
-        res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-        res.status(HttpStatus.CREATED).json(user);
+        res.header({ "Access-Control-Allow-Credentials": true })
+        res.header('Access-Control-Allow-Origin', req.headers.origin)
+        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS')
+        res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept')
+        res.status(HttpStatus.CREATED).json(user)
       }
     })
-    .catch(next);
-});
+    .catch(next)
+})
 
 
 router.post("/token", (req, res, next) => {
   try {
-    const refreshToken = (req.cookies ?? {})[REFRESH_TOKEN_COOKIE_NAME];
+    const refreshToken = (req.cookies ?? {})[REFRESH_TOKEN_COOKIE_NAME]
 
     if (!refreshToken) {
       throw new FunctionalityError(
         serverErrorCodes.NoSuchRefreshToken,
         [],
         HttpStatus.FORBIDDEN
-      );
+      )
     }
 
     authService
       .regenerateAccessToken(refreshToken)
       .then((tokens) => {
-        configureTokensCookie(res, tokens);
-        res.sendStatus(HttpStatus.OK);
+        configureTokensCookie(res, tokens)
+        res.sendStatus(HttpStatus.OK)
       })
-      .catch(next);
+      .catch(next)
   } catch (e) {
-    next(e);
+    next(e)
   }
-});
+})
 
 router.post("/login", useValidateBodyDto(LoginDTO), (req, res, next) => {
   authService
@@ -89,26 +89,26 @@ router.post("/login", useValidateBodyDto(LoginDTO), (req, res, next) => {
     .then((response) => {
       const tokens = response[0]
       const user = response[1]
-      configureTokensCookie(res, tokens);
+      configureTokensCookie(res, tokens)
       res.header({ "withCredentials" : true })
-      res.header({ "Access-Control-Allow-Credentials": true });
-      res.header('Access-Control-Allow-Origin', req.headers.origin);
-      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-      res.status(HttpStatus.CREATED).json(user);
+      res.header({ "Access-Control-Allow-Credentials": true })
+      res.header('Access-Control-Allow-Origin', req.headers.origin)
+      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS')
+      res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept')
+      res.status(HttpStatus.CREATED).json(user)
     })
-    .catch(next);
-});
+    .catch(next)
+})
 
 router.post("/logout", (req, res, next) => {
-});
+})
 
 router.put("/confirm", useValidateBodyDto(ConfirmDTO), (req, res, next) => {
   authService
     .confirmUser(new Types.ObjectId((req.body as ConfirmDTO).confirmId))
     .then((_) => res.sendStatus(HttpStatus.OK))
-    .catch(next);
-});
+    .catch(next)
+})
 
 
-export default router;
+export default router

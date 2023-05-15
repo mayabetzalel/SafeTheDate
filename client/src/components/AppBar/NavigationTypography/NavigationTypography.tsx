@@ -1,12 +1,12 @@
-import { Grid, Typography, TypographyProps } from "@mui/material";
-import { RoutePaths } from "../../../App";
-import * as React from "react";
-import { useLocation, useNavigate, useNavigation } from "react-router-dom";
-import { useTheme } from "@mui/material/styles";
-import { useCallback } from "react";
+import { Grid, Typography, TypographyProps } from "@mui/material"
+import { RoutePaths } from "../../../App"
+import * as React from "react"
+import { useLocation, useNavigate, useNavigation } from "react-router-dom"
+import { useTheme } from "@mui/material/styles"
+import { useCallback } from "react"
 
 interface NavigationTypographyProps extends TypographyProps {
-  route: RoutePaths;
+  route: RoutePaths
 }
 
 const NavigationTypography = ({
@@ -14,15 +14,15 @@ const NavigationTypography = ({
   children,
   ...other
 }: NavigationTypographyProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const theme = useTheme();
+  const navigate = useNavigate()
+  const location = useLocation()
+  const theme = useTheme()
 
   const getColor = useCallback(() => {
     return location?.pathname == route
       ? theme.palette.secondary.main
-      : theme.palette.primary.main;
-  }, [location]);
+      : theme.palette.primary.main
+  }, [location])
 
   return (
     <Typography
@@ -34,7 +34,7 @@ const NavigationTypography = ({
     >
       {children}
     </Typography>
-  );
-};
+  )
+}
 
-export default NavigationTypography;
+export default NavigationTypography

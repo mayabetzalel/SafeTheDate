@@ -1,4 +1,4 @@
-import { WitIntent } from "../graphql/resolvers/chat/chat";
+import { WitIntent } from "../graphql/resolvers/chat/chat"
 
 export default {
     ["get_event" as WitIntent]: {

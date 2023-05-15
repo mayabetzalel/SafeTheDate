@@ -1,20 +1,20 @@
-import Card from "@mui/material/Card";
+import Card from "@mui/material/Card"
 import {
   Avatar,
   CardContent,
   CardHeader,
   CardMedia,
   Typography,
-} from "@mui/material";
+} from "@mui/material"
 
-const TICKET_HEIGHT = 250;
+const TICKET_HEIGHT = 250
 
 interface TicketCardProps {
-  header: string;
-  subhrader: string;
-  title: string;
-  image?: string;
-  onClick?: () => void;
+  header: string
+  subhrader: string
+  title: string
+  image?: string
+  onClick?: () => void
 }
 
 const EventCard = ({
@@ -42,7 +42,7 @@ const EventCard = ({
       </CardContent>
       <CardMedia sx={{ height: TICKET_HEIGHT }} image={image} />
     </Card>
-  );
-};
+  )
+}
 
-export default EventCard;
+export default EventCard

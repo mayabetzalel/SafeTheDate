@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios'
 
 const REST_API = {
     auth: {
@@ -16,7 +16,7 @@ const backendAPI = {
           password
         },{
           withCredentials: true 
-        });
+        })
       },
 
       async signUpWithEmailAndPassword(email: string, username: string, firstName: string, 
@@ -29,7 +29,7 @@ const backendAPI = {
           password: password
         },{
           withCredentials: true 
-        });
+        })
       },
 
       async logOut() {
@@ -47,4 +47,4 @@ const backendAPI = {
     }
 }
 
-export default backendAPI;
+export default backendAPI

@@ -1,34 +1,34 @@
 /* eslint-disable no-debugger */
-import * as React from 'react';
-import axios from 'axios';
-import { useRef, useState, useEffect } from "react";
-import LockOutlinedIcon from "@mui/icons-material/Lock";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import { useTheme } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
-import { useSnackbar } from "notistack";
-import { RoutePaths } from "../App";
-import { useAuth } from "../hooks/userController/userContext";
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { GoogleLogin, useGoogleLogin  } from '@react-oauth/google';
+import * as React from 'react'
+import axios from 'axios'
+import { useRef, useState, useEffect } from "react"
+import LockOutlinedIcon from "@mui/icons-material/Lock"
+import FormControlLabel from "@mui/material/FormControlLabel"
+import Checkbox from "@mui/material/Checkbox"
+import { useTheme } from "@mui/material/styles"
+import { useNavigate } from "react-router-dom"
+import { useSnackbar } from "notistack"
+import { RoutePaths } from "../App"
+import { useAuth } from "../hooks/userController/userContext"
+import Avatar from '@mui/material/Avatar'
+import Button from '@mui/material/Button'
+import CssBaseline from '@mui/material/CssBaseline'
+import TextField from '@mui/material/TextField'
+import Link from '@mui/material/Link'
+import Paper from '@mui/material/Paper'
+import Box from '@mui/material/Box'
+import Grid from '@mui/material/Grid'
+import Typography from '@mui/material/Typography'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { GoogleLogin, useGoogleLogin  } from '@react-oauth/google'
 
 const Login = () => {
-  const email: React.MutableRefObject<any> = useRef(null);
-  const password: React.MutableRefObject<any> = useRef(null);
-  const { signIn } = useAuth();
-  const theme = useTheme();
-  const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
+  const email: React.MutableRefObject<any> = useRef(null)
+  const password: React.MutableRefObject<any> = useRef(null)
+  const { signIn } = useAuth()
+  const theme = useTheme()
+  const { enqueueSnackbar } = useSnackbar()
+  const navigate = useNavigate()
   const { logWithGoogle } = useAuth()
 
   const loginUserWithGoogle = useGoogleLogin({
@@ -42,25 +42,25 @@ const Login = () => {
       enqueueSnackbar(error.message, { variant: "error" })
       console.log('Login Failed:', error)
     }
-  });
+  })
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
     console.log({
       email: data.get('email'),
       password: data.get('password'),
-    });
+    })
     try {
       await signIn(data.get('email') as string, data.get('password') as string)
       console.log("here again")
-      enqueueSnackbar("Successful log in!", { variant: "success" });
-      navigate("/");
+      enqueueSnackbar("Successful log in!", { variant: "success" })
+      navigate("/")
     } catch (error: any) {
-      enqueueSnackbar("Could not log in " + error.message, { variant: "error" });
-      navigate("/login");
+      enqueueSnackbar("Could not log in " + error.message, { variant: "error" })
+      navigate("/login")
     }
-  };
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -162,7 +162,7 @@ const Login = () => {
         </Grid>
       </Grid>
     </ThemeProvider>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

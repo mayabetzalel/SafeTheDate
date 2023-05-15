@@ -2,11 +2,11 @@
 /* eslint-disable no-useless-catch */
 /* eslint-disable @typescript-eslint/no-empty-function */
 
-import { AnyCnameRecord } from 'dns';
-import backendAPI from '../../api';
-import React, { useState, useContext, createContext, useEffect } from 'react';
-import { useCookies } from 'react-cookie';
-import { googleLogout } from '@react-oauth/google';
+import { AnyCnameRecord } from 'dns'
+import backendAPI from '../../api'
+import React, { useState, useContext, createContext, useEffect } from 'react'
+import { useCookies } from 'react-cookie'
+import { googleLogout } from '@react-oauth/google'
 
 
 const AuthContext = createContext({
@@ -19,19 +19,19 @@ const AuthContext = createContext({
   getUser: () => {},
   getUserProfilePicture: () => { },
   logWithGoogle: (user: any) => {}
-});
+})
 
 export function useAuth() {
-  return useContext(AuthContext);
+  return useContext(AuthContext)
 }
 
 export const AuthContextProvider = ({ children }: { children: JSX.Element }) => {  
-  const [isFromGoogle, setIsFromGoogle] = useState(false);
-  const [cookies, setCookie, removeCookie] = useCookies(['user-session']);
-  const [currentUser, setCurrentUser] = useState(cookies['user-session']);
+  const [isFromGoogle, setIsFromGoogle] = useState(false)
+  const [cookies, setCookie, removeCookie] = useCookies(['user-session'])
+  const [currentUser, setCurrentUser] = useState(cookies['user-session'])
   const [userProfilePicture, setUserProfilePicture] = useState(
     'https://source.unsplash.com/xpTsS9PJMXQ'
-  );
+  )
 
   async function logWithGoogle(accessToken: string) {
     try {
@@ -80,8 +80,8 @@ export const AuthContextProvider = ({ children }: { children: JSX.Element }) => 
   }
 
   async function signOut() {
-    setCurrentUser(null);
-    removeCookie('user-session');
+    setCurrentUser(null)
+    removeCookie('user-session')
     if(isFromGoogle)
       googleLogout()
     else
@@ -89,15 +89,15 @@ export const AuthContextProvider = ({ children }: { children: JSX.Element }) => 
   }
 
   function isUserSignedIn() {
-    return currentUser != null;
+    return currentUser != null
   }
 
   function getUser() {
-    return currentUser;
+    return currentUser
   }
 
   function getUserProfilePicture() {
-    return userProfilePicture;
+    return userProfilePicture
   }
 
   const value = {
@@ -109,9 +109,9 @@ export const AuthContextProvider = ({ children }: { children: JSX.Element }) => 
     getUser,
     getUserProfilePicture,
     logWithGoogle
-  };
+  }
   
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-export default AuthContext;
+export default AuthContext

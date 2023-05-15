@@ -1,12 +1,12 @@
-import { Outlet } from "react-router-dom";
-import { Box, Divider, Grid, Stack } from "@mui/material";
-import NavigationTypography from "../AppBar/NavigationTypography/NavigationTypography";
-import { RoutePaths } from "../../App";
+import { Outlet } from "react-router-dom"
+import { Box, Divider, Grid, Stack } from "@mui/material"
+import NavigationTypography from "../AppBar/NavigationTypography/NavigationTypography"
+import { RoutePaths } from "../../App"
 import { useAuth } from "../../hooks/userController/userContext"  
 
 export const Profile = () => {
 
-  const { currentUser } = useAuth();
+  const { currentUser } = useAuth()
 
   return (
     !currentUser ?
@@ -80,11 +80,11 @@ export const Profile = () => {
           }}
         />
         <img src={currentUser['picture']} width="500" height="300"></img>
-        <h1> { currentUser['firstName']} &nbsp; {currentUser['lastName'] }</h1>
+        <h1> { currentUser['firstName']} &nbsp {currentUser['lastName'] }</h1>
         <h1> { currentUser['username'] } </h1>
         <h1> { currentUser['email'] }</h1>
       </div>
 
     </Box >
-  );
+  )
 }

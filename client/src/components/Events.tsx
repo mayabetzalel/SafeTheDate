@@ -1,21 +1,21 @@
 
-import { useAuth } from "../hooks/userController/userContext";
-import { gql, useQuery } from "urql";
-import FetchingState from "../utils/fetchingState";
-import EventCard from "./EventCard/EventCard";
-import { graphql } from "../graphql";
-import { Event, Exact, FilterEventParams } from "../graphql/graphql";
-import { Grid } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
-import styled from "@emotion/styled";
-import {useNavigate} from "react-router-dom";
-import {RoutePaths} from "../App";
+import { useAuth } from "../hooks/userController/userContext"
+import { gql, useQuery } from "urql"
+import FetchingState from "../utils/fetchingState"
+import EventCard from "./EventCard/EventCard"
+import { graphql } from "../graphql"
+import { Event, Exact, FilterEventParams } from "../graphql/graphql"
+import { Grid } from "@mui/material"
+import { useEffect, useRef, useState } from "react"
+import styled from "@emotion/styled"
+import {useNavigate} from "react-router-dom"
+import {RoutePaths} from "../App"
 
 const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
     display: "none",
   },
-});
+})
 
 const eventQuery = graphql(`
   query eventPageQuery($filterParams: FilterEventParams, $skip: Int!, $limit: Int!) {
@@ -27,23 +27,23 @@ const eventQuery = graphql(`
       type
     }
   }
-`);
+`)
 
-const EVENTS_PER_FETCH = 10;
+const EVENTS_PER_FETCH = 10
 
 interface EventsProps {
   filterParams?: FilterEventParams
 }
 
 const Events = (props: EventsProps) => {
-  const [skipNumber, setSkipNumber] = useState(0);
-  const [maxHeight, setMaxHeight] = useState(0);
-  const rootRef = useRef(null);
-  const navigate = useNavigate();
-  const [events, setEvents] = useState<Exact<Event>[]>([]);
+  const [skipNumber, setSkipNumber] = useState(0)
+  const [maxHeight, setMaxHeight] = useState(0)
+  const rootRef = useRef(null)
+  const navigate = useNavigate()
+  const [events, setEvents] = useState<Exact<Event>[]>([])
   const [{ data, fetching, error }, reexecuteQuery] = useQuery<
     { event: Exact<Event>[] },
-    { filterParams: FilterEventParams, skip: number; limit: number }
+    { filterParams: FilterEventParams, skip: number, limit: number }
   >({
     query: eventQuery,
     variables: {
@@ -51,30 +51,30 @@ const Events = (props: EventsProps) => {
       skip: skipNumber,
       limit: EVENTS_PER_FETCH,
     },
-  });
+  })
 
   useEffect(() => {
     if (data?.event) {
-      setEvents(() => [...events, ...data.event]);
+      setEvents(() => [...events, ...data.event])
     }
-  }, [data]);
+  }, [data])
 
   useEffect(() => {
-    reexecuteQuery();
-  }, [skipNumber]);
+    reexecuteQuery()
+  }, [skipNumber])
 
   const onScroll = () => {
     if (rootRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = rootRef.current;
+      const { scrollTop, scrollHeight, clientHeight } = rootRef.current
       if (
         maxHeight < scrollHeight &&
         scrollTop + clientHeight > scrollHeight - 10
       ) {
-        setSkipNumber((prev) => prev + EVENTS_PER_FETCH);
-        setMaxHeight(scrollHeight);
+        setSkipNumber((prev) => prev + EVENTS_PER_FETCH)
+        setMaxHeight(scrollHeight)
       }
     }
-  };
+  }
 
   return (
     <GridHiddenScroll
@@ -95,7 +95,7 @@ const Events = (props: EventsProps) => {
         </Grid>
       ))}
     </GridHiddenScroll>
-  );
-};
+  )
+}
 
-export default Events;
+export default Events

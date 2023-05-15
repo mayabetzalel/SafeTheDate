@@ -1,19 +1,19 @@
-import Events from "./components/Events";
-import { Box, Container } from "@mui/material";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
-import Navbar from "./components/AppBar/AppBar";
-import { RouterProvider, createBrowserRouter, Outlet } from "react-router-dom";
-import PrivateRoute from "./utils/PrivateRoute";
-import { CreateEvent } from "./components/CreateEvent";
-import { Event } from "./components/Event/Event";
-import { ImportTicket } from "./components/ImportTicket";
-import Captain from "./components/Captain";
-import CaptainEvents from "./components/CapatinEvents";
-import ScanEvent from "./components/ScanEvent";
-import {MyTickets} from "./components/profile/MyTickets";
-import {Profile} from "./components/profile/Profile";
-import {MyEvents} from "./components/profile/MyEvents";
+import Events from "./components/Events"
+import { Box, Container } from "@mui/material"
+import Login from "./components/Login"
+import Signup from "./components/Signup"
+import Navbar from "./components/AppBar/AppBar"
+import { RouterProvider, createBrowserRouter, Outlet } from "react-router-dom"
+import PrivateRoute from "./utils/PrivateRoute"
+import { CreateEvent } from "./components/CreateEvent"
+import { Event } from "./components/Event/Event"
+import { ImportTicket } from "./components/ImportTicket"
+import Captain from "./components/Captain"
+import CaptainEvents from "./components/CapatinEvents"
+import ScanEvent from "./components/ScanEvent"
+import {MyTickets} from "./components/profile/MyTickets"
+import {Profile} from "./components/profile/Profile"
+import {MyEvents} from "./components/profile/MyEvents"
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -171,10 +171,10 @@ const router = createBrowserRouter([
       }
     ],
   },
-]);
+])
 
 const App = () => {
-  return <RouterProvider router={router} />;
-};
+  return <RouterProvider router={router} />
+}
 
-export default App;
+export default App

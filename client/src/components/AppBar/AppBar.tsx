@@ -1,36 +1,36 @@
-import * as React from "react";
-import { Grid, IconButton } from "@mui/material";
-import { RoutePaths } from "../../App";
-import { Logout } from "@mui/icons-material";
-import logo from "../../assets/logo.png";
-import { useNavigate, useNavigation } from "react-router-dom";
-import NavigationTypography from "./NavigationTypography/NavigationTypography";
-import { useAuth  } from "../../hooks/userController/userContext";
-import { useSnackbar } from "notistack";
+import * as React from "react"
+import { Grid, IconButton } from "@mui/material"
+import { RoutePaths } from "../../App"
+import { Logout } from "@mui/icons-material"
+import logo from "../../assets/logo.png"
+import { useNavigate, useNavigation } from "react-router-dom"
+import NavigationTypography from "./NavigationTypography/NavigationTypography"
+import { useAuth  } from "../../hooks/userController/userContext"
+import { useSnackbar } from "notistack"
 
 const Navbar = () => {
-  const navigate = useNavigate();
-  const { location } = useNavigation();
-  const { currentUser, signOut } = useAuth();
-  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate()
+  const { location } = useNavigation()
+  const { currentUser, signOut } = useAuth()
+  const { enqueueSnackbar } = useSnackbar()
 
   const handleConnect = async () => {
     try {
       if(!currentUser)
-        navigate(RoutePaths.LOGIN);
+        navigate(RoutePaths.LOGIN)
       else {
         try {
           await signOut()
-          enqueueSnackbar("Successful sign out!", { variant: "success" });
-          navigate("/");
+          enqueueSnackbar("Successful sign out!", { variant: "success" })
+          navigate("/")
         } catch(err) {
-          enqueueSnackbar("could not sign out, please try again later!", { variant: "error" });
+          enqueueSnackbar("could not sign out, please try again later!", { variant: "error" })
         }
       }
     } catch (err) {
-      console.log(err);
+      console.log(err)
     }
-  };
+  }
 
   return (
     <Grid
@@ -103,7 +103,7 @@ const Navbar = () => {
           </IconButton>
         </Grid>
     </Grid>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

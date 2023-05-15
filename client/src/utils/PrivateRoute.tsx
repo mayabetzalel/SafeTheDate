@@ -1,10 +1,10 @@
-import { Navigate, Route, useLocation } from "react-router-dom";
-import { useAuth } from "../hooks/userController/userContext";
-import Spinner from "./spinner";
+import { Navigate, Route, useLocation } from "react-router-dom"
+import { useAuth } from "../hooks/userController/userContext"
+import Spinner from "./spinner"
 
 const PrivateRoute = ({ children }: { children: JSX.Element }): any => {
-  const { currentUser } = useAuth();
-  let location = useLocation();
+  const { currentUser } = useAuth()
+  let location = useLocation()
   return (
     <>
       {true ? (
@@ -17,6 +17,6 @@ const PrivateRoute = ({ children }: { children: JSX.Element }): any => {
         <Spinner />
       )}
     </>
-  );
-};
-export default PrivateRoute;
+  )
+}
+export default PrivateRoute
