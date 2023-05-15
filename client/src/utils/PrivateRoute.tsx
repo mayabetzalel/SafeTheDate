@@ -1,6 +1,6 @@
-import { Navigate, Route, useLocation } from "react-router-dom"
-import { useAuth } from "../hooks/userController/userContext"
-import Spinner from "./spinner"
+import { Navigate, Route, useLocation } from "react-router-dom";
+import { useAuth } from "../hooks/authController/AuthContext";
+import Spinner from "./spinner";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }): any => {
   const { currentUser } = useAuth()

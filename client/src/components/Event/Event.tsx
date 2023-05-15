@@ -88,7 +88,10 @@ export const Event = () => {
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
                 <EventIcon />
-                <Typography variant="h6">{event?.timeAndDate}</Typography>
+                <Typography variant="h6">
+                  {event?.timeAndDate &&
+                    new Date(event?.timeAndDate).toDateString()}
+                </Typography>
               </Stack>
             </Stack>
             <Divider color={"grey"} variant="middle" />

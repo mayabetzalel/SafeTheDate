@@ -5,9 +5,6 @@ import { log } from "console"
 const { Wit } = require("node-wit")
 var _ = require("lodash")
 
-// Constants
-const ACCESS_TOKEN = "RMO6ITKXK5EE5IBFPO52WDWRDRM75PNZ"
-
 export default {
   Mutation: {
     chatCommand: async (
