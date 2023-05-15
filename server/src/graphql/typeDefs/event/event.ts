@@ -5,14 +5,17 @@ export default  `
         location: String
         timeAndDate: String
         type: String
+        image: Upload
     }
 
+    scalar Upload
 
     input InputEvent {
         name: String!
         location: String!
         timeAndDate: String!
         type: String!
+        image: Upload
     }
 
     input FilterEventParams {

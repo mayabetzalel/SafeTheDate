@@ -25,6 +25,7 @@ const eventQuery = graphql(`
       location
       timeAndDate
       type
+      image
     }
   }
 `);
@@ -84,12 +85,13 @@ const Events = (props: EventsProps) => {
       onScroll={onScroll}
       sx={{ height: "inherit", overflowY: "auto" }}
     >
-      {events.map(({id, name, type, location}) => (
+      {events.map(({id, name, type, location, image}) => (
         <Grid key={id!} item sm={4} md={3}>
           <EventCard
             title={name!}
             header={type!}
             subhrader={location!}
+            image={image || undefined}
             onClick={() => navigate(`${RoutePaths.EVENT}/${id}`,{})}
           />
         </Grid>

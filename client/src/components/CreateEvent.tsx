@@ -38,8 +38,7 @@ const CREATE_EVENT_MUTATION = graphql(`
   const [createEventResult, createEvent] = useMutation<
     {
       createEvent: MutationResponse;
-    },
-    InputEvent
+    }
   >(CREATE_EVENT_MUTATION);
 
 
@@ -56,11 +55,12 @@ const CREATE_EVENT_MUTATION = graphql(`
       location: eventLocationRef.current?.value || "",
       timeAndDate: eventTimeAndDateRef.current?.value || "",
       type: eventTypeRef.current?.value || "",
+      image: image || ""
     };
 
 
     // Call the createEvent mutation with the inputEvent object
-    createEvent(inputEvent).then((result) => {
+    createEvent({inputEvent}).then((result) => {
       if (result.error) {
         console.error("Error creating event:", result.error);
         enqueueSnackbar("An error occurred", { variant: "error" });

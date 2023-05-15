@@ -5,6 +5,7 @@ interface EventMongoType {
   location: string;
   timeAndDate: Date;
   type: string;
+  image: string;
 }
 
 // Define Mongoose schema for Event
@@ -24,6 +25,10 @@ const eventSchema = new Schema<EventMongoType>({
   type: {
     type: String,
     required: true,
+  },
+  image: {
+    type: String,
+    required: false,
   },
 });
 
