@@ -19,7 +19,6 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-// import { loginUserWithGoogle } from "./Login"
 import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 
 const Signup = () => {
@@ -40,7 +39,6 @@ const Signup = () => {
     onError: (error: any) => {
       navigate("/Login");
       enqueueSnackbar("Login failed...", { variant: "error" });
-      // enqueueSnackbar(error.message, { variant: "error" });
       console.log("Login Failed:", error);
     },
   });

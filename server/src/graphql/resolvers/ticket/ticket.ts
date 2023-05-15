@@ -25,7 +25,6 @@ const ticketResolvers: {
         console.log("Ticket created: " + newTicket)
         return { message: "ticket created succesfully", code: 200 }
       } catch(error) {
-        debugger
         console.log("failed with " + error)
         return { message: FAILED_MUTATION_MESSAGE, code: 500 }
       }

@@ -1,9 +1,10 @@
+/* eslint-disable no-debugger */
+
 import React, { useState, useEffect } from "react"
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js"
 import { useSnackbar } from "notistack"
 // import CreateTicket from "../CreateTicket"
 import { useAuth } from "../../hooks/authController/AuthContext"  
-/* eslint-disable no-debugger */
 import { useNavigate } from "react-router-dom"
 import { InputTicket, MutationResponse, Ticket } from "../../graphql/graphql"
 import QRCode from 'qrcode'
@@ -33,12 +34,13 @@ const PaymentForm = ({
   const navigate = useNavigate()
   const { currentUser } = useAuth()
   const [ user, setCurrentUser] = useState<any[]>([])
-  const [CreateTicketResult, CreateTicket] = useMutation<
-        {
-            CreateTicket: MutationResponse
-        },
-        { inputTicket: InputTicket }
-      >(CREATE_TICKET_MUTATION)
+  const [CreateTicketResult, CreateTicket] = 
+  useMutation<
+    {
+        CreateTicket: MutationResponse
+    },
+    { inputTicket: InputTicket }
+  >(CREATE_TICKET_MUTATION)
 
   useEffect(() => {
     if(createTicket && currentUser) {
@@ -59,16 +61,14 @@ const PaymentForm = ({
               barcode: data
             }
 
-            debugger
             console.log(data)
             CreateTicket({ inputTicket }).then((result) => {
               if (result.error) {
                 console.error("Error creating ticket:", result.error)
                 enqueueSnackbar("An error occurred", { variant: "error" })
-              } else {debugger
+              } else {
                 navigate("/")
                 enqueueSnackbar("Ticket created successfully", {variant: 'success'})
-                console.log("tikcet created:" )
               }
             })
         })
@@ -98,10 +98,7 @@ const PaymentForm = ({
   // check Approval
   const onApprove = (data, actions) => {
     return actions.order.capture().then(function (details) {
-      console.log("here")
-      console.log(details)
-      console.log("creating new ticket")
-      debugger
+
       setCreateTicket(true)
       const { payer } = details
       setSuccess(true)
@@ -110,7 +107,6 @@ const PaymentForm = ({
 
   //capture likely error
   const onError = (err) => {
-    debugger
     console.log(err)
     enqueueSnackbar("Could not complete tranaction " + err.message, {
       variant: "error",
