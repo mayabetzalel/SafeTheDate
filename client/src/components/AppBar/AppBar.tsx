@@ -56,9 +56,13 @@ const Navbar = () => {
         />
       </Grid>
       <Grid item xs>
+      {
+        currentUser?
         <NavigationTypography route={RoutePaths.EVENTS}>
           Events
         </NavigationTypography>
+        : <></>
+      }
       </Grid>
       <Grid item xs>
       {
@@ -88,9 +92,13 @@ const Navbar = () => {
       }
       </Grid>
       <Grid item xs>
+      {
+        currentUser?
         <NavigationTypography route={RoutePaths.PROFILE}>
           Profile
         </NavigationTypography>
+        : <></>
+      }
       </Grid>
 
       <Grid item xs={2} container justifyContent={"center"}>
