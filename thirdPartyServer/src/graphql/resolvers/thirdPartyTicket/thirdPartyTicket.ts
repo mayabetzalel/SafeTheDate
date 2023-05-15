@@ -1,6 +1,6 @@
 import { QueryResolvers, MutationResolvers } from "../../typeDefs";
 import { ThirdPartyTickets } from "../../../../mongo/models/ThirdPartyTickets";
-const LENGTH = 50;
+const LENGTH = 60;
 
 function makeId() {
   let result = "";
