@@ -44,24 +44,26 @@ const PaymentForm = ({
 
   useEffect(() => {
     if(createTicket && currentUser) {
+
+      const url = window.location.href
+      const splittedUrl = url.lastIndexOf("/")
+      
+      const inputTicket: InputTicket = {
+        _id: "1",
+        userId: currentUser['_id'] || "",
+        eventId: url.slice(splittedUrl + 1),
+        barcode: ""
+      }
+      const qrValueString = "/" + inputTicket.userId + "/" + inputTicket.eventId
+
       setCurrentUser(currentUser || [])
-      QRCode.toString("value", {
+      QRCode.toString(qrValueString, {
         errorCorrectionLevel: 'H',
         type: 'svg'
         }, function(err, data) {
             if (err) throw err
           
-            const url = window.location.href
-            const splittedUrl = url.lastIndexOf("/")
-            
-            const inputTicket: InputTicket = {
-              _id: "1",
-              userId: currentUser['_id'] || "",
-              eventId: url.slice(splittedUrl + 1),
-              barcode: data
-            }
-
-            console.log(data)
+            inputTicket.barcode = data
             CreateTicket({ inputTicket }).then((result) => {
               if (result.error) {
                 console.error("Error creating ticket:", result.error)
