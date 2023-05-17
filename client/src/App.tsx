@@ -95,8 +95,7 @@ const router = createBrowserRouter([
         path: RoutePaths.IMPORT_TICKET,
         element: (
           <PrivateRoute>
-            {/* <ImportTicket /> */}
-            <ScanEvent />
+            <ImportTicket />
           </PrivateRoute>
         ),
       },
