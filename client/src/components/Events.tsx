@@ -3,18 +3,18 @@ import FetchingState from "../utils/fetchingState";
 import EventCard from "./EventCard/EventCard";
 import { graphql } from "../graphql";
 import { Event, Exact, FilterEventParams } from "../graphql/graphql";
-import { Grid, Pagination } from "@mui/material";
+import { Grid, Pagination, PaginationItem } from "@mui/material";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import { RoutePaths } from "../App";
-import {ceil, floor} from "lodash";
+import { floor } from "lodash";
 
 const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
     display: "none",
   },
-})
+});
 
 const eventQuery = graphql(`
   query eventPageQuery(
@@ -31,7 +31,7 @@ const eventQuery = graphql(`
       image
     }
   }
-`)
+`);
 
 const eventCountQuery = graphql(`
   query eventCountQuery($filterParams: FilterEventParams) {
@@ -58,9 +58,9 @@ const Events = ({ filterParams }: EventsProps) => {
       skip: page * EVENTS_PER_FETCH,
       limit: EVENTS_PER_FETCH,
     },
-  })
+  });
 
-  const [{ data: dataCount = {eventCount: 0} }] = useQuery<
+  const [{ data: dataCount = { eventCount: 0 } }] = useQuery<
     { eventCount: number },
     { filterParams: FilterEventParams }
   >({
@@ -101,4 +101,4 @@ const Events = ({ filterParams }: EventsProps) => {
   );
 };
 
-export default Events
+export default Events;
