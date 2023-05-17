@@ -11,7 +11,7 @@ import { Exact, ThirdPartyTicket } from "../graphql/graphql";
 
 export const ImportTicket = () => {
   const [selectedDeviceId, setSelectedDeviceId] = useState("");
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState({});
   const [videoInputDevices, setVideoInputDevices] = useState([]);
   const [isValid, setIsValid] = useState(false);
   const [showIsValid, setShowIsValid] = useState(false);
@@ -31,14 +31,13 @@ export const ImportTicket = () => {
     }
   `);
 
-  const [{ data = { validateTicket: [] }, fetching }, reexecuteQuery] =
-    useQuery<{
-      validateTicket: Exact<ThirdPartyTicket>[];
-    }>({
-      query: VALIDATE_TICKET_QUERY,
-      variables: { id: code },
-      pause: true,
-    });
+  const [{ data = { validateTicket: {} }, fetching }] = useQuery<{
+    validateTicket: Exact<ThirdPartyTicket>;
+  }>({
+    query: VALIDATE_TICKET_QUERY,
+    variables: code,
+    pause: true,
+  });
 
   function setupDevices(videoInputDevices) {
     // selects first device
@@ -58,11 +57,11 @@ export const ImportTicket = () => {
         if (result) {
           // properly decoded qr code
           console.log("Found QR code!", result);
-          setCode(result.getText());
+          setCode({ id: result.getText() });
         }
 
         if (err) {
-          setCode("");
+          setCode({});
         }
       }
     );
@@ -86,20 +85,21 @@ export const ImportTicket = () => {
   }, [selectedDeviceId]);
 
   useEffect(() => {
-    if (data?.validateTicket.length != 0) {
+    console.log(data?.validateTicket);
+    if (data?.validateTicket?.id) {
       setIsValid(true);
       setShowIsValid(true);
       setTimeout(() => setShowIsValid(false), 3000);
     }
-  }, [data]);
+  }, [code]);
 
-  useEffect(() => {
-    if (code) {
-      // validate in server
-      console.log("validating");
-      reexecuteQuery({ requestPolicy: "cache-and-network" });
-    }
-  }, [code, reexecuteQuery]);
+  // useEffect(() => {
+  //   if (code) {
+  //     // validate in server
+  //     console.log("validating");
+  //     reexecuteQuery({ requestPolicy: "network-only" });
+  //   }
+  // }, [code, reexecuteQuery]);
 
   return (
     <Center>
@@ -110,7 +110,6 @@ export const ImportTicket = () => {
           <div style={{ visibility: showIsValid ? "hidden" : "visible" }}>
             <video id="video" width="300" height="200" />
           </div>
-
           {showIsValid && (
             <Box sx={{ color: isValid ? "success.main" : "error.main" }}>
               <Center>
