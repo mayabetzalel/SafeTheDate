@@ -96,6 +96,14 @@ const theme = createTheme({
         disableFocusRipple: true,
       },
     },
+    MuiPaginationItem: {
+      styleOverrides: {
+        outlined: ({theme}) => ({
+          color: theme.palette.primary.main,
+          border: `1px solid ${theme.palette.primary.dark}`
+        })
+      },
+    }
   },
 })
 
