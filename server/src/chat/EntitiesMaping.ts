@@ -1,4 +1,4 @@
-import { WitEntity } from "../graphql/resolvers/chat/chat";
+import { WitEntity } from "../graphql/resolvers/chat/chat"
 
 export default {
     ["wit$datetime" as WitEntity]: {

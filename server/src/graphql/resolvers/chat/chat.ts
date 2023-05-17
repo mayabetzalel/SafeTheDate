@@ -1,9 +1,9 @@
-import { InputMessage } from "../../typeDefs";
-import EntitiesMaping from "../../../chat/EntitiesMaping";
-import IntentsStore from "../../../chat/IntentsStore";
-import { log } from "console";
-const { Wit } = require("node-wit");
-var _ = require("lodash");
+import { InputMessage } from "../../typeDefs"
+import EntitiesMaping from "../../../chat/EntitiesMaping"
+import IntentsStore from "../../../chat/IntentsStore"
+import { log } from "console"
+const { Wit } = require("node-wit")
+var _ = require("lodash")
 
 export default {
   Mutation: {
@@ -12,22 +12,22 @@ export default {
       { inputMessage }: { inputMessage: InputMessage } // Specify the type of inputEvent argument
     ) => {
       // Extract values from the inputEvent object
-      const { message } = inputMessage;
+      const { message } = inputMessage
       // Create a new event using the extracted values
 
-      const client = new Wit({ accessToken: process.env.BOT_ACCESS_TOKEN });
-      var res = await client.message(message, {});
+      const client = new Wit({ accessToken: process.env.BOT_ACCESS_TOKEN })
+      var res = await client.message(message, {})
       if (!res && res.error) {
-        console.error("Got error from wit ai");
+        console.error("Got error from wit ai")
         return {
           responseMessage: IntentsStore.error.responseMessage,
-        };
+        }
       } else {
-        var intent = matchWitToSearchedRequests(res);
+        var intent = matchWitToSearchedRequests(res)
 
-        var entities = matchEntities(res);
+        var entities = matchEntities(res)
 
-        let responseMessage;
+        let responseMessage
 
         if (intent && IntentsStore?.[intent] && intent !== "nothing")
           responseMessage = IntentsStore[intent]?.responseMessage;
@@ -37,40 +37,40 @@ export default {
           type: intent,
           ...Object.assign({}, ...entities),
           responseMessage,
-        };
+        }
       }
     },
   },
-};
+}
 
 export type WitEntity =
   | "wit$datetime:datetime"
   | "wit$location:location"
-  | "wit$notable_person:notable_person";
-export type WitIntent = "get_event" | "navigate_page" | "nothing" | "error";
+  | "wit$notable_person:notable_person"
+export type WitIntent = "get_event" | "navigate_page" | "nothing" | "error"
 
 interface WitResponse {
   entities: {
     [key: string]: [
       {
-        confidence: number;
-        name: string;
+        confidence: number
+        name: string
       }
-    ];
-  };
+    ]
+  }
   intents: [
     {
-      confidence: number;
-      name: string;
+      confidence: number
+      name: string
     }
-  ];
+  ]
 }
 
 function matchWitToSearchedRequests(responseMessage: WitResponse): WitIntent {
   // Sort by confidence to get the best hypothesis of the intent
   var sortedIntents = responseMessage.intents.sort(
     (intent1, intent2) => intent1.confidence - intent2.confidence
-  );
+  )
 
   // Get the best hypothesis
   var intent = sortedIntents[0];
@@ -84,7 +84,7 @@ function matchEntities(responseMessage: WitResponse): any {
     Object.entries(EntitiesMaping[entity[0].name]).map(([key, value]) => ({
       [key]: _.get(entity, value),
     }))
-  );
+  )
 
-  return entities.flat(1);
+  return entities.flat(1)
 }

@@ -1,25 +1,25 @@
-import TextField from "@mui/material/TextField";
-import { InputAdornment } from "@mui/material";
-import { Search } from "@mui/icons-material";
-import * as React from "react";
-import CircularProgress from "@mui/material/CircularProgress";
-import Autocomplete from "@mui/material/Autocomplete";
-import { useState } from "react";
+import TextField from "@mui/material/TextField"
+import { InputAdornment } from "@mui/material"
+import { Search } from "@mui/icons-material"
+import * as React from "react"
+import CircularProgress from "@mui/material/CircularProgress"
+import Autocomplete from "@mui/material/Autocomplete"
+import { useState } from "react"
 
 interface Item {
-  _id: string;
-  description: string;
+  _id: string
+  description: string
 }
 
 const AppSearch = () => {
-  const [open, setOpen] = useState(false);
-  const [searchInput, setSearchInput] = useState("");
-  // const debouncedValue = useDebounce<string>(searchInput, 500);
+  const [open, setOpen] = useState(false)
+  const [searchInput, setSearchInput] = useState("")
+  // const debouncedValue = useDebounce<string>(searchInput, 500)
   // const { data, isLoading, isError, isSuccess } = useQuery<Item[] | undefined>(
   //   ["itemsDesc", debouncedValue],
   //   () => getAllItemsDesc(debouncedValue)
-  // );
-  const [options, setOptions] = useState<readonly Item[] | undefined>([]);
+  // )
+  const [options, setOptions] = useState<readonly Item[] | undefined>([])
 
   return (
     <Autocomplete
@@ -29,16 +29,16 @@ const AppSearch = () => {
       // onChange={(e, value) => {
       //   value?._id
       //     ? navigate(RoutePaths.PRODUCT_DETAILS_NO_ID + "/" + value?._id)
-      //     : navigate(RoutePaths.HOME);
+      //     : navigate(RoutePaths.HOME)
       // }}
       onOpen={() => {
-        setOpen(true);
+        setOpen(true)
       }}
       onClose={() => {
-        setOpen(false);
+        setOpen(false)
       }}
       onInputChange={(event, newInputValue) => {
-        setSearchInput(newInputValue);
+        setSearchInput(newInputValue)
       }}
       isOptionEqualToValue={(option, value) =>
         option.description === value.description
@@ -66,7 +66,7 @@ const AppSearch = () => {
         />
       )}
     />
-  );
-};
+  )
+}
 
 export default AppSearch

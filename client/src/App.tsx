@@ -171,7 +171,7 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+])
 
 const App = () => {
   const { checkIfSessionValid } = useAuth();
@@ -181,4 +181,4 @@ const App = () => {
   return <RouterProvider router={router} />;
 };
 
-export default App;
+export default App

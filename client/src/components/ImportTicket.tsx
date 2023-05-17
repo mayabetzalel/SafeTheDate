@@ -1,5 +1,5 @@
 export const ImportTicket = () => {
-  return <div>import ticket</div>;
-};
+  return <div>import ticket</div>
+}
 
-export default ImportTicket;
+export default ImportTicket

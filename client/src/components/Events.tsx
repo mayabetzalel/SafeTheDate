@@ -14,7 +14,7 @@ const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
     display: "none",
   },
-});
+})
 
 const eventQuery = graphql(`
   query eventPageQuery(
@@ -31,7 +31,7 @@ const eventQuery = graphql(`
       image
     }
   }
-`);
+`)
 
 const eventCountQuery = graphql(`
   query eventCountQuery($filterParams: FilterEventParams) {
@@ -58,7 +58,7 @@ const Events = ({ filterParams }: EventsProps) => {
       skip: page * EVENTS_PER_FETCH,
       limit: EVENTS_PER_FETCH,
     },
-  });
+  })
 
   const [{ data: dataCount = {eventCount: 0} }] = useQuery<
     { eventCount: number },
@@ -101,4 +101,4 @@ const Events = ({ filterParams }: EventsProps) => {
   );
 };
 
-export default Events;
+export default Events

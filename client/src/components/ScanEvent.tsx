@@ -1,45 +1,45 @@
-import React, { useState, useEffect } from "react";
-import { Box, Button, Typography } from "@mui/material";
-import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
-import InvalidIcon from "@mui/icons-material/CancelOutlined";
+import React, { useState, useEffect } from "react"
+import { Box, Button, Typography } from "@mui/material"
+import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined"
+import InvalidIcon from "@mui/icons-material/CancelOutlined"
 import {
   BrowserQRCodeReader,
   NotFoundException,
   ChecksumException,
   FormatException,
-} from "@zxing/library";
-import Spinner from "../utils/spinner";
-import { Center } from "../utils/center";
+} from "@zxing/library"
+import Spinner from "../utils/spinner"
+import { Center } from "../utils/center"
 
 export const ScanEvent = () => {
-  const [selectedDeviceId, setSelectedDeviceId] = useState("");
-  const [code, setCode] = useState("");
-  const [videoInputDevices, setVideoInputDevices] = useState([]);
+  const [selectedDeviceId, setSelectedDeviceId] = useState("")
+  const [code, setCode] = useState("")
+  const [videoInputDevices, setVideoInputDevices] = useState([])
 
-  const [isValidating, setIsValidating] = useState(false);
-  const [isValid, setIsValid] = useState(false);
-  const [showIsValid, setShowIsValid] = useState(false);
+  const [isValidating, setIsValidating] = useState(false)
+  const [isValid, setIsValid] = useState(false)
+  const [showIsValid, setShowIsValid] = useState(false)
 
-  const codeReader = new BrowserQRCodeReader();
+  const codeReader = new BrowserQRCodeReader()
 
   useEffect(() => {
     codeReader
       .getVideoInputDevices()
       .then((videoInputDevices) => {
-        setupDevices(videoInputDevices);
+        setupDevices(videoInputDevices)
       })
       .catch((err) => {
-        console.error(err);
-      });
-  }, []);
+        console.error(err)
+      })
+  }, [])
 
   function setupDevices(videoInputDevices) {
     // selects first device
-    setSelectedDeviceId(videoInputDevices[0].deviceId);
+    setSelectedDeviceId(videoInputDevices[0].deviceId)
 
     // setup devices dropdown
     if (videoInputDevices.length >= 1) {
-      setVideoInputDevices(videoInputDevices);
+      setVideoInputDevices(videoInputDevices)
     }
   }
 
@@ -50,37 +50,37 @@ export const ScanEvent = () => {
       (result, err) => {
         if (result) {
           // properly decoded qr code
-          console.log("Found QR code!", result);
-          setCode(result.getText());
+          console.log("Found QR code!", result)
+          setCode(result.getText())
         }
 
         if (err) {
-          setCode("");
+          setCode("")
         }
       }
-    );
+    )
   }
 
   useEffect(() => {
-    codeReader;
-    decodeContinuously(selectedDeviceId);
-    console.log(`Started decode from camera with id ${selectedDeviceId}`);
-  }, [selectedDeviceId]);
+    codeReader
+    decodeContinuously(selectedDeviceId)
+    console.log(`Started decode from camera with id ${selectedDeviceId}`)
+  }, [selectedDeviceId])
 
   useEffect(() => {
     if (code) {
-      setIsValidating(true);
+      setIsValidating(true)
 
       // validate in server
-      let valid = true;
+      let valid = true
 
-      setShowIsValid(true);
-      setTimeout(() => setShowIsValid(false), 3000);
-      setIsValid(valid);
+      setShowIsValid(true)
+      setTimeout(() => setShowIsValid(false), 3000)
+      setIsValid(valid)
 
-      setIsValidating(false);
+      setIsValidating(false)
     }
-  }, [code]);
+  }, [code])
 
   return (
     <Center>
@@ -112,7 +112,7 @@ export const ScanEvent = () => {
         </>
       )}
     </Center>
-  );
-};
+  )
+}
 
-export default ScanEvent;
+export default ScanEvent
