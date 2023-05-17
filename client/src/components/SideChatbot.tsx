@@ -9,32 +9,33 @@ const ChatButtonContainer = styled('div')`
   position: fixed;
   bottom: ${({ theme }) => theme.spacing(2)};
   left: ${({ theme }) => theme.spacing(2)};
-  border-radius: 10px;
+  border-radius: 1rem;
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const ChatButtonPrimary = styled(Button)`
   background-color: ${({ theme }) => theme.palette.primary.main};
   color: ${({ theme }) => theme.palette.primary.contrastText};
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.3);
 `;
 
 const ChatButtonSecondary = styled(Button)`
   background-color: ${({ theme }) => theme.palette.secondary.main};
   color: ${({ theme }) => theme.palette.secondary.contrastText};
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.3);
 `;
 
 const ChatPopUp = styled('div')`
   padding: ${({ theme }) => theme.spacing(2)};
-  border-radius: 10px;
+  border-radius: 1rem;
   bottom: ${({ theme }) => theme.spacing(2)};
-  top: 50px; /* Added this line to move the container up by 50 pixels */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  top: 3.125rem; /* Equivalent to 50 pixels */
+  box-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   flex: 1;
 `;
+
 
 const SideChatbot = () => {
     const [anchorEl, setAnchorEl] = useState(null);

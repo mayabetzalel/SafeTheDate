@@ -26,7 +26,7 @@ export function Chatbot(props: chatbotProps) {
     }
 
     return (
-        <div style={{ position: "relative", height: "20rem", width:"300px" }}>
+        <div style={{ position: "relative", height: "20rem", width:"16rem" }}>
             <MainContainer>
                 <ChatContainer >
                     <MessageList>

@@ -29,7 +29,7 @@ export default {
 
         let responseMessage;
 
-        if (intent && IntentsStore?.[intent])
+        if (intent && IntentsStore?.[intent] && intent !== "nothing")
           responseMessage = IntentsStore[intent]?.responseMessage;
         else responseMessage = IntentsStore?.nothing?.responseMessage;
 
@@ -75,7 +75,7 @@ function matchWitToSearchedRequests(responseMessage: WitResponse): WitIntent {
   // Get the best hypothesis
   var intent = sortedIntents[0];
   
-  return intent ? intent.name as WitIntent : null;
+  return intent ? intent.name as WitIntent : "nothing";
 }
 
 function matchEntities(responseMessage: WitResponse): any {
