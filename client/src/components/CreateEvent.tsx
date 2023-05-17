@@ -3,10 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "urql";
 import { useSnackbar } from "notistack";
 import { graphql } from "../graphql";
-import { InputEvent, MutationResponse, Event } from "../graphql/graphql";
+import { InputEvent, MutationResponse } from "../graphql/graphql";
 import {
-  Card,
-  CardContent,
   Typography,
   TextField,
   Button,

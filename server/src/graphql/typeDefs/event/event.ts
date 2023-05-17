@@ -22,7 +22,7 @@ export default  `
     }
 
     type Query {
-        event(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String]): [Event!]!
+        event(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String]): [Event!]! @auth
     }
 
     type Query {
