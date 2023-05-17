@@ -29,9 +29,9 @@ const Navbar = () => {
         }
       }
     } catch (err) {
-      console.log(err);
+      console.log(err)
     }
-  };
+  }
 
   return (
     <Grid
@@ -56,29 +56,49 @@ const Navbar = () => {
         />
       </Grid>
       <Grid item xs>
+      {
+        currentUser?
         <NavigationTypography route={RoutePaths.EVENTS}>
           Events
         </NavigationTypography>
+        : <></>
+      }
       </Grid>
       <Grid item xs>
-        <NavigationTypography route={RoutePaths.CAPTAIN}>
-          Captain
-        </NavigationTypography>
+      {
+        currentUser?
+          <NavigationTypography route={RoutePaths.CAPTAIN}>
+            Captain
+          </NavigationTypography>
+          : <></>
+      }
       </Grid>
       <Grid item xs>
-        <NavigationTypography route={RoutePaths.CREATE_EVENT}>
-          Create Events
-        </NavigationTypography>
+      {
+        currentUser?
+          <NavigationTypography route={RoutePaths.CREATE_EVENT}>
+            Create Events
+          </NavigationTypography>
+          : <></>
+      }
       </Grid>
       <Grid item xs>
-        <NavigationTypography route={RoutePaths.IMPORT_TICKET}>
-          Import Tickets
-        </NavigationTypography>
+      {
+        currentUser?
+          <NavigationTypography route={RoutePaths.IMPORT_TICKET}>
+            Import Tickets
+          </NavigationTypography>
+          : <></>
+      }
       </Grid>
       <Grid item xs>
+      {
+        currentUser?
         <NavigationTypography route={RoutePaths.PROFILE}>
           Profile
         </NavigationTypography>
+        : <></>
+      }
       </Grid>
 
       <Grid item xs={2} container justifyContent={"center"}>
@@ -88,7 +108,7 @@ const Navbar = () => {
         </IconButton>
       </Grid>
     </Grid>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

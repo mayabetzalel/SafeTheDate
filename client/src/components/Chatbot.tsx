@@ -4,25 +4,25 @@ import {
     MessageList,
     Message,
     MessageInput,
-} from "@chatscope/chat-ui-kit-react";
-import { MessageDirection } from "@chatscope/chat-ui-kit-react/src/types/unions";
+} from "@chatscope/chat-ui-kit-react"
+import { MessageDirection } from "@chatscope/chat-ui-kit-react/src/types/unions"
 
-import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
-import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { RoutePaths } from "../App";
+import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css"
+import { Button } from "@mui/material"
+import { useNavigate } from "react-router-dom"
+import { RoutePaths } from "../App"
 
 export interface chatbotProps {
-    handleMessageComplete: (message: string) => void;
+    handleMessageComplete: (message: string) => void
     messages: { messageData: string, direction: MessageDirection }[]
 }
 //"incoming"
 export function Chatbot(props: chatbotProps) {
-    const { handleMessageComplete, messages } = props;
-    const navigate = useNavigate();
+    const { handleMessageComplete, messages } = props
+    const navigate = useNavigate()
 
     function handleClick(): void {
-        navigate(RoutePaths.CAPTAIN_EVENTS);
+        navigate(RoutePaths.CAPTAIN_EVENTS)
     }
 
     return (

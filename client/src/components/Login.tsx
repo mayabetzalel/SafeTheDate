@@ -49,8 +49,8 @@ const Login = () => {
   });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
     console.log({
       email: data.get("email"),
       password: data.get("password"),
@@ -65,7 +65,7 @@ const Login = () => {
       enqueueSnackbar("Login failed...", { variant: "error" });
       navigate("/login");
     }
-  };
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -188,7 +188,7 @@ const Login = () => {
         </Grid>
       </Grid>
     </ThemeProvider>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

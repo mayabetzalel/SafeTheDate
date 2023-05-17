@@ -1,13 +1,13 @@
-import { ErrorRequestHandler } from "express";
-import { ValidationError } from "class-validator";
+import { ErrorRequestHandler } from "express"
+import { ValidationError } from "class-validator"
 import {
   HttpStatus,
   PayloadValidationError,
   ServerError,
   ServerValidationsReturn,
-} from "./types";
-import { ILogger } from "./logger";
-import appLogger from "../lib/app-logger";
+} from "./types"
+import { ILogger } from "./logger"
+import appLogger from "../lib/app-logger"
 
 export enum serverErrorCodes {
   UserIsMissing = 1001,
@@ -45,7 +45,7 @@ export const serverErrorsMessage: { [id in serverErrorCodes]: string } = {
   [serverErrorCodes.NoSuchRefreshToken]:
     "לא הצלחנו לחדש את חיבורך, אנא התחבר מחדש",
   [serverErrorCodes.NoSuchConfirmationKey]: "לא קיים קוד אישור כזה",
-};
+}
 
 export const retServerError = (
   errCode: serverErrorCodes,
@@ -55,47 +55,47 @@ export const retServerError = (
     code: errCode,
     message: customMessage ?? serverErrorsMessage[errCode],
   },
-});
+})
 
-const VALIDATION_DEFAULT_ERR_MESSAGE = "סופק ערך לא חוקי";
+const VALIDATION_DEFAULT_ERR_MESSAGE = "סופק ערך לא חוקי"
 
 export function mapValidationErrors<T extends object>(
   errors: ValidationError[]
 ): ServerValidationsReturn<T> {
-  const payloadErrors = {} as PayloadValidationError<T>;
+  const payloadErrors = {} as PayloadValidationError<T>
   errors.forEach((e) => {
     if (e.constraints) {
-      const errors: string[] = [];
+      const errors: string[] = []
 
-      Object.values(e.constraints).forEach((c) => errors.push(c));
-      payloadErrors[e.property as keyof T] = errors;
+      Object.values(e.constraints).forEach((c) => errors.push(c))
+      payloadErrors[e.property as keyof T] = errors
     } else {
-      payloadErrors[e.property as keyof T] = [VALIDATION_DEFAULT_ERR_MESSAGE];
+      payloadErrors[e.property as keyof T] = [VALIDATION_DEFAULT_ERR_MESSAGE]
     }
-  });
-  return { fieldErrors: payloadErrors };
+  })
+  return { fieldErrors: payloadErrors }
 }
 
 export class FunctionalityError extends Error {
-  serverErrorCode: serverErrorCodes;
-  httpErrorCode: number;
-  argumentsArray: string[];
-  errorRetToClient = () => retServerError(this.serverErrorCode, this.message);
+  serverErrorCode: serverErrorCodes
+  httpErrorCode: number
+  argumentsArray: string[]
+  errorRetToClient = () => retServerError(this.serverErrorCode, this.message)
   constructor(
     serverErrorCode: serverErrorCodes,
     argumentsArray?: string[],
     httpErrorCode: number = 400
   ) {
-    let message = serverErrorsMessage[serverErrorCode];
+    let message = serverErrorsMessage[serverErrorCode]
     argumentsArray?.forEach(
       (a, index) => (message = message.replace(`&${index + 1}`, a))
-    );
-    super(message);
-    this.serverErrorCode = serverErrorCode;
-    this.httpErrorCode = httpErrorCode;
+    )
+    super(message)
+    this.serverErrorCode = serverErrorCode
+    this.httpErrorCode = httpErrorCode
 
     // Set the prototype explicitly.
-    Object.setPrototypeOf(this, FunctionalityError.prototype);
+    Object.setPrototypeOf(this, FunctionalityError.prototype)
   }
 }
 
@@ -103,12 +103,12 @@ export const errorHandler: (logger?: ILogger) => ErrorRequestHandler =
   (logger: ILogger = appLogger()) =>
   (err, req, res, next) => {
     try {
-      console.error(err.stack);
-      logger.error(err);
-      if (res.headersSent) return;
+      console.error(err.stack)
+      logger.error(err)
+      if (res.headersSent) return
 
       if (err instanceof FunctionalityError) {
-        res.status(err.httpErrorCode).send(err.errorRetToClient());
+        res.status(err.httpErrorCode).send(err.errorRetToClient())
         // Error was on payload json parsing, ret to user good error indicating what the error was
       } else if (
         err instanceof SyntaxError &&
@@ -123,18 +123,18 @@ export const errorHandler: (logger?: ILogger) => ErrorRequestHandler =
               serverErrorCodes.InvalidJsonPayload,
               (err as SyntaxError).message
             )
-          );
+          )
       } else {
         // Track uncaught exception to appinsights and mark it as critical
         res
           .status(500)
-          .send(retServerError(serverErrorCodes.ServiceUnavilable));
+          .send(retServerError(serverErrorCodes.ServiceUnavilable))
       }
       // In case an exception occured in the error handler :D
     } catch (e) {
-      logger.error(e as Error);
+      logger.error(e as Error)
 
-      if (res.headersSent) return;
-      res.status(500).send(retServerError(serverErrorCodes.ServiceUnavilable));
+      if (res.headersSent) return
+      res.status(500).send(retServerError(serverErrorCodes.ServiceUnavilable))
     }
-  };
+  }

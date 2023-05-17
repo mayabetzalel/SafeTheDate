@@ -1,5 +1,5 @@
-import Events from "../Events";
+import Events from "../Events"
 
 export const MyTickets = () => {
-  return <Events />;
-};
+  return <Events />
+}

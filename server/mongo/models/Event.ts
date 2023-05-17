@@ -1,10 +1,10 @@
-import { Schema, model, Document, Model } from "mongoose";
+import { Schema, model, Document, Model } from "mongoose"
 
 interface EventMongoType {
-  name: string;
-  location: string;
-  timeAndDate: Date;
-  type: string;
+  name: string
+  location: string
+  timeAndDate: Date
+  type: string
 }
 
 // Define Mongoose schema for Event
@@ -25,7 +25,7 @@ const eventSchema = new Schema<EventMongoType>({
     type: String,
     required: true,
   },
-});
+})
 
 // Create Mongoose model for Event
-export const Event: Model<EventMongoType> = model("Event", eventSchema);
+export const Event: Model<EventMongoType> = model("Event", eventSchema)

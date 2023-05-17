@@ -1,4 +1,4 @@
-import Card from "@mui/material/Card";
+import Card from "@mui/material/Card"
 import {
   Avatar,
   Box,
@@ -6,9 +6,9 @@ import {
   CardHeader,
   CardMedia,
   Typography,
-} from "@mui/material";
+} from "@mui/material"
 
-const TICKET_HEIGHT = 250;
+const TICKET_HEIGHT = 250
 
 interface TicketCardProps {
   header: string;
@@ -48,4 +48,4 @@ const EventCard = ({
   );
 };
 
-export default EventCard;
+export default EventCard

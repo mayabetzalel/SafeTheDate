@@ -10,16 +10,16 @@ import {
   Button,
   Stack,
   Divider,
-} from "@mui/material";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import EventIcon from "@mui/icons-material/Event";
-import { useParams } from "react-router-dom";
-import { useQuery } from "urql";
-import { graphql } from "../../graphql";
-import FetchingState from "../../utils/fetchingState";
-import { useEffect, useState } from "react";
-import { Exact, Event as EventType } from "../../graphql/graphql";
-import PaymentForm from "../checkout/PaymentForm";
+} from "@mui/material"
+import LocationOnIcon from "@mui/icons-material/LocationOn"
+import EventIcon from "@mui/icons-material/Event"
+import { useParams } from "react-router-dom"
+import { useQuery } from "urql"
+import { graphql } from "../../graphql"
+import FetchingState from "../../utils/fetchingState"
+import { useEffect, useState } from "react"
+import { Exact, Event as EventType } from "../../graphql/graphql"
+import PaymentForm from "../checkout/PaymentForm"
 
 const EVENT_QUERY = graphql(`
   query event($ids: [String]) {
@@ -30,24 +30,24 @@ const EVENT_QUERY = graphql(`
       timeAndDate
     }
   }
-`);
+`)
 
 export const Event = () => {
-  const publisherName = "publisher name";
-  const [event, setEvent] = useState<Exact<EventType>>();
-  const { id = "" } = useParams();
+  const publisherName = "publisher name"
+  const [event, setEvent] = useState<Exact<EventType>>()
+  const { id = "" } = useParams()
   const [{ data, fetching }, reexecuteQuery] = useQuery<{
-    event: Exact<EventType>[];
+    event: Exact<EventType>[]
   }>({
     query: EVENT_QUERY,
     variables: { ids: [id] },
-  });
+  })
 
   useEffect(() => {
     if (data?.event.length == 1) {
-      setEvent(data.event.at(0));
+      setEvent(data.event.at(0))
     }
-  }, [data]);
+  }, [data])
 
   return (
     <FetchingState isFetching={fetching}>
@@ -111,5 +111,5 @@ export const Event = () => {
         </Grid>
       </Grid>
     </FetchingState>
-  );
-};
+  )
+}

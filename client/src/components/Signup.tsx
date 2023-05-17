@@ -19,7 +19,6 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-// import { loginUserWithGoogle } from "./Login"
 import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 
 const Signup = () => {
@@ -40,14 +39,13 @@ const Signup = () => {
     onError: (error: any) => {
       navigate("/Login");
       enqueueSnackbar("Login failed...", { variant: "error" });
-      // enqueueSnackbar(error.message, { variant: "error" });
       console.log("Login Failed:", error);
     },
   });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
     try {
       if (
         !data.get("email") ||
@@ -79,7 +77,7 @@ const Signup = () => {
       );
       navigate("/Signup");
     }
-  };
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -240,7 +238,7 @@ const Signup = () => {
         </Grid>
       </Grid>
     </ThemeProvider>
-  );
-};
+  )
+}
 
 export default Signup;
