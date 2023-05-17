@@ -28,6 +28,7 @@ const eventQuery = graphql(`
       location
       timeAndDate
       type
+      image
     }
   }
 `)
@@ -76,12 +77,13 @@ const Events = ({ filterParams }: EventsProps) => {
   return (
     <FetchingState isFetching={fetching}>
       <GridHiddenScroll container sx={{ height: "inherit", overflowY: "auto" }}>
-        {data.event.map(({ id, name, type, location, timeAndDate }) => (
+        {data.event.map(({ id, name, type, location, timeAndDate, image }) => (
           <Grid key={id!} item sm={4} md={3}>
             <EventCard
               title={name!}
               header={type!}
               subheader={location!}
+              image={image || undefined}
               onClick={() => navigate(`${RoutePaths.EVENT}/${id}`, {})}
             />
           </Grid>

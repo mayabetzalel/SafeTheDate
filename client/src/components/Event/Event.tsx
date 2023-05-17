@@ -28,6 +28,16 @@ const EVENT_QUERY = graphql(`
       name
       location
       timeAndDate
+      image
+    }
+  }
+`);
+
+const EVENT_QUERY_IMAGE = graphql(`
+  query eventImage($ids: [String]) {
+    event(ids: $ids) {
+      id
+      image
     }
   }
 `)
@@ -42,6 +52,13 @@ export const Event = () => {
     query: EVENT_QUERY,
     variables: { ids: [id] },
   })
+
+  const [dataImage, reexecuteQueryImage] = useQuery<{
+    event: Exact<EventType>[];
+  }>({
+    query: EVENT_QUERY_IMAGE,
+    variables: { ids: [id] },
+  });
 
   useEffect(() => {
     if (data?.event.length == 1) {
@@ -60,7 +77,7 @@ export const Event = () => {
           <Card sx={{ borderRadius: "40px", height: "100%" }}>
             <CardMedia
               sx={{ height: "100%" }}
-              image="https://thumbs.dreamstime.com/b/nightclub-party-lightshow-18331890.jpg"
+              image={dataImage.data?.event.at(0)?.image || "https://thumbs.dreamstime.com/b/nightclub-party-lightshow-18331890.jpg"}
             />
           </Card>
         </Grid>

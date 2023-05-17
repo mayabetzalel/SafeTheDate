@@ -65,22 +65,9 @@ const Navbar = () => {
       }
       </Grid>
       <Grid item xs>
-      {
-        currentUser?
-          <NavigationTypography route={RoutePaths.CAPTAIN}>
-            Captain
-          </NavigationTypography>
-          : <></>
-      }
-      </Grid>
-      <Grid item xs>
-      {
-        currentUser?
-          <NavigationTypography route={RoutePaths.CREATE_EVENT}>
-            Create Events
-          </NavigationTypography>
-          : <></>
-      }
+        <NavigationTypography route={RoutePaths.CREATE_EVENT}>
+          Create Events
+        </NavigationTypography>
       </Grid>
       <Grid item xs>
       {

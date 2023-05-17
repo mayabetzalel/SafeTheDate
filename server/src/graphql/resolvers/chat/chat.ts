@@ -29,9 +29,9 @@ export default {
 
         let responseMessage
 
-        if (IntentsStore?.[intent])
-          responseMessage = IntentsStore[intent]?.responseMessage
-        else responseMessage = IntentsStore?.nothing?.responseMessage
+        if (intent && IntentsStore?.[intent] && intent !== "nothing")
+          responseMessage = IntentsStore[intent]?.responseMessage;
+        else responseMessage = IntentsStore?.nothing?.responseMessage;
 
         return {
           type: intent,
@@ -73,9 +73,9 @@ function matchWitToSearchedRequests(responseMessage: WitResponse): WitIntent {
   )
 
   // Get the best hypothesis
-  var intent = sortedIntents[0]
-
-  return intent.name as WitIntent
+  var intent = sortedIntents[0];
+  
+  return intent ? intent.name as WitIntent : "nothing";
 }
 
 function matchEntities(responseMessage: WitResponse): any {
