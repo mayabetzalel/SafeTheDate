@@ -90,7 +90,7 @@ const Events = ({ filterParams }: EventsProps) => {
         ))}
       </GridHiddenScroll>
       <Pagination
-        count={floor(dataCount.eventCount / EVENTS_PER_FETCH)}
+        count={floor(dataCount.eventCount / EVENTS_PER_FETCH) + 1}
         page={page + 1}
         variant={"outlined"}
         color={"primary"}

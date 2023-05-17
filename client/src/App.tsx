@@ -18,6 +18,7 @@ import SideChatbot from "./components/SideChatbot";
 import { EventsPage } from "./components/EventsPage/EventsPage";
 import { useAuth } from "./hooks/authController/AuthContext";
 import { useEffect } from "react";
+import {MyDetails} from "./components/profile/MyDetails";
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -122,7 +123,7 @@ const router = createBrowserRouter([
             path: RoutePaths.MY_DETAILS,
             element: (
               <PrivateRoute>
-                <ImportTicket />
+                <MyDetails />
               </PrivateRoute>
             ),
           },
@@ -141,15 +142,6 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <MyTickets />
-          </PrivateRoute>
-        ),
-      },
-      {
-        path: RoutePaths.MY_DETAILS,
-        element: (
-          <PrivateRoute>
-            {/* <ImportTicket /> */}
-            <ScanEvent />
           </PrivateRoute>
         ),
       },

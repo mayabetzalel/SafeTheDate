@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -12,6 +12,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Upload: any;
 };
 
 export type ChatResponse = {
@@ -27,6 +28,7 @@ export type ChatResponse = {
 export type Event = {
   __typename?: 'Event';
   id?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['Upload']>;
   location?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   timeAndDate?: Maybe<Scalars['Float']>;
@@ -41,6 +43,7 @@ export type FilterEventParams = {
 };
 
 export type InputEvent = {
+  image?: InputMaybe<Scalars['Upload']>;
   location: Scalars['String'];
   name: Scalars['String'];
   timeAndDate: Scalars['Float'];
@@ -201,6 +204,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Ticket: ResolverTypeWrapper<Ticket>;
+  Upload: ResolverTypeWrapper<Scalars['Upload']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -220,6 +224,7 @@ export type ResolversParentTypes = {
   Query: {};
   String: Scalars['String'];
   Ticket: Ticket;
+  Upload: Scalars['Upload'];
 };
 
 export type ChatResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ChatResponse'] = ResolversParentTypes['ChatResponse']> = {
@@ -234,6 +239,7 @@ export type ChatResponseResolvers<ContextType = any, ParentType extends Resolver
 
 export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = {
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['Upload']>, ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   timeAndDate?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -267,6 +273,10 @@ export type TicketResolvers<ContextType = any, ParentType extends ResolversParen
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
+  name: 'Upload';
+}
+
 export type Resolvers<ContextType = any> = {
   ChatResponse?: ChatResponseResolvers<ContextType>;
   Event?: EventResolvers<ContextType>;
@@ -274,5 +284,6 @@ export type Resolvers<ContextType = any> = {
   MutationResponse?: MutationResponseResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Ticket?: TicketResolvers<ContextType>;
+  Upload?: GraphQLScalarType;
 };
 
