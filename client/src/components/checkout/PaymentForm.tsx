@@ -52,6 +52,8 @@ const PaymentForm = ({
         _id: "1",
         userId: currentUser['_id'] || "",
         eventId: url.slice(splittedUrl + 1),
+        isFirstHand: true, 
+        price: 50,
         barcode: ""
       }
       const qrValueString = "/" + inputTicket.userId + "/" + inputTicket.eventId

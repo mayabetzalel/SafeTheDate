@@ -3,6 +3,8 @@ export default  `
         _id: ID
         userId: ID
         eventId: ID
+        isFirstHand: Boolean
+        price: Float
         barcode: String
     }
 
@@ -10,6 +12,8 @@ export default  `
         _id: ID!,
         userId: ID!,
         eventId: ID!,
+        isFirstHand: Boolean!, 
+        price: Float!,
         barcode: String!,
     }
 

@@ -13,6 +13,8 @@ const ticketResolvers: {
       const {  _id,
         userId,
         eventId,
+        isFirstHand, 
+        price,
         barcode } = inputTicket
       try {
 
@@ -20,6 +22,8 @@ const ticketResolvers: {
           _id: new mongoose.Types.ObjectId(),
           userId: new Types.ObjectId(userId),
           eventId:new Types.ObjectId(eventId),
+          isFirstHand: isFirstHand, 
+          price: price,
           barcode: barcode
         })
         console.log("Ticket created: " + newTicket)

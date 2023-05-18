@@ -4,6 +4,8 @@ interface TicketMongoType {
   _id: Types.ObjectId
   userId: Types.ObjectId
   eventId: Types.ObjectId
+  isFirstHand: Boolean,
+  price: Number,
   barcode: string
 }
 
@@ -20,6 +22,14 @@ const ticketSchema = new Schema<TicketMongoType>({
     type: Schema.Types.ObjectId,
     required: true
   },
+  isFirstHand: {
+    type: Boolean, 
+    required: true
+  }, 
+  price: {
+    type: Number, 
+    required: true
+  }, 
   barcode: {
     type: String, 
     required: true

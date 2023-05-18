@@ -58,6 +58,8 @@ export type InputTicket = {
   _id: Scalars['ID'];
   barcode: Scalars['String'];
   eventId: Scalars['ID'];
+  isFirstHand: Scalars['Boolean'];
+  price: Scalars['Float'];
   userId: Scalars['ID'];
 };
 
@@ -115,6 +117,8 @@ export type Ticket = {
   _id?: Maybe<Scalars['ID']>;
   barcode?: Maybe<Scalars['String']>;
   eventId?: Maybe<Scalars['ID']>;
+  isFirstHand?: Maybe<Scalars['Boolean']>;
+  price?: Maybe<Scalars['Float']>;
   userId?: Maybe<Scalars['ID']>;
 };
 
@@ -269,6 +273,8 @@ export type TicketResolvers<ContextType = any, ParentType extends ResolversParen
   _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   barcode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   eventId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  isFirstHand?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  price?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
