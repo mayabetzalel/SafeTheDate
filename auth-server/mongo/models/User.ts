@@ -1,6 +1,6 @@
-import mongoose, { Schema, Types } from "mongoose";
-import { IRefreshToken } from "./RefreshToken";
-import { IUserConfirmation } from "./UserConfirmation";
+import mongoose, { Schema, Types } from "mongoose"
+import { IRefreshToken } from "./RefreshToken"
+import { IUserConfirmation } from "./UserConfirmation"
 
 const UserSchema = new mongoose.Schema<IUser>({
   username: { type: String, required: true },
@@ -18,19 +18,19 @@ const UserSchema = new mongoose.Schema<IUser>({
     required: false,
     ref: "UserConfirmation",
   },
-});
+})
 
-const User = mongoose.model("User", UserSchema);
+const User = mongoose.model("User", UserSchema)
 export interface IUser {
-  _id: Types.ObjectId;
-  username: string;
-  password: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  refreshToken: Types.ObjectId;
-  isConfirmed: boolean;
-  userConfirmation: Types.ObjectId;
+  _id: Types.ObjectId
+  username: string
+  password: string
+  email: string
+  firstName: string
+  lastName: string
+  refreshToken: Types.ObjectId
+  isConfirmed: boolean
+  userConfirmation: Types.ObjectId
 }
 
-export default User;
+export default User

@@ -132,4 +132,4 @@ const backendAPI = {
   },
 };
 
-export default backendAPI;
+export default backendAPI
