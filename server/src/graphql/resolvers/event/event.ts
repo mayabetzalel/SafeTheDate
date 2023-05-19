@@ -21,8 +21,8 @@ const eventResolvers: {
         ...(location && { location: { $regex: location, $options : 'i' } }),
         ...((from || to) && {
           timeAndDate: {
-            ...(from && { $gte: new Date(from), $options : 'i' }),
-            ...(to && { $lt: new Date(to), $options : 'i' }),
+            ...(from && { $gte: new Date(from) }),
+            ...(to && { $lt: new Date(to) }),
           },
         }),
       };
