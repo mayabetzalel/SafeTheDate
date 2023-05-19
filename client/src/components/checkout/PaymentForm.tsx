@@ -11,6 +11,7 @@ import QRCode from 'qrcode'
 import { graphql } from "../../graphql"
 import { useMutation } from "urql"
 
+const LENGTH = 60;
 const CREATE_TICKET_MUTATION = graphql(`
   mutation CreateTicket($inputTicket: InputTicket!) {
     createTicket(inputTicket: $inputTicket) {
@@ -19,6 +20,19 @@ const CREATE_TICKET_MUTATION = graphql(`
     }
   }
 `)
+
+function makeId() {
+  let result = "";
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < LENGTH) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+}
 
 const PaymentForm = ({
   amount,
@@ -54,31 +68,24 @@ const PaymentForm = ({
         eventId: url.slice(splittedUrl + 1),
         isFirstHand: true, 
         price: 50,
-        barcode: ""
+        barcode: makeId()
       }
       const qrValueString = "/" + inputTicket.userId + "/" + inputTicket.eventId
 
       setCurrentUser(currentUser || [])
-      QRCode.toString(qrValueString, {
-        errorCorrectionLevel: 'H',
-        type: 'svg'
-        }, function(err, data) {
-            if (err) throw err
-          
-            inputTicket.barcode = data
-            CreateTicket({ inputTicket }).then((result) => {
-              if (result.error) {
-                console.error("Error creating ticket:", result.error)
-                enqueueSnackbar("An error occurred", { variant: "error" })
-              } else {
-                navigate("/")
-                enqueueSnackbar("Ticket created successfully", {variant: 'success'})
-              }
-            })
-        })
+      CreateTicket({ inputTicket }).then((result) => {
+        if (result.error) {
+          console.error("Error creating ticket:", result.error)
+          enqueueSnackbar("An error occurred", { variant: "error" })
+        } else {
+          navigate("/")
+          enqueueSnackbar("Ticket created successfully", {variant: 'success'})
+        }
+      })
         setCreateTicket(false)
       }
   })
+  
   // creates a paypal order
   const createOrder = (data, actions) => {
     return actions.order
