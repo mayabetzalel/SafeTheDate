@@ -31,6 +31,7 @@ export type Event = {
   image?: Maybe<Scalars['Upload']>;
   location?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
+  ticketsAmount?: Maybe<Scalars['Int']>;
   timeAndDate?: Maybe<Scalars['Float']>;
   type?: Maybe<Scalars['String']>;
 };
@@ -46,6 +47,7 @@ export type InputEvent = {
   image?: InputMaybe<Scalars['Upload']>;
   location: Scalars['String'];
   name: Scalars['String'];
+  ticketsAmount: Scalars['Int'];
   timeAndDate: Scalars['Float'];
   type: Scalars['String'];
 };
@@ -242,6 +244,7 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   image?: Resolver<Maybe<ResolversTypes['Upload']>, ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  ticketsAmount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   timeAndDate?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

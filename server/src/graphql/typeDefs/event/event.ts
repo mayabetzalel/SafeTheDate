@@ -1,10 +1,11 @@
-export default  `
+export default `
     type Event {
         id: String
         name: String
         location: String
         timeAndDate: Float
         type: String
+        ticketsAmount: Int
         image: Upload
     }
 
@@ -15,6 +16,7 @@ export default  `
         location: String!
         timeAndDate: Float!
         type: String!
+        ticketsAmount: Int!
         image: Upload
     }
 
