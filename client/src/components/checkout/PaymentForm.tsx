@@ -1,13 +1,9 @@
-/* eslint-disable no-debugger */
-
 import React, { useState, useEffect } from "react"
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js"
 import { useSnackbar } from "notistack"
-// import CreateTicket from "../CreateTicket"
+import CreateTicketComp from "../CreateTicket"
 import { useAuth } from "../../hooks/authController/AuthContext"  
-import { useNavigate } from "react-router-dom"
 import { InputTicket, MutationResponse, Ticket } from "../../graphql/graphql"
-import QRCode from 'qrcode'
 import { graphql } from "../../graphql"
 import { useMutation } from "urql"
 
@@ -45,9 +41,10 @@ const PaymentForm = ({
   const [orderID, setOrderID] = useState(false)
   const [success, setSuccess] = useState(false)
   const [createTicket, setCreateTicket] = useState(false)
-  const navigate = useNavigate()
   const { currentUser } = useAuth()
   const [ user, setCurrentUser] = useState<any[]>([])
+  const [ isShowTicket, setShowTicket ] = useState(true)
+  const [ ticketData, setTicketData ] = useState({})
   const [CreateTicketResult, CreateTicket] = 
   useMutation<
     {
@@ -70,15 +67,16 @@ const PaymentForm = ({
         price: 50,
         barcode: makeId()
       }
-      const qrValueString = "/" + inputTicket.userId + "/" + inputTicket.eventId
 
+      setTicketData(inputTicket)
       setCurrentUser(currentUser || [])
+      setShowTicket(true)
       CreateTicket({ inputTicket }).then((result) => {
         if (result.error) {
           console.error("Error creating ticket:", result.error)
           enqueueSnackbar("An error occurred", { variant: "error" })
         } else {
-          navigate("/")
+          console.log("wow")
           enqueueSnackbar("Ticket created successfully", {variant: 'success'})
         }
       })
@@ -109,7 +107,6 @@ const PaymentForm = ({
   // check Approval
   const onApprove = (data, actions) => {
     return actions.order.capture().then(function (details) {
-
       setCreateTicket(true)
       const { payer } = details
       setSuccess(true)
@@ -145,6 +142,11 @@ const PaymentForm = ({
         onError={onError}
         createOrder={createOrder}
       />
+      {
+        isShowTicket? 
+        <CreateTicketComp ticket={ticketData}/>
+        : null
+      }
     </PayPalScriptProvider>
   )
 }
