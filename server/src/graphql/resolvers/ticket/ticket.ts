@@ -13,7 +13,7 @@ const ticketResolvers: {
       const {  _id,
         userId,
         eventId,
-        isFirstHand, 
+        isSecondHand, 
         price,
         barcode } = inputTicket
       try {
@@ -22,7 +22,7 @@ const ticketResolvers: {
           _id: new mongoose.Types.ObjectId(),
           userId: new Types.ObjectId(userId),
           eventId:new Types.ObjectId(eventId),
-          isFirstHand: isFirstHand, 
+          isSecondHand: isSecondHand, 
           price: price,
           barcode: barcode
         })

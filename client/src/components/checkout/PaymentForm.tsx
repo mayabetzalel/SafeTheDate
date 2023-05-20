@@ -7,6 +7,7 @@ import { InputTicket, MutationResponse, Ticket } from "../../graphql/graphql"
 import { graphql } from "../../graphql"
 import { useMutation } from "urql"
 
+const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 const LENGTH = 60;
 const CREATE_TICKET_MUTATION = graphql(`
   mutation CreateTicket($inputTicket: InputTicket!) {
@@ -19,8 +20,6 @@ const CREATE_TICKET_MUTATION = graphql(`
 
 function makeId() {
   let result = "";
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const charactersLength = characters.length;
   let counter = 0;
   while (counter < LENGTH) {
@@ -43,7 +42,7 @@ const PaymentForm = ({
   const [createTicket, setCreateTicket] = useState(false)
   const { currentUser } = useAuth()
   const [ user, setCurrentUser] = useState<any[]>([])
-  const [ isShowTicket, setShowTicket ] = useState(true)
+  const [ isShowTicket, setShowTicket ] = useState(false)
   const [ ticketData, setTicketData ] = useState({})
   const [CreateTicketResult, CreateTicket] = 
   useMutation<
@@ -63,7 +62,7 @@ const PaymentForm = ({
         _id: "1",
         userId: currentUser['_id'] || "",
         eventId: url.slice(splittedUrl + 1),
-        isFirstHand: true, 
+        isSecondHand: true, 
         price: 50,
         barcode: makeId()
       }

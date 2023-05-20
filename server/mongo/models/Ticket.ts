@@ -4,7 +4,7 @@ interface TicketMongoType {
   _id: Types.ObjectId
   userId: Types.ObjectId
   eventId: Types.ObjectId
-  isFirstHand: Boolean,
+  isSecondHand: Boolean,
   price: Number,
   barcode: string
 }
@@ -22,7 +22,7 @@ const ticketSchema = new Schema<TicketMongoType>({
     type: Schema.Types.ObjectId,
     required: true
   },
-  isFirstHand: {
+  isSecondHand: {
     type: Boolean, 
     required: true
   }, 
