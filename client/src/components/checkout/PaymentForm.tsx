@@ -42,7 +42,7 @@ const PaymentForm = ({
   const [createTicket, setCreateTicket] = useState(false)
   const { currentUser } = useAuth()
   const [ user, setCurrentUser] = useState<any[]>([])
-  const [ isShowTicket, setShowTicket ] = useState(false)
+  const [ isShowTicket, setShowTicket ] = useState(true)
   const [ ticketData, setTicketData ] = useState({})
   const [CreateTicketResult, CreateTicket] = 
   useMutation<

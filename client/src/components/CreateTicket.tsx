@@ -11,6 +11,22 @@ import QRCode from 'react-qr-code';
 import { Typography, Divider, Grid } from "@mui/material";
 import logo from "../assets/logo.png";
 import { useAuth } from "../hooks/authController/AuthContext"  
+import { graphql } from "../graphql";
+import { useQuery } from "urql";
+import _ from 'lodash';
+
+const GET_EVENT = graphql(`
+    query getEventById($eventId: [String]) {
+        event(ids: $eventId) {
+            id
+            name
+            location
+            timeAndDate
+            type
+            image
+        }
+    }
+`);
 
 export const CreateTicketComp = ( {ticket} ) => {
     const [open, setOpen] = React.useState(true);
@@ -18,13 +34,28 @@ export const CreateTicketComp = ( {ticket} ) => {
     const { currentUser } = useAuth()
     let firstName = ""
     let lastName = ""
+    let time = new Date()
+    let location = ""
+
+    const event = useQuery({
+        query: GET_EVENT, 
+        variables: {
+            eventId: ["6467686b41349cba46cad54e"],
+        }
+    });
+
+    let eventData = event[0].data || {}
     
-    console.log("here")
-    console.log("")
+    if(event && eventData  && !_.isEqual(eventData, {}) && eventData["event"]) {
+        eventData = eventData["event"][0]
+        console.log(eventData)
+
+        time = eventData["timeAndDate"]
+        location = eventData["location"]
+    }
     if(currentUser) {
         firstName = currentUser["firstName"]
         lastName = currentUser["lastName"]
-        console.log(firstName + lastName)
     }
     const handleClose = () => {
       console.log(ticket)
@@ -56,8 +87,8 @@ export const CreateTicketComp = ( {ticket} ) => {
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
                 <h3> {firstName} {lastName} </h3>
-                <h5> At: 12:30 Wed </h5>
-                <h5> In: location </h5>
+                {/* <h5> {time} </h5> */}
+                <h5> {location} </h5>
                 </DialogContentText>
                 <QRCode  
                     value=""
