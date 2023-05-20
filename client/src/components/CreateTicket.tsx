@@ -13,6 +13,7 @@ import logo from "../assets/logo.png";
 import { useAuth } from "../hooks/authController/AuthContext"  
 import { graphql } from "../graphql";
 import { useQuery } from "urql";
+import { PDFViewer } from '@react-pdf/renderer';
 import _ from 'lodash';
 
 const GET_EVENT = graphql(`
@@ -28,19 +29,19 @@ const GET_EVENT = graphql(`
     }
 `);
 
-export const CreateTicketComp = ( {ticket} ) => {
+export const CreateTicketComp = ( { ticket } ) => {
     const [open, setOpen] = React.useState(true);
     const navigate = useNavigate()
     const { currentUser } = useAuth()
     let firstName = ""
     let lastName = ""
-    let time = new Date()
     let location = ""
+    let eventName = ""
 
     const event = useQuery({
         query: GET_EVENT, 
         variables: {
-            eventId: ["6467686b41349cba46cad54e"],
+            eventId: [ticket.eventId],
         }
     });
 
@@ -48,11 +49,17 @@ export const CreateTicketComp = ( {ticket} ) => {
     
     if(event && eventData  && !_.isEqual(eventData, {}) && eventData["event"]) {
         eventData = eventData["event"][0]
+        console.log(ticket)
         console.log(eventData)
 
-        time = eventData["timeAndDate"]
+        
         location = eventData["location"]
+        eventName = eventData["name"]
     }
+    let time = new Date(eventData["timeAndDate"])
+    const hourTime = time.getHours() 
+        + ':' + time.getMinutes() 
+    const dateTime = time.getDay() + "/" + time.getMonth() + "/" + time.getFullYear()
     if(currentUser) {
         firstName = currentUser["firstName"]
         lastName = currentUser["lastName"]
@@ -63,6 +70,7 @@ export const CreateTicketComp = ( {ticket} ) => {
       navigate("/")
     };
   
+
     return (
         <div>
             <Dialog
@@ -79,19 +87,19 @@ export const CreateTicketComp = ( {ticket} ) => {
                 />
             </Grid>
             <DialogTitle style={{ textAlign:"center" }} id="alert-dialog-title">
-                {"Entry Ticket"}
-                {"Event name"}
+                {"Entry Ticket - "} 
+                {eventName}
             </DialogTitle>
             <h6 style={{ textAlign:"center" }}>Present in the entry with id</h6>
             <Divider/>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
                 <h3> {firstName} {lastName} </h3>
-                {/* <h5> {time} </h5> */}
+                <h5>{dateTime}  {hourTime} </h5>
                 <h5> {location} </h5>
                 </DialogContentText>
                 <QRCode  
-                    value=""
+                    value={ticket.barcode ? ticket.barcode : ""}
                     size={256}
                 />
             </DialogContent>
@@ -103,8 +111,9 @@ export const CreateTicketComp = ( {ticket} ) => {
             </DialogActions>
             </Dialog>
         </div>
-        
     );
+
+    
 }
 
 
