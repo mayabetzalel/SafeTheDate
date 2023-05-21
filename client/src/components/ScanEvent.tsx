@@ -58,11 +58,7 @@ export const ScanEvent = () => {
         if (result) {
           // properly decoded qr code
           console.log("Found QR code!", result)
-          setCode(result.getText())
-        }
-
-        if (err) {
-          setCode("")
+          result.getText() && setCode(result.getText())
         }
       }
     )
@@ -78,6 +74,7 @@ export const ScanEvent = () => {
 
   return (
     <Center>
+      <h1>{`code : ${code}`}</h1>
       {isValidating ? (
         <Spinner />
       ) : (
