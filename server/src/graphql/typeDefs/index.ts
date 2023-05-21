@@ -95,6 +95,7 @@ export type Query = {
   __typename?: 'Query';
   event: Array<Event>;
   eventCount: Scalars['Int'];
+  isVallid: Scalars['Boolean'];
   query?: Maybe<Scalars['String']>;
 };
 
@@ -110,6 +111,12 @@ export type QueryEventArgs = {
 export type QueryEventCountArgs = {
   filterParams?: InputMaybe<FilterEventParams>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
+
+export type QueryIsVallidArgs = {
+  barcode: Scalars['String'];
+  eventId: Scalars['ID'];
 };
 
 export type Ticket = {
@@ -265,6 +272,7 @@ export type MutationResponseResolvers<ContextType = any, ParentType extends Reso
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   event?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventArgs>>;
   eventCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<QueryEventCountArgs>>;
+  isVallid?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryIsVallidArgs, 'barcode' | 'eventId'>>;
   query?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 };
 

@@ -6,30 +6,35 @@ const DEFAULT_LIMIT = 50
 const FAILED_MUTATION_MESSAGE = "mutation createTicket failed"
 
 const ticketResolvers: {
+  Query: Pick<QueryResolvers, "isVallid">;
   Mutation: Pick<MutationResolvers, "createTicket">
 } = {
   Mutation: {
     createTicket: async (parent, { inputTicket }, context, info) => {
-      const {  _id,
-        userId,
-        eventId,
-        barcode } = inputTicket
+      const { _id, userId, eventId, barcode } = inputTicket;
       try {
 
-        const newTicket = await TicketModel.create({ 
+        const newTicket = await TicketModel.create({
           _id: new mongoose.Types.ObjectId(),
           userId: new Types.ObjectId(userId),
-          eventId:new Types.ObjectId(eventId),
+          eventId: new Types.ObjectId(eventId),
           barcode: barcode
-        })
-        console.log("Ticket created: " + newTicket)
-        return { message: "ticket created succesfully", code: 200 }
-      } catch(error) {
-        console.log("failed with " + error)
-        return { message: FAILED_MUTATION_MESSAGE, code: 500 }
+        });
+        console.log("Ticket created: " + newTicket);
+        return { message: "ticket created succesfully", code: 200 };
+      } catch (error) {
+        console.log("failed with " + error);
+        return { message: FAILED_MUTATION_MESSAGE, code: 500 };
       }
     },
   },
+  Query: {
+    isVallid: async (parent, args, context, info) => {
+      const { eventId, barcode } = args;
+
+      return true
+    }
+  }
 }
 
 export default ticketResolvers
