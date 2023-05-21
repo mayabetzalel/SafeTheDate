@@ -11,14 +11,14 @@ import { ImportTicket } from "./components/ImportTicket";
 import Captain from "./components/Captain";
 import CaptainEvents from "./components/CapatinEvents";
 import ScanEvent from "./components/ScanEvent";
-import {MyTickets} from "./components/profile/MyTickets";
-import {Profile} from "./components/profile/Profile";
-import {MyEvents} from "./components/profile/MyEvents";
+import { MyTickets } from "./components/profile/MyTickets";
+import { Profile } from "./components/profile/Profile";
+import { MyEvents } from "./components/profile/MyEvents";
 import SideChatbot from "./components/SideChatbot";
 import { EventsPage } from "./components/EventsPage/EventsPage";
 import { useAuth } from "./hooks/authController/AuthContext";
 import { useEffect } from "react";
-import {MyDetails} from "./components/profile/MyDetails";
+import { MyDetails } from "./components/profile/MyDetails";
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -46,7 +46,7 @@ const router = createBrowserRouter([
         <Container sx={{ height: "90%" }} maxWidth={"xl"}>
           <Outlet />
         </Container>
-        <SideChatbot/>
+        <SideChatbot />
       </>
     ),
     children: [
@@ -145,7 +145,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: RoutePaths.SCAN_EVENT,
+        path: `${RoutePaths.SCAN_EVENT}/:id`,
         element: (
           <PrivateRoute>
             <ScanEvent />

@@ -1,13 +1,9 @@
 import {
   Avatar,
-  CardContent,
-  CardHeader,
   CardMedia,
   Grid,
   Typography,
   Card,
-  CardActions,
-  Button,
   Stack,
   Divider,
 } from "@mui/material";
@@ -27,6 +23,7 @@ const EVENT_QUERY = graphql(`
       id
       name
       location
+      ticketsAmount
       timeAndDate
       image
     }
@@ -105,6 +102,9 @@ export const Event = () => {
               <Stack direction="row" spacing={1} alignItems="center">
                 <LocationOnIcon />
                 <Typography variant="h6">{event?.location}</Typography>
+              </Stack>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography variant="h6"> {event?.ticketsAmount ? (event?.ticketsAmount + ' tickets avilable') : 'No avilable tickets'}</Typography>
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
                 <EventIcon />

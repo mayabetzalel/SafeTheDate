@@ -31,6 +31,7 @@ export type Event = {
   image?: Maybe<Scalars['Upload']>;
   location?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
+  ticketsAmount?: Maybe<Scalars['Int']>;
   timeAndDate?: Maybe<Scalars['Float']>;
   type?: Maybe<Scalars['String']>;
 };
@@ -46,6 +47,7 @@ export type InputEvent = {
   image?: InputMaybe<Scalars['Upload']>;
   location: Scalars['String'];
   name: Scalars['String'];
+  ticketsAmount: Scalars['Int'];
   timeAndDate: Scalars['Float'];
   type: Scalars['String'];
 };
@@ -93,6 +95,7 @@ export type Query = {
   __typename?: 'Query';
   event: Array<Event>;
   eventCount: Scalars['Int'];
+  isVallid: Scalars['Boolean'];
   query?: Maybe<Scalars['String']>;
 };
 
@@ -108,6 +111,12 @@ export type QueryEventArgs = {
 export type QueryEventCountArgs = {
   filterParams?: InputMaybe<FilterEventParams>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
+
+export type QueryIsVallidArgs = {
+  barcode: Scalars['String'];
+  eventId: Scalars['ID'];
 };
 
 export type Ticket = {
@@ -242,6 +251,7 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   image?: Resolver<Maybe<ResolversTypes['Upload']>, ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  ticketsAmount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   timeAndDate?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   type?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -262,6 +272,7 @@ export type MutationResponseResolvers<ContextType = any, ParentType extends Reso
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   event?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventArgs>>;
   eventCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<QueryEventCountArgs>>;
+  isVallid?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryIsVallidArgs, 'barcode' | 'eventId'>>;
   query?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 };
 

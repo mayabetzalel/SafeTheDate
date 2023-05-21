@@ -1,52 +1,59 @@
-import React, { useState, useEffect } from "react"
-import { Box, Button, Typography } from "@mui/material"
+import React, { useState, useEffect, useRef } from "react"
+import { Box, Typography } from "@mui/material"
 import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined"
 import InvalidIcon from "@mui/icons-material/CancelOutlined"
 import {
   BrowserQRCodeReader,
-  NotFoundException,
-  ChecksumException,
-  FormatException,
-} from "@zxing/library"
+} from "@zxing/browser"
 import Spinner from "../utils/spinner"
 import { Center } from "../utils/center"
+import { useParams } from "react-router-dom"
+import { graphql } from "../graphql"
+// import { useQuery } from "urql"
+
+// const VALIDATE_TICKET_QUERY = graphql(`
+//   query isVallid($eventId: [String], $barcode: [String]) {
+//     isVallid(eventId: $eventId, barcode=$barcode) {
+//       iisVallid
+//     }
+//   }
+// `);
 
 export const ScanEvent = () => {
-  const [selectedDeviceId, setSelectedDeviceId] = useState("")
+  const { id = "" } = useParams()
   const [code, setCode] = useState("")
-  const [videoInputDevices, setVideoInputDevices] = useState([])
 
   const [isValidating, setIsValidating] = useState(false)
   const [isValid, setIsValid] = useState(false)
   const [showIsValid, setShowIsValid] = useState(false)
 
-  const codeReader = new BrowserQRCodeReader()
+  const videoRef = useRef<any>();
 
-  useEffect(() => {
-    codeReader
-      .getVideoInputDevices()
-      .then((videoInputDevices) => {
-        setupDevices(videoInputDevices)
-      })
-      .catch((err) => {
-        console.error(err)
-      })
-  }, [])
+  // const [{ data, fetching }, reexecuteQuery] = useQuery<{
+  //   isValid: Boolean
+  // }>({
+  //   query: VALIDATE_TICKET_QUERY,
+  //   variables: { eventId: [id], barcode: code },
+  // })
 
-  function setupDevices(videoInputDevices) {
-    // selects first device
-    setSelectedDeviceId(videoInputDevices[0].deviceId)
+  // const [{ isVallidData, fetchingIsVallidData}, reexecuteIsVallidQuery] = useQuery<{
+  //   event: Exact<Event>[]
+  // }>({
+  //   query: EVENT_QUERY,
+  //   variables: { ids: [id] },
+  // })
 
-    // setup devices dropdown
-    if (videoInputDevices.length >= 1) {
-      setVideoInputDevices(videoInputDevices)
-    }
-  }
+  async function decodeContinuously() {
+    const codeReader = new BrowserQRCodeReader()
 
-  function decodeContinuously(selectedDeviceId) {
-    codeReader.decodeFromInputVideoDeviceContinuously(
+    const videoInputDevices = await BrowserQRCodeReader.listVideoInputDevices();
+
+    // choose your media device (webcam, frontal camera, back camera, etc.)
+    const selectedDeviceId = videoInputDevices[0].deviceId;
+
+    codeReader.decodeFromVideoDevice(
       selectedDeviceId,
-      "video",
+      videoRef.current,
       (result, err) => {
         if (result) {
           // properly decoded qr code
@@ -62,25 +69,12 @@ export const ScanEvent = () => {
   }
 
   useEffect(() => {
-    codeReader
-    decodeContinuously(selectedDeviceId)
-    console.log(`Started decode from camera with id ${selectedDeviceId}`)
-  }, [selectedDeviceId])
+    decodeContinuously()
+  }, [])
 
   useEffect(() => {
-    if (code) {
-      setIsValidating(true)
-
-      // validate in server
-      let valid = true
-
-      setShowIsValid(true)
-      setTimeout(() => setShowIsValid(false), 3000)
-      setIsValid(valid)
-
-      setIsValidating(false)
-    }
-  }, [code])
+    setTimeout(() => setShowIsValid(false), 3000)
+  }, [showIsValid])
 
   return (
     <Center>
@@ -89,9 +83,8 @@ export const ScanEvent = () => {
       ) : (
         <>
           <div style={{ visibility: showIsValid ? "hidden" : "visible" }}>
-            <video id="video" width="300" height="200" />
+            <video ref={videoRef} id="video" width="300" height="200" />
           </div>
-
           {showIsValid && (
             <Box sx={{ color: isValid ? "success.main" : "error.main" }}>
               <Center>
