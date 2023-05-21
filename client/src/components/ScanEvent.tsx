@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useRef } from "react"
-import { Box, Typography } from "@mui/material"
-import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined"
-import InvalidIcon from "@mui/icons-material/CancelOutlined"
-import {
-  BrowserQRCodeReader,
-} from "@zxing/browser"
-import Spinner from "../utils/spinner"
-import { Center } from "../utils/center"
-import { useParams } from "react-router-dom"
-import { graphql } from "../graphql"
+import React, { useState, useEffect, useRef } from "react";
+import { Box, Typography } from "@mui/material";
+import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
+import InvalidIcon from "@mui/icons-material/CancelOutlined";
+import { BrowserQRCodeReader } from "@zxing/browser";
+import Spinner from "../utils/spinner";
+import { Center } from "../utils/center";
+import { useParams } from "react-router-dom";
+import { graphql } from "../graphql";
 // import { useQuery } from "urql"
 
 // const VALIDATE_TICKET_QUERY = graphql(`
@@ -20,12 +18,12 @@ import { graphql } from "../graphql"
 // `);
 
 export const ScanEvent = () => {
-  const { id = "" } = useParams()
-  const [code, setCode] = useState("")
+  const { id = "" } = useParams();
+  const [code, setCode] = useState("");
 
-  const [isValidating, setIsValidating] = useState(false)
-  const [isValid, setIsValid] = useState(false)
-  const [showIsValid, setShowIsValid] = useState(false)
+  const [isValidating, setIsValidating] = useState(false);
+  const [isValid, setIsValid] = useState(false);
+  const [showIsValid, setShowIsValid] = useState(false);
 
   const videoRef = useRef<any>();
 
@@ -44,7 +42,7 @@ export const ScanEvent = () => {
   // })
 
   async function decodeContinuously() {
-    const codeReader = new BrowserQRCodeReader()
+    const codeReader = new BrowserQRCodeReader();
 
     const videoInputDevices = await BrowserQRCodeReader.listVideoInputDevices();
 
@@ -57,24 +55,20 @@ export const ScanEvent = () => {
       (result, err) => {
         if (result) {
           // properly decoded qr code
-          console.log("Found QR code!", result)
-          setCode(result.getText())
-        }
-
-        if (err) {
-          setCode("")
+          console.log("Found QR code!", result);
+          setCode(result.getText());
         }
       }
-    )
+    );
   }
 
   useEffect(() => {
-    decodeContinuously()
-  }, [])
+    decodeContinuously();
+  }, []);
 
   useEffect(() => {
-    setTimeout(() => setShowIsValid(false), 3000)
-  }, [showIsValid])
+    setTimeout(() => setShowIsValid(false), 3000);
+  }, [showIsValid]);
 
   return (
     <Center>
@@ -105,7 +99,7 @@ export const ScanEvent = () => {
         </>
       )}
     </Center>
-  )
-}
+  );
+};
 
-export default ScanEvent
+export default ScanEvent;

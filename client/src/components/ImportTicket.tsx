@@ -1,22 +1,21 @@
-import { useState, useEffect } from "react";
-import { Box, Button, Typography } from "@mui/material";
-import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
-import InvalidIcon from "@mui/icons-material/CancelOutlined";
-import { BrowserQRCodeReader } from "@zxing/library";
-import Spinner from "../utils/spinner";
-import { Center } from "../utils/center";
 import { graphql } from "../graphql";
 import { useQuery } from "urql";
 import { Exact, ThirdPartyTicket } from "../graphql/graphql";
+import React, { useState, useEffect, useRef } from "react";
+import { Box, Button, Typography } from "@mui/material";
+import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
+import InvalidIcon from "@mui/icons-material/CancelOutlined";
+import { BrowserQRCodeReader } from "@zxing/browser";
+import Spinner from "../utils/spinner";
+import { Center } from "../utils/center";
+import { useParams } from "react-router-dom";
 
 export const ImportTicket = () => {
-  const [selectedDeviceId, setSelectedDeviceId] = useState("");
   const [code, setCode] = useState("");
-  const [videoInputDevices, setVideoInputDevices] = useState([]);
   const [isValid, setIsValid] = useState(false);
   const [showIsValid, setShowIsValid] = useState(false);
 
-  const codeReader = new BrowserQRCodeReader();
+  const videoRef = useRef<any>();
 
   const VALIDATE_TICKET_QUERY = graphql(`
     query validateTicket($id: String) {
@@ -39,50 +38,30 @@ export const ImportTicket = () => {
     },
   });
 
-  function setupDevices(videoInputDevices) {
-    // selects first device
-    setSelectedDeviceId(videoInputDevices[0].deviceId);
+  async function decodeContinuously() {
+    const codeReader = new BrowserQRCodeReader();
 
-    // setup devices dropdown
-    if (videoInputDevices.length >= 1) {
-      setVideoInputDevices(videoInputDevices);
-    }
-  }
+    const videoInputDevices = await BrowserQRCodeReader.listVideoInputDevices();
 
-  function decodeContinuously(selectedDeviceId) {
-    codeReader.decodeFromInputVideoDeviceContinuously(
+    // choose your media device (webcam, frontal camera, back camera, etc.)
+    const selectedDeviceId = videoInputDevices[0].deviceId;
+
+    codeReader.decodeFromVideoDevice(
       selectedDeviceId,
-      "video",
+      videoRef.current,
       (result, err) => {
         if (result) {
           // properly decoded qr code
           console.log("Found QR code!", result);
           setCode(result.getText());
         }
-
-        if (err) {
-          setCode("");
-        }
       }
     );
   }
 
   useEffect(() => {
-    codeReader
-      .getVideoInputDevices()
-      .then((videoInputDevices) => {
-        setupDevices(videoInputDevices);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    decodeContinuously();
   }, []);
-
-  useEffect(() => {
-    codeReader;
-    decodeContinuously(selectedDeviceId);
-    console.log(`Started decode from camera with id ${selectedDeviceId}`);
-  }, [selectedDeviceId]);
 
   useEffect(() => {
     console.log(data?.validateTicket);
@@ -95,12 +74,14 @@ export const ImportTicket = () => {
 
   return (
     <Center>
+      {/* <h2 style={{ color: "red" }}>{JSON.stringify(data, null, 2)}</h2>
+      <h2 style={{ color: "red" }}>{JSON.stringify(code, null, 2)}</h2> */}
       {fetching ? (
         <Spinner />
       ) : (
         <>
           <div style={{ visibility: showIsValid ? "hidden" : "visible" }}>
-            <video id="video" width="300" height="200" />
+            <video ref={videoRef} id="video" width="300" height="200" />
           </div>
           {showIsValid && (
             <Box sx={{ color: isValid ? "success.main" : "error.main" }}>

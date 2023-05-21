@@ -68,6 +68,7 @@ export type Mutation = {
   chatCommand: ChatResponse;
   createEvent: MutationResponse;
   createTicket: MutationResponse;
+  generateTicketForCurrentEvent: ThirdPartyTicket;
 };
 
 
@@ -85,6 +86,11 @@ export type MutationCreateTicketArgs = {
   inputTicket: InputTicket;
 };
 
+
+export type MutationGenerateTicketForCurrentEventArgs = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
 export type MutationResponse = {
   __typename?: 'MutationResponse';
   code: Scalars['Int'];
@@ -97,6 +103,7 @@ export type Query = {
   eventCount: Scalars['Int'];
   isVallid: Scalars['Boolean'];
   query?: Maybe<Scalars['String']>;
+  validateTicket: ThirdPartyTicket;
 };
 
 
@@ -117,6 +124,20 @@ export type QueryEventCountArgs = {
 export type QueryIsVallidArgs = {
   barcode: Scalars['String'];
   eventId: Scalars['ID'];
+};
+
+
+export type QueryValidateTicketArgs = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
+export type ThirdPartyTicket = {
+  __typename?: 'ThirdPartyTicket';
+  eventName?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  ownerEmail?: Maybe<Scalars['String']>;
+  price?: Maybe<Scalars['Int']>;
+  qrCodeId?: Maybe<Scalars['String']>;
 };
 
 export type Ticket = {
@@ -212,6 +233,7 @@ export type ResolversTypes = {
   MutationResponse: ResolverTypeWrapper<MutationResponse>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  ThirdPartyTicket: ResolverTypeWrapper<ThirdPartyTicket>;
   Ticket: ResolverTypeWrapper<Ticket>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
 };
@@ -232,6 +254,7 @@ export type ResolversParentTypes = {
   MutationResponse: MutationResponse;
   Query: {};
   String: Scalars['String'];
+  ThirdPartyTicket: ThirdPartyTicket;
   Ticket: Ticket;
   Upload: Scalars['Upload'];
 };
@@ -261,6 +284,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   chatCommand?: Resolver<ResolversTypes['ChatResponse'], ParentType, ContextType, RequireFields<MutationChatCommandArgs, 'inputMessage'>>;
   createEvent?: Resolver<ResolversTypes['MutationResponse'], ParentType, ContextType, RequireFields<MutationCreateEventArgs, 'inputEvent'>>;
   createTicket?: Resolver<ResolversTypes['MutationResponse'], ParentType, ContextType, RequireFields<MutationCreateTicketArgs, 'inputTicket'>>;
+  generateTicketForCurrentEvent?: Resolver<ResolversTypes['ThirdPartyTicket'], ParentType, ContextType, Partial<MutationGenerateTicketForCurrentEventArgs>>;
 };
 
 export type MutationResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['MutationResponse'] = ResolversParentTypes['MutationResponse']> = {
@@ -274,6 +298,16 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   eventCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<QueryEventCountArgs>>;
   isVallid?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryIsVallidArgs, 'barcode' | 'eventId'>>;
   query?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  validateTicket?: Resolver<ResolversTypes['ThirdPartyTicket'], ParentType, ContextType, Partial<QueryValidateTicketArgs>>;
+};
+
+export type ThirdPartyTicketResolvers<ContextType = any, ParentType extends ResolversParentTypes['ThirdPartyTicket'] = ResolversParentTypes['ThirdPartyTicket']> = {
+  eventName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  ownerEmail?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  price?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  qrCodeId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type TicketResolvers<ContextType = any, ParentType extends ResolversParentTypes['Ticket'] = ResolversParentTypes['Ticket']> = {
@@ -294,6 +328,7 @@ export type Resolvers<ContextType = any> = {
   Mutation?: MutationResolvers<ContextType>;
   MutationResponse?: MutationResponseResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  ThirdPartyTicket?: ThirdPartyTicketResolvers<ContextType>;
   Ticket?: TicketResolvers<ContextType>;
   Upload?: GraphQLScalarType;
 };
