@@ -1,4 +1,4 @@
-export default  `
+export default `
     type Ticket {
         _id: ID
         userId: ID
@@ -11,6 +11,10 @@ export default  `
         userId: ID!,
         eventId: ID!,
         barcode: String!,
+    }
+
+    type Query {
+        isVallid(eventId: ID!, barcode: String!): Boolean!
     }
 
     type Mutation {
