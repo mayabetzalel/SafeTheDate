@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import InvalidIcon from "@mui/icons-material/CancelOutlined";
 import { BrowserQRCodeReader } from "@zxing/library";
@@ -11,7 +11,7 @@ import { Exact, ThirdPartyTicket } from "../graphql/graphql";
 
 export const ImportTicket = () => {
   const [selectedDeviceId, setSelectedDeviceId] = useState("");
-  const [code, setCode] = useState({});
+  const [code, setCode] = useState("");
   const [videoInputDevices, setVideoInputDevices] = useState([]);
   const [isValid, setIsValid] = useState(false);
   const [showIsValid, setShowIsValid] = useState(false);
@@ -26,17 +26,17 @@ export const ImportTicket = () => {
         ownerEmail
         price
         qrCodeId
-        seat
       }
     }
   `);
 
-  const [{ data = { validateTicket: {} }, fetching }] = useQuery<{
+  const [{ data, fetching }] = useQuery<{
     validateTicket: Exact<ThirdPartyTicket>;
   }>({
     query: VALIDATE_TICKET_QUERY,
-    variables: code,
-    pause: true,
+    variables: {
+      id: code,
+    },
   });
 
   function setupDevices(videoInputDevices) {
@@ -57,11 +57,11 @@ export const ImportTicket = () => {
         if (result) {
           // properly decoded qr code
           console.log("Found QR code!", result);
-          setCode({ id: result.getText() });
+          setCode(result.getText());
         }
 
         if (err) {
-          setCode({});
+          setCode("");
         }
       }
     );
@@ -91,15 +91,7 @@ export const ImportTicket = () => {
       setShowIsValid(true);
       setTimeout(() => setShowIsValid(false), 3000);
     }
-  }, [code]);
-
-  // useEffect(() => {
-  //   if (code) {
-  //     // validate in server
-  //     console.log("validating");
-  //     reexecuteQuery({ requestPolicy: "network-only" });
-  //   }
-  // }, [code, reexecuteQuery]);
+  }, [data]);
 
   return (
     <Center>
