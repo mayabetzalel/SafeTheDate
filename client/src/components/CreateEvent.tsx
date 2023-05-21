@@ -3,10 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "urql";
 import { useSnackbar } from "notistack";
 import { graphql } from "../graphql";
-import { InputEvent, MutationResponse, Event } from "../graphql/graphql";
+import { InputEvent, MutationResponse } from "../graphql/graphql";
 import {
-  Card,
-  CardContent,
   Typography,
   TextField,
   Button,
@@ -25,14 +23,15 @@ const CREATE_EVENT_MUTATION = graphql(`
     }
   }
   `);
-  
-  export const CreateEvent = () => {
-    const eventNameRef = useRef<HTMLInputElement | null>();
-    const eventLocationRef = useRef<HTMLInputElement | null>();
-    const eventTimeAndDateRef = useRef<HTMLInputElement | null>();
-    const eventTypeRef = useRef<HTMLInputElement | null>();
-    const [image, setImage] = useState(undefined);
-    const { enqueueSnackbar } = useSnackbar();
+
+export const CreateEvent = () => {
+  const eventNameRef = useRef<HTMLInputElement | null>();
+  const eventLocationRef = useRef<HTMLInputElement | null>();
+  const eventTimeAndDateRef = useRef<HTMLInputElement | null>();
+  const eventTypeRef = useRef<HTMLInputElement | null>();
+  const eventTicketAmoutRef = useRef<HTMLInputElement | null>();
+  const [image, setImage] = useState(undefined);
+  const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
   const [createEventResult, createEvent] = useMutation<
@@ -42,12 +41,12 @@ const CREATE_EVENT_MUTATION = graphql(`
   >(CREATE_EVENT_MUTATION);
 
 
-    const onChangeImage = (imageList) => {
-        // only allow one image to be uploaded
-        if (imageList.length === 1) {
-            setImage(imageList[0].data_url);
-        }
-    };
+  const onChangeImage = (imageList) => {
+    // only allow one image to be uploaded
+    if (imageList.length === 1) {
+      setImage(imageList[0].data_url);
+    }
+  };
 
   function handleEventCreation() {
     const inputEvent: InputEvent = {
@@ -55,11 +54,12 @@ const CREATE_EVENT_MUTATION = graphql(`
       location: eventLocationRef.current?.value || "",
       timeAndDate: Date.parse(eventTimeAndDateRef.current?.value || new Date().toString()),
       type: eventTypeRef.current?.value || "",
+      ticketsAmount: eventTicketAmoutRef.current?.value ? parseInt(eventTicketAmoutRef.current?.value) : 1,
       image: image || ""
     };
 
     // Call the createEvent mutation with the inputEvent object
-    createEvent({inputEvent}).then((result) => {
+    createEvent({ inputEvent }).then((result) => {
       if (result.error) {
         console.error("Error creating event:", result.error);
         enqueueSnackbar("An error occurred", { variant: "error" });
@@ -156,11 +156,31 @@ const CREATE_EVENT_MUTATION = graphql(`
                     }}
                   />
                 </Grid>
+                <Grid container justifyContent={"center"}>
+                  <Grid item xs={3}>
+                    <Typography variant="h4">Amout of tickets</Typography>
+                  </Grid>
+                  <Grid item xs={5}>
+                    <TextField
+                      fullWidth
+                      color={"secondary"}
+                      placeholder="Tickets amount"
+                      inputRef={eventTicketAmoutRef}
+                      variant="outlined"
+                      type='number'
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start"></InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                </Grid>
               </Grid>
             </Stack>
           </Grid>
           <Grid item xs={3}>
-            <ImagePicker image={image} onChangeImage={onChangeImage}/>
+            <ImagePicker image={image} onChangeImage={onChangeImage} />
           </Grid>
         </Grid>
       </Paper>
