@@ -16,6 +16,7 @@ import { useQuery } from "urql";
 import { PDFViewer } from '@react-pdf/renderer';
 import _ from 'lodash';
 
+const BARCODE_SIZE = 256
 const GET_EVENT = graphql(`
     query getEventById($eventId: [String]) {
         event(ids: $eventId) {
@@ -29,7 +30,7 @@ const GET_EVENT = graphql(`
     }
 `);
 
-export const CreateTicketComp = ( { ticket } ) => {
+export const DisplayTicket= ( { ticket } ) => {
     const [open, setOpen] = React.useState(true);
     const navigate = useNavigate()
     const { currentUser } = useAuth()
@@ -99,8 +100,8 @@ export const CreateTicketComp = ( { ticket } ) => {
                 <h5> {location} </h5>
                 </DialogContentText>
                 <QRCode  
-                    value={ticket.barcode ? ticket.barcode : ""}
-                    size={256}
+                    value={ticket.barcode || ""}
+                    size={BARCODE_SIZE}
                 />
             </DialogContent>
             <DialogActions>
@@ -117,4 +118,4 @@ export const CreateTicketComp = ( { ticket } ) => {
 }
 
 
-export default CreateTicketComp
+export default DisplayTicket

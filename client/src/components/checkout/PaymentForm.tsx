@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js"
 import { useSnackbar } from "notistack"
-import CreateTicketComp from "../CreateTicket"
+import DisplayTicket from "../CreateTicket"
 import { useAuth } from "../../hooks/authController/AuthContext"  
 import { InputTicket, MutationResponse, Ticket } from "../../graphql/graphql"
 import { graphql } from "../../graphql"
@@ -39,10 +39,10 @@ const PaymentForm = ({
   const { enqueueSnackbar } = useSnackbar()
   const [orderID, setOrderID] = useState(false)
   const [success, setSuccess] = useState(false)
-  const [createTicket, setCreateTicket] = useState(true)
+  const [createTicket, setCreateTicket] = useState(false)
   const { currentUser } = useAuth()
   const [ user, setCurrentUser] = useState<any[]>([])
-  const [ isShowTicket, setShowTicket ] = useState(true)
+  const [ isShowTicket, setShowTicket ] = useState(false)
   const [ ticketData, setTicketData ] = useState({})
   const [CreateTicketResult, CreateTicket] = 
   useMutation<
@@ -69,13 +69,12 @@ const PaymentForm = ({
 
       setTicketData(inputTicket)
       setCurrentUser(currentUser || [])
-      setShowTicket(true)
       CreateTicket({ inputTicket }).then((result) => {
         if (result.error) {
           console.error("Error creating ticket:", result.error)
           enqueueSnackbar("An error occurred", { variant: "error" })
         } else {
-          console.log("wow")
+          setShowTicket(true)
           enqueueSnackbar("Ticket created successfully", {variant: 'success'})
         }
       })
@@ -143,8 +142,8 @@ const PaymentForm = ({
       />
       {
         isShowTicket? 
-        <CreateTicketComp ticket={ticketData}/>
-        : null
+        <DisplayTicket ticket={ticketData}/>
+        : <></>
       }
     </PayPalScriptProvider>
   )
