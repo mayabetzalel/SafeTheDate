@@ -1,4 +1,4 @@
-export default  `
+export default `
     type Ticket {
         _id: ID
         userId: ID
@@ -15,6 +15,10 @@ export default  `
         isSecondHand: Boolean!, 
         price: Float!,
         barcode: String!,
+    }
+
+    type Query {
+        isVallid(eventId: ID!, barcode: String!): Boolean!
     }
 
     type Mutation {
