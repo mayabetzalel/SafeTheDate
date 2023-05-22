@@ -11,13 +11,20 @@ const ticketResolvers: {
 } = {
   Mutation: {
     createTicket: async (parent, { inputTicket }, context, info) => {
-      const { _id, userId, eventId, barcode } = inputTicket;
+      const {  _id,
+        userId,
+        eventId,
+        isSecondHand, 
+        price,
+        barcode } = inputTicket
       try {
 
         const newTicket = await TicketModel.create({
           _id: new mongoose.Types.ObjectId(),
           userId: new Types.ObjectId(userId),
-          eventId: new Types.ObjectId(eventId),
+          eventId:new Types.ObjectId(eventId),
+          isSecondHand: isSecondHand, 
+          price: price,
           barcode: barcode
         });
         console.log("Ticket created: " + newTicket);
