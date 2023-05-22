@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js"
 import { useSnackbar } from "notistack"
 import DisplayTicket from "../CreateTicket"
-import { useAuth } from "../../hooks/authController/AuthContext"  
+import { useAuth } from "../../hooks/authController/AuthContext"
 import { InputTicket, MutationResponse, Ticket } from "../../graphql/graphql"
 import { graphql } from "../../graphql"
 import { useMutation } from "urql"
@@ -43,8 +43,8 @@ const PaymentForm = ({
   const { currentUser } = useAuth()
   const [ user, setCurrentUser] = useState<any[]>([])
   const [ isShowTicket, setShowTicket ] = useState(false)
-  const [ ticketData, setTicketData ] = useState({})
-  const [CreateTicketResult, CreateTicket] = 
+  const [ ticketData, setTicketData ] = useState<Partial<InputTicket>>({})
+  const [CreateTicketResult, CreateTicket] =
   useMutation<
     {
         CreateTicket: MutationResponse
@@ -57,12 +57,12 @@ const PaymentForm = ({
 
       const url = window.location.href
       const splittedUrl = url.lastIndexOf("/")
-      
+
       const inputTicket: InputTicket = {
         _id: "1",
         userId: currentUser['_id'] || "",
         eventId: url.slice(splittedUrl + 1),
-        isSecondHand: true, 
+        isSecondHand: true,
         price: 50,
         barcode: makeId()
       }
@@ -81,7 +81,7 @@ const PaymentForm = ({
         setCreateTicket(false)
       }
   })
-  
+
   // creates a paypal order
   const createOrder = (data, actions) => {
     return actions.order
@@ -141,7 +141,7 @@ const PaymentForm = ({
         createOrder={createOrder}
       />
       {
-        isShowTicket? 
+        isShowTicket?
         <DisplayTicket ticket={ticketData}/>
         : <></>
       }

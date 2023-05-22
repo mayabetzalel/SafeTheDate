@@ -6,16 +6,21 @@ import {
   Card,
   Stack,
   Divider,
+  Button,
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import EventIcon from "@mui/icons-material/Event";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "urql";
 import { graphql } from "../../graphql";
 import FetchingState from "../../utils/fetchingState";
 import { useEffect, useState } from "react";
 import { Exact, Event as EventType } from "../../graphql/graphql";
 import PaymentForm from "../checkout/PaymentForm";
+import { useAuth } from "../../hooks/authController/AuthContext";
+import { Login, Logout } from "@mui/icons-material";
+import * as React from "react";
+import { RoutePaths } from "../../App";
 
 const EVENT_QUERY = graphql(`
   query event($ids: [String]) {
@@ -40,6 +45,8 @@ const EVENT_QUERY_IMAGE = graphql(`
 `);
 
 export const Event = () => {
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const publisherName = "publisher name";
   const [event, setEvent] = useState<Exact<EventType>>();
   const { id = "" } = useParams();
@@ -104,7 +111,12 @@ export const Event = () => {
                 <Typography variant="h6">{event?.location}</Typography>
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
-                <Typography variant="h6"> {event?.ticketsAmount ? (event?.ticketsAmount + ' tickets avilable') : 'No avilable tickets'}</Typography>
+                <Typography variant="h6">
+                  {" "}
+                  {event?.ticketsAmount
+                    ? event?.ticketsAmount + " tickets avilable"
+                    : "No avilable tickets"}
+                </Typography>
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
                 <EventIcon />
@@ -126,7 +138,19 @@ export const Event = () => {
             </Typography>
           </Stack>
           <Grid>
-            <PaymentForm amount={20} description={event?.name ?? "Event"} />
+            {currentUser ? (
+              <PaymentForm amount={20} description={event?.name ?? "Event"} />
+            ) : (
+              <Button
+                variant={"text"}
+                color={"secondary"}
+                fullWidth
+                onClick={() => navigate(RoutePaths.LOGIN)}
+                endIcon={<Login />}
+              >
+                Sign In For Purchase
+              </Button>
+            )}
           </Grid>
         </Grid>
       </Grid>
