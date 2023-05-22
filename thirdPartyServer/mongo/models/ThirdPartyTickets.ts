@@ -4,7 +4,6 @@ interface ThirdPartyTicketsMongoType {
   qrCodeId: string;
   price: number;
   eventName: string;
-  seat: string;
   ownerEmail: string;
 }
 
@@ -16,10 +15,6 @@ const thirdPartyTicketsSchema = new Schema<ThirdPartyTicketsMongoType>({
     required: true,
   },
   eventName: {
-    type: String,
-    required: true,
-  },
-  seat: {
     type: String,
     required: true,
   },
