@@ -5,10 +5,15 @@ const DEFAULT_LIMIT = 50;
 const FAILED_MUTATION_MESSAGE = "mutation createEvent failed";
 
 const eventResolvers: {
-  Query: Pick<QueryResolvers, "event" | "eventCount">;
+  Query: Pick<QueryResolvers,  "getEventById" | "event" | "eventCount">;
   Mutation: Pick<MutationResolvers, "createEvent">;
 } = {
   Query: {
+    getEventById: async (ids) => {
+      let filter = { ...(ids && { _id: { $in: ids } })}
+      return await EventModel.find(filter)
+    },
+
     event: async (parent, args, context, info) => {
       const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids } = args;
 
