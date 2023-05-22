@@ -1,25 +1,21 @@
 import {
   Avatar,
-  CardContent,
-  CardHeader,
   CardMedia,
   Grid,
   Typography,
   Card,
-  CardActions,
-  Button,
   Stack,
   Divider,
-} from "@mui/material";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import EventIcon from "@mui/icons-material/Event";
-import { useParams } from "react-router-dom";
-import { useQuery } from "urql";
-import { graphql } from "../../graphql";
-import FetchingState from "../../utils/fetchingState";
-import { useEffect, useState } from "react";
-import { Exact, Event as EventType } from "../../graphql/graphql";
-import PaymentForm from "../checkout/PaymentForm";
+} from "@mui/material"
+import LocationOnIcon from "@mui/icons-material/LocationOn"
+import EventIcon from "@mui/icons-material/Event"
+import { useParams } from "react-router-dom"
+import { useQuery } from "urql"
+import { graphql } from "../../graphql"
+import FetchingState from "../../utils/fetchingState"
+import { useEffect, useState } from "react"
+import { Exact, Event as EventType } from "../../graphql/graphql"
+import PaymentForm from "../checkout/PaymentForm"
 
 const EVENT_QUERY = graphql(`
   query event($ids: [String]) {
@@ -27,27 +23,45 @@ const EVENT_QUERY = graphql(`
       id
       name
       location
+      ticketsAmount
       timeAndDate
+      image
     }
   }
 `);
 
+const EVENT_QUERY_IMAGE = graphql(`
+  query eventImage($ids: [String]) {
+    event(ids: $ids) {
+      id
+      image
+    }
+  }
+`)
+
 export const Event = () => {
-  const publisherName = "publisher name";
-  const [event, setEvent] = useState<Exact<EventType>>();
-  const { id = "" } = useParams();
+  const publisherName = "publisher name"
+  const [event, setEvent] = useState<Exact<EventType>>()
+  const { id = "" } = useParams()
   const [{ data, fetching }, reexecuteQuery] = useQuery<{
-    event: Exact<EventType>[];
+    event: Exact<EventType>[]
   }>({
     query: EVENT_QUERY,
+    variables: { ids: [id] },
+  })
+
+  const [dataImage, reexecuteQueryImage] = useQuery<{
+    event: Exact<EventType>[];
+  }>({
+    query: EVENT_QUERY_IMAGE,
     variables: { ids: [id] },
   });
 
   useEffect(() => {
     if (data?.event.length == 1) {
-      setEvent(data.event.at(0));
+      setEvent(data.event.at(0))
     }
-  }, [data]);
+  }, [data])
 
   return (
     <FetchingState isFetching={fetching}>
@@ -60,7 +74,7 @@ export const Event = () => {
           <Card sx={{ borderRadius: "40px", height: "100%" }}>
             <CardMedia
               sx={{ height: "100%" }}
-              image="https://thumbs.dreamstime.com/b/nightclub-party-lightshow-18331890.jpg"
+              image={dataImage.data?.event.at(0)?.image || "https://thumbs.dreamstime.com/b/nightclub-party-lightshow-18331890.jpg"}
             />
           </Card>
         </Grid>
@@ -87,6 +101,9 @@ export const Event = () => {
                 <Typography variant="h6">{event?.location}</Typography>
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
+                <Typography variant="h6"> {event?.ticketsAmount ? (event?.ticketsAmount + ' tickets avilable') : 'No avilable tickets'}</Typography>
+              </Stack>
+              <Stack direction="row" spacing={1} alignItems="center">
                 <EventIcon />
                 <Typography variant="h6">
                   {event?.timeAndDate &&
@@ -111,5 +128,5 @@ export const Event = () => {
         </Grid>
       </Grid>
     </FetchingState>
-  );
-};
+  )
+}

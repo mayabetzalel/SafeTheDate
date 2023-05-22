@@ -5,10 +5,15 @@ const DEFAULT_LIMIT = 50;
 const FAILED_MUTATION_MESSAGE = "mutation createEvent failed";
 
 const eventResolvers: {
-  Query: Pick<QueryResolvers, "event" | "eventCount">;
+  Query: Pick<QueryResolvers,  "getEventById" | "event" | "eventCount">;
   Mutation: Pick<MutationResolvers, "createEvent">;
 } = {
   Query: {
+    getEventById: async (ids) => {
+      let filter = { ...(ids && { _id: { $in: ids } })}
+      return await EventModel.find(filter)
+    },
+
     event: async (parent, args, context, info) => {
       const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids } = args;
 
@@ -17,12 +22,12 @@ const eventResolvers: {
 
       let filter = {
         ...(ids && { _id: { $in: ids } }),
-        ...(name && { name: { $regex: name } }),
-        ...(location && { location: { $regex: location } }),
+        ...(name && { name: { $regex: name, $options: 'i' } }),
+        ...(location && { location: { $regex: location, $options: 'i' } }),
         ...((from || to) && {
           timeAndDate: {
-            ...(from && { $gte: new Date(from) }),
-            ...(to && { $lt: new Date(to) }),
+            ...(from && { $gte: new Date(from), $options: 'i' }),
+            ...(to && { $lt: new Date(to), $options: 'i' }),
           },
         }),
       };
@@ -31,11 +36,13 @@ const eventResolvers: {
         .skip(skip)
         .limit(limit)
         .then((events) =>
-          events.map<Event>(({ name, location, timeAndDate, type, _id }) => ({
+          events.map<Event>(({ name, location, timeAndDate, type, ticketsAmount, image, _id }) => ({
             name,
             location,
             timeAndDate: new Date(timeAndDate).getTime(),
             type,
+            ticketsAmount,
+            image,
             id: _id.toString(),
           }))
         );
@@ -65,7 +72,7 @@ const eventResolvers: {
   },
   Mutation: {
     createEvent: async (parent, { inputEvent }, context, info) => {
-      const { name, location, timeAndDate = 0, type } = inputEvent;
+      const { name, location, timeAndDate = 0, type, ticketsAmount, image } = inputEvent;
 
       try {
         const newEvent = await EventModel.create({
@@ -73,6 +80,8 @@ const eventResolvers: {
           location,
           timeAndDate: new Date(timeAndDate).toString(),
           type,
+          ticketsAmount,
+          image
         });
         return { message: "event created succesfully", code: 200 };
       } catch {

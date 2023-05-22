@@ -1,17 +1,23 @@
-export default  `
+export default `
     type Event {
         id: String
         name: String
         location: String
         timeAndDate: Float
         type: String
+        ticketsAmount: Int
+        image: Upload
     }
+
+    scalar Upload
 
     input InputEvent {
         name: String!
         location: String!
         timeAndDate: Float!
         type: String!
+        ticketsAmount: Int!
+        image: Upload
     }
 
     input FilterEventParams {
@@ -19,6 +25,10 @@ export default  `
         location: String
         from: Float
         to: Float
+    }
+
+    type Query {
+        getEventById(ids: [String]): [Event!]!
     }
 
     type Query {

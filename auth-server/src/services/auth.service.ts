@@ -1,13 +1,13 @@
-import { ConsoleLogger, Events, ILogger } from "../utils/logger";
+import { ConsoleLogger, Events, ILogger } from "../utils/logger"
 import {
   AccessTokenPayload,
   FormFieldError,
   HttpStatus,
   IToken,
-} from "../utils/types";
-import { FunctionalityError, serverErrorCodes } from "../utils/error";
-import { RegisterDTO } from "../dto-types/register.req";
-import RefreshToken, { IRefreshToken } from "../../mongo/models/RefreshToken";
+} from "../utils/types"
+import { FunctionalityError, serverErrorCodes } from "../utils/error"
+import { RegisterDTO } from "../dto-types/register.req"
+import RefreshToken, { IRefreshToken } from "../../mongo/models/RefreshToken"
 import UserConfirmation, {
   IUserConfirmation,
 } from "../../mongo/models/UserConfirmation";
@@ -35,10 +35,10 @@ class AuthService {
     userTableIntegrator: typeof User,
     userConfirmationTableIntegrator: typeof UserConfirmation
   ) {
-    this.logger = logger;
-    this.refreshTokenTableIntegrator = RefreshTokenTableIntegrator;
-    this.userTableIntegrator = userTableIntegrator;
-    this.userConfirmationTableIntegrator = userConfirmationTableIntegrator;
+    this.logger = logger
+    this.refreshTokenTableIntegrator = RefreshTokenTableIntegrator
+    this.userTableIntegrator = userTableIntegrator
+    this.userConfirmationTableIntegrator = userConfirmationTableIntegrator
   }
   private sendConfirmationMail(
     confirmationId: IUserConfirmation["_id"],
@@ -59,7 +59,7 @@ class AuthService {
           email: registeredUserEmail,
         })
       )
-      .catch(this.logger.error);
+      .catch(this.logger.error)
   }
   async register(
     userToRegister: RegisterDTO
@@ -130,7 +130,7 @@ class AuthService {
   }
 
   private verifyTokenExpiration(token: IToken) {
-    return token.expiryDate.getTime() > new Date().getTime();
+    return token.expiryDate.getTime() > new Date().getTime()
   }
 
   async regenerateAccessToken(refreshToken: string): Promise<TokensPack> {
@@ -139,33 +139,33 @@ class AuthService {
         token: refreshToken,
       })
       .populate("user")
-      .lean();
+      .lean()
 
     if (!token || !this.verifyTokenExpiration(token as IToken)) {
-      throw new FunctionalityError(serverErrorCodes.NoSuchRefreshToken);
+      throw new FunctionalityError(serverErrorCodes.NoSuchRefreshToken)
     }
-    return this.createTokensPack(token.user);
+    return this.createTokensPack(token.user)
   }
   async confirmUser(confirmationId: IUserConfirmation["_id"]) {
     const user = await this.userConfirmationTableIntegrator
       .findOne({
         _id: confirmationId,
       })
-      .lean();
+      .lean()
     if (!user) {
-      throw new FunctionalityError(serverErrorCodes.UserIsMissing);
+      throw new FunctionalityError(serverErrorCodes.UserIsMissing)
     }
     const updUser = await this.userTableIntegrator.updateOne(
       {
         email: user.email,
       },
       { $set: { isConfirmed: true } }
-    );
+    )
 
     if (!updUser)
       throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
 
-    return updUser;
+    return updUser
   }
   async login({ emailOrUsername, password }: LoginDTO): Promise<TokensPack> {
     // Try selecting either by email or username
@@ -173,7 +173,7 @@ class AuthService {
       .findOne({
         $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
       })
-      .lean();
+      .lean()
 
     // No such user with given email or username
     if (!user) {
@@ -181,7 +181,7 @@ class AuthService {
         serverErrorCodes.UserPasswordIncorrect,
         [],
         HttpStatus.FORBIDDEN
-      );
+      )
     }
 
     if (!(await compare(password, user.password))) {
@@ -189,7 +189,7 @@ class AuthService {
         serverErrorCodes.UserPasswordIncorrect,
         [],
         HttpStatus.FORBIDDEN
-      );
+      )
     }
 
     return this.createTokensPack(user);
@@ -326,19 +326,19 @@ class AuthService {
           if (err || !encoded) {
             this.logger.error(
               err ?? new Error("sign method did not provide token")
-            );
-            return reject(err);
+            )
+            return reject(err)
           }
-          resolve(encoded!);
+          resolve(encoded!)
         }
-      );
-    });
+      )
+    })
   }
 
   logout(userId: IUser["_id"]) {
     return this.refreshTokenTableIntegrator.deleteMany({
       user: userId,
-    });
+    })
   }
 
   private async createTokensPack(user: IUser) {
@@ -350,7 +350,7 @@ class AuthService {
       expiresIn: +(process.env.JWT_EXPIRATION ?? 0),
       refreshExpiryDate: refreshToken.expiryDate,
       refreshToken: refreshToken.token,
-    };
+    }
   }
 }
 export const authService = new AuthService(
@@ -358,4 +358,4 @@ export const authService = new AuthService(
   RefreshToken,
   User,
   UserConfirmation
-);
+)

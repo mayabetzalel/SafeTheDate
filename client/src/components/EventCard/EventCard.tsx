@@ -1,4 +1,4 @@
-import Card from "@mui/material/Card";
+import Card from "@mui/material/Card"
 import {
   Avatar,
   Box,
@@ -6,21 +6,23 @@ import {
   CardHeader,
   CardMedia,
   Typography,
-} from "@mui/material";
+} from "@mui/material"
 
-const TICKET_HEIGHT = 250;
+const TICKET_HEIGHT = 250
 
 interface TicketCardProps {
   header: string;
   subheader: string;
   title: string;
   image?: string;
+  ticketsAmount: number
   onClick?: () => void;
 }
 
 const EventCard = ({
   header,
   title,
+  ticketsAmount,
   image = "https://thumbs.dreamstime.com/b/nightclub-party-lightshow-18331890.jpg",
   subheader,
   onClick,
@@ -41,6 +43,9 @@ const EventCard = ({
           <Typography variant="h5" align={"center"}>
             {title}
           </Typography>
+          {ticketsAmount && <Typography variant="body1" align={"center"}>
+            {ticketsAmount + ' tickets avilable'}
+          </Typography>}
         </CardContent>
         <CardMedia sx={{ height: TICKET_HEIGHT }} image={image} />
       </Card>
@@ -48,4 +53,4 @@ const EventCard = ({
   );
 };
 
-export default EventCard;
+export default EventCard

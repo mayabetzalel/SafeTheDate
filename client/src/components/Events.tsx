@@ -1,14 +1,14 @@
-import { gql, useQuery } from "urql";
+import { useQuery } from "urql";
 import FetchingState from "../utils/fetchingState";
 import EventCard from "./EventCard/EventCard";
 import { graphql } from "../graphql";
 import { Event, Exact, FilterEventParams } from "../graphql/graphql";
 import { Grid, Pagination } from "@mui/material";
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import { RoutePaths } from "../App";
-import {ceil, floor} from "lodash";
+import { floor } from "lodash";
 
 const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
@@ -27,7 +27,9 @@ const eventQuery = graphql(`
       name
       location
       timeAndDate
+      ticketsAmount
       type
+      image
     }
   }
 `);
@@ -59,7 +61,7 @@ const Events = ({ filterParams }: EventsProps) => {
     },
   });
 
-  const [{ data: dataCount = {eventCount: 0} }] = useQuery<
+  const [{ data: dataCount = { eventCount: 0 } }] = useQuery<
     { eventCount: number },
     { filterParams: FilterEventParams }
   >({
@@ -76,19 +78,21 @@ const Events = ({ filterParams }: EventsProps) => {
   return (
     <FetchingState isFetching={fetching}>
       <GridHiddenScroll container sx={{ height: "inherit", overflowY: "auto" }}>
-        {data.event.map(({ id, name, type, location, timeAndDate }) => (
+        {data.event.map(({ id, name, type, location, timeAndDate, ticketsAmount, image }) => (
           <Grid key={id!} item sm={4} md={3}>
             <EventCard
               title={name!}
               header={type!}
               subheader={location!}
+              ticketsAmount={ticketsAmount!}
+              image={image || undefined}
               onClick={() => navigate(`${RoutePaths.EVENT}/${id}`, {})}
             />
           </Grid>
         ))}
       </GridHiddenScroll>
       <Pagination
-        count={floor(dataCount.eventCount / EVENTS_PER_FETCH)}
+        count={floor(dataCount.eventCount / EVENTS_PER_FETCH) + 1}
         page={page + 1}
         variant={"outlined"}
         color={"primary"}

@@ -1,13 +1,27 @@
-export default  `
-    #Ticket for an event
+export default `
     type Ticket {
-        id: String # id field - the id of the ticket - ! means to non-nullable value
-        eventName: String
-        areaNumber: Int
-        sitNumber: Int
+        _id: ID
+        userId: ID
+        eventId: ID
+        isSecondHand: Boolean
+        price: Float
+        barcode: String
+    }
+
+    input InputTicket {
+        _id: ID!,
+        userId: ID!,
+        eventId: ID!,
+        isSecondHand: Boolean!, 
+        price: Float!,
+        barcode: String!,
     }
 
     type Query {
-        ticket(id: [String]): [Ticket]!
+        isVallid(eventId: ID!, barcode: String!): Boolean!
+    }
+
+    type Mutation {
+        createTicket(inputTicket: InputTicket!): MutationResponse!
     }
 `

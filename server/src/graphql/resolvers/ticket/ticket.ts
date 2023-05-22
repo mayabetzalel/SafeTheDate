@@ -1,13 +1,47 @@
-import {MutationResolvers, Query, QueryResolvers} from "../../typeDefs";
+import { QueryResolvers, MutationResolvers, Ticket } from "../../typeDefs"
+import { Ticket as TicketModel } from "../../../../mongo/models/Ticket"
+import mongoose, { Types } from 'mongoose';
 
-const ticketResolver: {
-    Query: Pick<QueryResolvers, "ticket">;
+const DEFAULT_LIMIT = 50
+const FAILED_MUTATION_MESSAGE = "mutation createTicket failed"
+
+const ticketResolvers: {
+  Query: Pick<QueryResolvers, "isVallid">;
+  Mutation: Pick<MutationResolvers, "createTicket">
 } = {
-    Query: {
-        ticket: (parent, args, context, info) => {
-            return [{id: "", areaNumber: 3213213,sitNumber: 231, eventName: "rihanna"}];
-        }
+  Mutation: {
+    createTicket: async (parent, { inputTicket }, context, info) => {
+      const {  _id,
+        userId,
+        eventId,
+        isSecondHand, 
+        price,
+        barcode } = inputTicket
+      try {
+
+        const newTicket = await TicketModel.create({
+          _id: new mongoose.Types.ObjectId(),
+          userId: new Types.ObjectId(userId),
+          eventId:new Types.ObjectId(eventId),
+          isSecondHand: isSecondHand, 
+          price: price,
+          barcode: barcode
+        });
+        console.log("Ticket created: " + newTicket);
+        return { message: "ticket created succesfully", code: 200 };
+      } catch (error) {
+        console.log("failed with " + error);
+        return { message: FAILED_MUTATION_MESSAGE, code: 500 };
+      }
+    },
+  },
+  Query: {
+    isVallid: async (parent, args, context, info) => {
+      const { eventId, barcode } = args;
+
+      return true
     }
+  }
 }
 
-export default ticketResolver
+export default ticketResolvers

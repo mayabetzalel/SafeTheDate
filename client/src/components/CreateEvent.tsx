@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "urql";
 import { useSnackbar } from "notistack";
@@ -13,6 +13,7 @@ import {
   Paper,
   InputAdornment,
 } from "@mui/material";
+import ImagePicker from "./ImagePicker";
 
 const CREATE_EVENT_MUTATION = graphql(`
   mutation CreateEvent($inputEvent: InputEvent!) {
@@ -21,22 +22,31 @@ const CREATE_EVENT_MUTATION = graphql(`
       code
     }
   }
-`);
+  `);
 
 export const CreateEvent = () => {
   const eventNameRef = useRef<HTMLInputElement | null>();
   const eventLocationRef = useRef<HTMLInputElement | null>();
   const eventTimeAndDateRef = useRef<HTMLInputElement | null>();
   const eventTypeRef = useRef<HTMLInputElement | null>();
+  const eventTicketAmoutRef = useRef<HTMLInputElement | null>();
+  const [image, setImage] = useState(undefined);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
   const [createEventResult, createEvent] = useMutation<
     {
       createEvent: MutationResponse;
-    },
-    { inputEvent: InputEvent }
+    }
   >(CREATE_EVENT_MUTATION);
+
+
+  const onChangeImage = (imageList) => {
+    // only allow one image to be uploaded
+    if (imageList.length === 1) {
+      setImage(imageList[0].data_url);
+    }
+  };
 
   function handleEventCreation() {
     const inputEvent: InputEvent = {
@@ -44,6 +54,8 @@ export const CreateEvent = () => {
       location: eventLocationRef.current?.value || "",
       timeAndDate: Date.parse(eventTimeAndDateRef.current?.value || new Date().toString()),
       type: eventTypeRef.current?.value || "",
+      ticketsAmount: eventTicketAmoutRef.current?.value ? parseInt(eventTicketAmoutRef.current?.value) : 1,
+      image: image || ""
     };
 
     // Call the createEvent mutation with the inputEvent object
@@ -144,11 +156,31 @@ export const CreateEvent = () => {
                     }}
                   />
                 </Grid>
+                <Grid container justifyContent={"center"}>
+                  <Grid item xs={3}>
+                    <Typography variant="h4">Amout of tickets</Typography>
+                  </Grid>
+                  <Grid item xs={5}>
+                    <TextField
+                      fullWidth
+                      color={"secondary"}
+                      placeholder="Tickets amount"
+                      inputRef={eventTicketAmoutRef}
+                      variant="outlined"
+                      type='number'
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start"></InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                </Grid>
               </Grid>
             </Stack>
           </Grid>
           <Grid item xs={3}>
-            image uploader
+            <ImagePicker image={image} onChangeImage={onChangeImage} />
           </Grid>
         </Grid>
       </Paper>

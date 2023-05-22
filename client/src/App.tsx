@@ -14,9 +14,11 @@ import ScanEvent from "./components/ScanEvent";
 import { MyTickets } from "./components/profile/MyTickets";
 import { Profile } from "./components/profile/Profile";
 import { MyEvents } from "./components/profile/MyEvents";
-import { useEffect } from "react";
-import { useAuth } from "./hooks/authController/AuthContext";
+import SideChatbot from "./components/SideChatbot";
 import { EventsPage } from "./components/EventsPage/EventsPage";
+import { useAuth } from "./hooks/authController/AuthContext";
+import { useEffect } from "react";
+import { MyDetails } from "./components/profile/MyDetails";
 
 // use this enum to make links to pages
 export enum RoutePaths {
@@ -44,6 +46,7 @@ const router = createBrowserRouter([
         <Container sx={{ height: "90%" }} maxWidth={"xl"}>
           <Outlet />
         </Container>
+        <SideChatbot />
       </>
     ),
     children: [
@@ -68,14 +71,6 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <CaptainEvents />
-          </PrivateRoute>
-        ),
-      },
-      {
-        path: RoutePaths.CAPTAIN,
-        element: (
-          <PrivateRoute>
-            <Captain />
           </PrivateRoute>
         ),
       },
@@ -128,7 +123,7 @@ const router = createBrowserRouter([
             path: RoutePaths.MY_DETAILS,
             element: (
               <PrivateRoute>
-                <ImportTicket />
+                <MyDetails />
               </PrivateRoute>
             ),
           },
@@ -151,16 +146,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: RoutePaths.MY_DETAILS,
-        element: (
-          <PrivateRoute>
-            {/* <ImportTicket /> */}
-            <ScanEvent />
-          </PrivateRoute>
-        ),
-      },
-      {
-        path: RoutePaths.SCAN_EVENT,
+        path: `${RoutePaths.SCAN_EVENT}/:id`,
         element: (
           <PrivateRoute>
             <ScanEvent />
@@ -177,7 +163,7 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+])
 
 const App = () => {
   const { checkIfSessionValid } = useAuth();
@@ -187,4 +173,4 @@ const App = () => {
   return <RouterProvider router={router} />;
 };
 
-export default App;
+export default App
