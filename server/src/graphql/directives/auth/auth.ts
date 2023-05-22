@@ -1,18 +1,37 @@
-import { GraphQLSchema } from "graphql";
+import { GraphQLError, GraphQLSchema } from "graphql";
 import { getDirective, mapSchema, MapperKind } from "@graphql-tools/utils";
+import axios from "axios";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 export const authSchemaTransformer = (schema: GraphQLSchema) =>
   mapSchema(schema, {
     [MapperKind.OBJECT_FIELD]: (fieldConfig) => {
       const authDirective = getDirective(schema, fieldConfig, "auth")?.[0];
+      const { NEED_AUTH = false } = process.env;
 
-      if (authDirective) {
+      if (authDirective && NEED_AUTH) {
         const originalResolver = fieldConfig.resolve;
-        fieldConfig.resolve = (source, args, context, info) => {
-          console.log(context.request.cookieStore?.get("access_token"));
-          console.log(context.request.headers);
-          console.log(context.request.headers.cookie);
-          return originalResolver(source, args, context, info);
+        fieldConfig.resolve = async (source, args, context, info) => {
+          const token = await context.request.cookieStore?.get("access_token");
+
+          if (!!token) {
+            // @ts-ignore
+            const user = await axios
+              .get("http://localhost:5000/api/auth/session", {
+                headers: {
+                  cookie: `${token.name}=${token.value}`,
+                },
+              })
+              .then(({ data }) => data);
+            if (!user._id) {
+              return new GraphQLError(`Auth failed! please add token to the request`);
+            }
+            context.user = user;
+            return originalResolver(source, args, context, info);
+          }
+          return () => "Auth failed! please add token to the request";
         };
       }
 
