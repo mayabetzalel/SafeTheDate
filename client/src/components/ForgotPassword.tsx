@@ -19,51 +19,46 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 
-const Login = () => {
-  const email: React.MutableRefObject<any> = useRef(null);
-  const password: React.MutableRefObject<any> = useRef(null);
-  const { signIn, logWithGoogle } = useAuth();
+const ForgotPassword = () => {
+  const usernameOrMail: React.MutableRefObject<any> = useRef(null);
+  const newPassword: React.MutableRefObject<any> = useRef(null);
+  const OneTimecode: React.MutableRefObject<any> = useRef(null);
+  const [isMailSent, setIsMailSent] = useState(false);
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const { resetPasswordSendMail, resetPassword } = useAuth();
 
-  const loginUserWithGoogle = useGoogleLogin({
-    onSuccess: async (codeResponse: any) => {
-      try {
-        await logWithGoogle(codeResponse.access_token);
-        enqueueSnackbar("Successful login!", { variant: "success" });
-        navigate(RoutePaths.EVENTS);
-      } catch (error: any) {
-        navigate("/Login");
-        enqueueSnackbar("Login failed... ", { variant: "error" });
-        console.log("Login Failed:", error);
-      }
-    },
-    onError: (error: any) => {
-      navigate("/Login");
-      enqueueSnackbar(error.message, { variant: "error" });
-      console.log("Login Failed:", error);
-    },
-  });
+  const sendResetPassword = async () => {
+    try {
+      console.log("here again");
+      await resetPasswordSendMail(usernameOrMail.current.value);
+      setIsMailSent(true);
+      enqueueSnackbar("Successful send email!", { variant: "success" });
+    } catch (error: any) {
+      console.log(error.response);
+      enqueueSnackbar("Email failed: " + error, { variant: "error" });
+    }
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get("email"),
-      password: data.get("password"),
+      newPassword: data.get("newPassword"),
     });
     try {
-      await signIn(data.get("email") as string, data.get("password") as string);
-      console.log("here again");
-      enqueueSnackbar("Successful log in!", { variant: "success" });
-      navigate("/");
+      await resetPassword(
+        data.get("newPassword") as string,
+        data.get("OneTimecode") as string
+      );
+      enqueueSnackbar("Successful reset!", { variant: "success" });
+      navigate("/login");
     } catch (error: any) {
       console.log(error);
-      enqueueSnackbar("Login failed: " + error, { variant: "error" });
-      navigate("/login");
+      enqueueSnackbar("Reset failed: " + error, { variant: "error" });
     }
   };
 
@@ -119,7 +114,7 @@ const Login = () => {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Sign In
+              Forgot Password
             </Typography>
             <Box
               component="form"
@@ -127,49 +122,76 @@ const Login = () => {
               onSubmit={handleSubmit}
               sx={{ mt: 1 }}
             >
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                inputRef={email}
-                label="Email Address"
-                name="email"
-                placeholder="Enter email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                inputRef={password}
-                name="password"
-                label="Password"
-                type="password"
-                placeholder="Enter password"
-                id="password"
-                autoComplete="current-password"
-              />
-              <GoogleLogin onSuccess={() => loginUserWithGoogle()} />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Sign In
-              </Button>
+              {!isMailSent ? (
+                <>
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="usernameOrMail"
+                    inputRef={usernameOrMail}
+                    label="Email Address"
+                    name="usernameOrMail"
+                    placeholder="Enter email or username"
+                    autoComplete="email"
+                    autoFocus
+                  />
+
+                  <Button
+                    onClick={sendResetPassword}
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                  >
+                    Send code to email
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    inputRef={newPassword}
+                    name="newPassword"
+                    label="newPassword"
+                    type="password"
+                    placeholder="Enter new password"
+                    id="newPassword"
+                    autoComplete="current-newPassword"
+                  />
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    inputRef={OneTimecode}
+                    name="OneTimecode"
+                    label="OneTimecode"
+                    type="text"
+                    placeholder="Enter email code"
+                    id="OneTimecode"
+                    autoComplete="current-OneTimecode"
+                  />
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                  >
+                    Change
+                  </Button>
+                </>
+              )}
 
               <Grid container>
                 <Grid item xs>
                   <Link
-                    href={RoutePaths.FORGOT_PASSWORD}
+                    href={RoutePaths.LOGIN}
                     variant="body1"
                     underline="hover"
                     color="inherit"
                   >
-                    Forgot password?
+                    Login
                   </Link>
                 </Grid>
                 <Grid item>
@@ -191,4 +213,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;
