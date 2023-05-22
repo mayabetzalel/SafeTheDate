@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Grid, IconButton } from "@mui/material";
+import { Button, Grid, IconButton } from "@mui/material";
 import { RoutePaths } from "../../App";
 import { Logout } from "@mui/icons-material";
 import logo from "../../assets/logo.png";
@@ -29,9 +29,9 @@ const Navbar = () => {
         }
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
   return (
     <Grid
@@ -56,46 +56,50 @@ const Navbar = () => {
         />
       </Grid>
       <Grid item xs>
-      {
-        currentUser?
         <NavigationTypography route={RoutePaths.EVENTS}>
           Events
         </NavigationTypography>
-        : <></>
-      }
       </Grid>
       <Grid item xs>
-        <NavigationTypography route={RoutePaths.CREATE_EVENT}>
-          Create Events
-        </NavigationTypography>
+        {currentUser ? (
+          <NavigationTypography route={RoutePaths.CREATE_EVENT}>
+            Create Events
+          </NavigationTypography>
+        ) : (
+          <></>
+        )}
       </Grid>
       <Grid item xs>
-      {
-        currentUser?
+        {currentUser ? (
           <NavigationTypography route={RoutePaths.IMPORT_TICKET}>
             Import Tickets
           </NavigationTypography>
-          : <></>
-      }
+        ) : (
+          <></>
+        )}
       </Grid>
       <Grid item xs>
-      {
-        currentUser?
-        <NavigationTypography route={RoutePaths.PROFILE}>
-          Profile
-        </NavigationTypography>
-        : <></>
-      }
+        {currentUser ? (
+          <NavigationTypography route={RoutePaths.PROFILE}>
+            Profile
+          </NavigationTypography>
+        ) : (
+          <></>
+        )}
       </Grid>
 
       <Grid item xs={2} container justifyContent={"center"}>
-        <IconButton size="medium" edge="start" onClick={handleConnect}>
+        <Button
+          size="medium"
+          variant={"text"}
+          onClick={handleConnect}
+          endIcon={<Logout />}
+        >
           {currentUser ? "Log Out" : "Sign In"}
-          <Logout />
-        </IconButton>
+        </Button>
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

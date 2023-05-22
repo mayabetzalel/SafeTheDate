@@ -1,4 +1,4 @@
-import { Grid, Typography, TypographyProps } from "@mui/material"
+import {Grid, styled, Typography, TypographyProps} from "@mui/material"
 import { RoutePaths } from "../../../App"
 import * as React from "react"
 import { useLocation, useNavigate, useNavigation } from "react-router-dom"
@@ -8,6 +8,11 @@ import { useCallback } from "react"
 interface NavigationTypographyProps extends TypographyProps {
   route: RoutePaths
 }
+
+const StyledTypography = styled(Typography)(({theme}) => ({
+  transition: "0.3s",
+  "color:hover": theme.palette.secondary.main
+}))
 
 const NavigationTypography = ({
   route,
@@ -25,7 +30,7 @@ const NavigationTypography = ({
   }, [location])
 
   return (
-    <Typography
+    <StyledTypography
       variant={"h5"}
       {...other}
       color={getColor()}
@@ -33,7 +38,7 @@ const NavigationTypography = ({
       sx={{cursor: "pointer"}}
     >
       {children}
-    </Typography>
+    </StyledTypography>
   )
 }
 

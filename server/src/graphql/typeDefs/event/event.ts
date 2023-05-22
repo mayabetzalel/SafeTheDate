@@ -28,10 +28,6 @@ export default `
     }
 
     type Query {
-        getEventById(ids: [String]): [Event!]!
-    }
-
-    type Query {
         event(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String]): [Event!]!
     }
 
