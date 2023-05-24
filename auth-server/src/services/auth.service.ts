@@ -23,7 +23,7 @@ import { ResetPasswordTokenRequestDTO } from "../dto-types/resetPassToken.req";
 import { generateOTP } from "../utils/otp.utils";
 import UserRestoreToken, {
   IUserRestoreToken,
-} from "../../mongo/models/userRestoreToken";
+} from "../../mongo/models/UserRestoreToken";
 import { maskString } from "../utils/string.utils";
 import { ResetPasswordRequestDTO } from "../dto-types/resetPassword.req";
 
