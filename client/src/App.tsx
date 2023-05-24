@@ -11,7 +11,7 @@ import { ImportTicket } from "./components/ImportTicket";
 import Captain from "./components/Captain";
 import CaptainEvents from "./components/CapatinEvents";
 import ScanEvent from "./components/ScanEvent";
-import {MyTickets} from "./components/profile/MyTickets";
+import MyTickets from "./components/profile/MyTickets";
 import {Profile} from "./components/profile/Profile";
 import {MyEvents} from "./components/profile/MyEvents";
 import SideChatbot from "./components/SideChatbot";

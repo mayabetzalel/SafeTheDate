@@ -1,38 +1,41 @@
 import { QueryResolvers, MutationResolvers, Event } from "../../typeDefs";
 import { Event as EventModel } from "../../../../mongo/models/Event";
+import { Ticket as TicketModel } from "../../../../mongo/models/Ticket";
+import { Types } from "mongoose";
 
 const DEFAULT_LIMIT = 50;
 const FAILED_MUTATION_MESSAGE = "mutation createEvent failed";
 
 const eventResolvers: {
-  Query: Pick<QueryResolvers,  "getEventById" | "event" | "eventCount">;
+  Query: Pick<QueryResolvers, "getEventById" | "event" | "eventCount">;
   Mutation: Pick<MutationResolvers, "createEvent">;
 } = {
   Query: {
     getEventById: async (ids) => {
-      let filter = { ...(ids && { _id: { $in: ids } })}
+      let filter = { ...(ids && { _id: { $in: ids } }) }
       return await EventModel.find(filter)
     },
 
     event: async (parent, args, context, info) => {
-      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids } = args;
+      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids, customerId } = args;
 
       // Those are filters to query the mongo
       let { name, location, from, to } = filterParams;
 
       let filter = {
         ...(ids && { _id: { $in: ids } }),
-        ...(name && { name: { $regex: name, $options : 'i' } }),
-        ...(location && { location: { $regex: location, $options : 'i' } }),
+        ...(name && { name: { $regex: name, $options: 'i' } }),
+        ...(location && { location: { $regex: location, $options: 'i' } }),
         ...((from || to) && {
           timeAndDate: {
-            ...(from && { $gte: new Date(from), $options : 'i' }),
-            ...(to && { $lt: new Date(to), $options : 'i' }),
+            ...(from && { $gte: new Date(from), $options: 'i' }),
+            ...(to && { $lt: new Date(to), $options: 'i' }),
           },
         }),
       };
 
-      const events = await EventModel.find(filter)
+      // need to add user that created
+      let events = await EventModel.find({...filter, ...(customerId && { userId: customerId })})
         .skip(skip)
         .limit(limit)
         .then((events) =>
@@ -45,11 +48,14 @@ const eventResolvers: {
             id: _id.toString(),
           }))
         );
+      console.log(customerId);
       
+      
+
       return events;
     },
     eventCount: async (parent, args, context, info) => {
-      const { filterParams = {}, ids } = args;
+      const { filterParams = {}, ids, customerId } = args;
 
       let { name, location, from, to } = filterParams;
       let filter = {
@@ -64,7 +70,7 @@ const eventResolvers: {
         }),
       };
 
-      return await EventModel.find(filter)
+      return await EventModel.find({...filter, ...(customerId && { userId: customerId })})
         .count()
         .exec();
     },
