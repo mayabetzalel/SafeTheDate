@@ -21,6 +21,7 @@ interface EventCardProps {
   subheader: string;
   title: string;
   image?: string;
+  ticketsAmount?: number
   onClick?: () => void;
   menuItems?: { label: string; onClick: (id: string) => void }[];
   id: string;
@@ -29,6 +30,7 @@ interface EventCardProps {
 const EventCard = ({
   header,
   title,
+  ticketsAmount,
   image = "https://thumbs.dreamstime.com/b/nightclub-party-lightshow-18331890.jpg",
   subheader,
   onClick,
@@ -80,6 +82,9 @@ const EventCard = ({
           <Typography variant="h5" align="center">
             {title}
           </Typography>
+          {ticketsAmount && <Typography variant="body1" align={"center"}>
+            {ticketsAmount + ' tickets avilable'}
+          </Typography>}
         </CardContent>
         <CardMedia sx={{ height: TICKET_HEIGHT }} image={image} />
         <Menu

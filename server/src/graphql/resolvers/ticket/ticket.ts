@@ -8,7 +8,7 @@ const DEFAULT_LIMIT = 50
 const FAILED_MUTATION_MESSAGE = "mutation createTicket failed"
 
 const ticketResolvers: {
-  Query: Pick<QueryResolvers, "ticket" | "ticketCount">;
+  Query: Pick<QueryResolvers, "ticket" | "ticketCount" | "isVallid">;
   Mutation: Pick<MutationResolvers, "createTicket" | "updateMarket">;
 } = {
   Query: {
@@ -24,8 +24,8 @@ const ticketResolvers: {
         ...(location && { location: { $regex: location, $options: 'i' } }),
         ...((from || to) && {
           timeAndDate: {
-            ...(from && { $gte: new Date(from), $options: 'i' }),
-            ...(to && { $lt: new Date(to), $options: 'i' }),
+            ...(from && { $gte: new Date(from) }),
+            ...(to && { $lt: new Date(to) }),
           },
         }),
       };
@@ -71,6 +71,11 @@ const ticketResolvers: {
         .exec();
 
     },
+    isVallid: async (parent, args, context, info) => {
+      const { eventId, barcode } = args;
+
+      return true
+    }
   },
 
   Mutation: {
@@ -111,15 +116,16 @@ const ticketResolvers: {
           isSecondHand: isSecondHand,
           price: price,
           barcode: barcode
-        })
-        console.log("Ticket created: " + newTicket)
-        return { message: "ticket created succesfully", code: 200 }
+        });
+        console.log("Ticket created: " + newTicket);
+        return { message: "ticket created succesfully", code: 200 };
       } catch (error) {
-        console.log("failed with " + error)
-        return { message: FAILED_MUTATION_MESSAGE, code: 500 }
+        console.log("failed with " + error);
+        return { message: FAILED_MUTATION_MESSAGE, code: 500 };
       }
     },
   },
+    
 }
 
 export default ticketResolvers

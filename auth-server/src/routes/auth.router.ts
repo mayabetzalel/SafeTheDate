@@ -1,5 +1,5 @@
-import express, { Response } from "express"
-import { Types } from "mongoose"
+import express, { Response } from "express";
+import { Types } from "mongoose";
 import {
   ACCESS_TOKEN_COOKIE_NAME,
   REFRESH_TOKEN_COOKIE_NAME,
@@ -13,6 +13,16 @@ import { useValidateBodyDto } from "../middlewares/useValidation";
 import { authService } from "../services/auth.service";
 import { FunctionalityError, serverErrorCodes } from "../utils/error";
 import { HttpStatus } from "../utils/types";
+import { ResetPasswordTokenRequestDTO } from "../dto-types/resetPassToken.req";
+import { ResetPasswordRequestDTO } from "../dto-types/resetPassword.req";
+const rateLimit = require("express-rate-limit");
+
+// Define the rate limit configuration
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: process.env.NUMBER_OF_REQUESTS, // Maximum of 5 requests per windowMs
+  message: serverErrorCodes.TooManyRequests,
+});
 
 function configureTokensCookie(res: Response, tokens: TokensPack) {
   res.cookie(REFRESH_TOKEN_COOKIE_NAME, tokens.refreshToken, {
@@ -21,7 +31,7 @@ function configureTokensCookie(res: Response, tokens: TokensPack) {
     domain: process.env.COOKIE_DOMAIN,
     expires: tokens.refreshExpiryDate,
     sameSite: "strict",
-  })
+  });
 
   res.cookie(ACCESS_TOKEN_COOKIE_NAME, tokens.accessToken, {
     httpOnly: true,
@@ -31,20 +41,45 @@ function configureTokensCookie(res: Response, tokens: TokensPack) {
   });
 }
 
-const router = express.Router()
+const router = express.Router();
 
 router.post("/register", useValidateBodyDto(RegisterDTO), (req, res, next) => {
   authService
     .register(req.body as RegisterDTO)
     .then((errors) => {
       if (errors.length > 0) {
-        res.status(HttpStatus.BAD_REQUEST).send(errors)
+        res.status(HttpStatus.BAD_REQUEST).send(errors);
       } else {
         res.sendStatus(HttpStatus.CREATED);
       }
     })
-    .catch(next)
-})
+    .catch(next);
+});
+
+router.put(
+  "/reset/token",
+  limiter,
+  useValidateBodyDto(ResetPasswordTokenRequestDTO),
+  (req, res, next) => {
+    const usernameOrMail: ResetPasswordTokenRequestDTO = req.body;
+    authService
+      .sendRestoreToken(usernameOrMail.usernameOrMail)
+      .then((maskedEmail) => res.status(HttpStatus.ACCEPTED).send(maskedEmail))
+      .catch(next);
+  }
+);
+
+router.put(
+  "/reset",
+  limiter,
+  useValidateBodyDto(ResetPasswordRequestDTO),
+  (req, res, next) => {
+    authService
+      .resetPassword(req.body as ResetPasswordRequestDTO)
+      .then((_) => res.sendStatus(HttpStatus.ACCEPTED))
+      .catch(next);
+  }
+);
 
 router.post("/google/login", (req, res, next) => {
   authService
@@ -57,27 +92,27 @@ router.post("/google/login", (req, res, next) => {
 });
 router.post("/token", (req, res, next) => {
   try {
-    const refreshToken = (req.cookies ?? {})[REFRESH_TOKEN_COOKIE_NAME]
+    const refreshToken = (req.cookies ?? {})[REFRESH_TOKEN_COOKIE_NAME];
 
     if (!refreshToken) {
       throw new FunctionalityError(
         serverErrorCodes.NoSuchRefreshToken,
         [],
         HttpStatus.FORBIDDEN
-      )
+      );
     }
 
     authService
       .regenerateAccessToken(refreshToken)
       .then((tokens) => {
-        configureTokensCookie(res, tokens)
-        res.sendStatus(HttpStatus.OK)
+        configureTokensCookie(res, tokens);
+        res.sendStatus(HttpStatus.OK);
       })
-      .catch(next)
+      .catch(next);
   } catch (e) {
-    next(e)
+    next(e);
   }
-})
+});
 
 router.post("/login", useValidateBodyDto(LoginDTO), (req, res, next) => {
   authService
@@ -86,8 +121,8 @@ router.post("/login", useValidateBodyDto(LoginDTO), (req, res, next) => {
       configureTokensCookie(res, tokens);
       res.sendStatus(HttpStatus.OK);
     })
-    .catch(next)
-})
+    .catch(next);
+});
 
 router.post("/logout", (req, res, next) => {
   if (!req.user?._id) {
@@ -108,11 +143,11 @@ router.put("/confirm", useValidateBodyDto(ConfirmDTO), (req, res, next) => {
   authService
     .confirmUser(new Types.ObjectId((req.body as ConfirmDTO).confirmId))
     .then((_) => res.sendStatus(HttpStatus.OK))
-    .catch(next)
-})
+    .catch(next);
+});
 
 router.get("/session", useAuth, (req, res, next) => {
   res.send(req.user);
 });
 
-export default router
+export default router;

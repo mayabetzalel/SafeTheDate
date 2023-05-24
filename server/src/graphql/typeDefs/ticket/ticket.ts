@@ -1,4 +1,4 @@
-export default  `
+export default `
     type Ticket {
         _id: ID
         userId: ID
@@ -48,6 +48,10 @@ export default  `
 
     type Mutation {
         updateMarket(ticketId: String!): MutationResponse!
+    }
+
+    type Query {
+        isVallid(eventId: ID!, barcode: String!): Boolean!
     }
 
     type Mutation {

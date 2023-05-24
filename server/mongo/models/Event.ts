@@ -5,6 +5,7 @@ interface EventMongoType {
   location: string;
   timeAndDate: Date;
   type: string;
+  ticketsAmount: number
   image: string;
 }
 
@@ -24,6 +25,10 @@ const eventSchema = new Schema<EventMongoType>({
   },
   type: {
     type: String,
+    required: true,
+  },
+  ticketsAmount: {
+    type: Number,
     required: true,
   },
   image: {

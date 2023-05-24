@@ -57,7 +57,7 @@ export const MyTicket = ({ header, id, subheader, title, image, isOnMarket, loca
         subheader={subheader!}
         image={image!}
         id={id!}
-        menuItems={[{label: `Ticket ${!isOnMarket ? "on": "off"} market`, onClick: onMarketChange}]}
-    />
+        menuItems={[{ label: `Ticket ${!isOnMarket ? "on" : "off"} market`, onClick: onMarketChange }]} 
+           />
 }
 

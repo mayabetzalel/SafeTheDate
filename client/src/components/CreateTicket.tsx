@@ -10,15 +10,17 @@ import { useNavigate } from "react-router-dom"
 import QRCode from 'react-qr-code';
 import { Typography, Divider, Grid } from "@mui/material";
 import logo from "../assets/logo.png";
-import { useAuth } from "../hooks/authController/AuthContext"  
+import { useAuth } from "../hooks/authController/AuthContext"
 import { graphql } from "../graphql";
 import { useQuery } from "urql";
 import { PDFViewer } from '@react-pdf/renderer';
 import _ from 'lodash';
+import {InputTicket} from "../graphql/graphql";
 
+const BARCODE_SIZE = 256
 const GET_EVENT = graphql(`
-    query getEventById($eventId: [String]) {
-        event(ids: $eventId) {
+    query events($ids: [String]) {
+        event(ids: $ids) {
             id
             name
             location
@@ -29,7 +31,11 @@ const GET_EVENT = graphql(`
     }
 `);
 
-export const CreateTicketComp = ( { ticket } ) => {
+interface DisplayTicketProps {
+    ticket: Partial<InputTicket>
+}
+
+export const DisplayTicket= ( { ticket }: DisplayTicketProps ) => {
     const [open, setOpen] = React.useState(true);
     const navigate = useNavigate()
     const { currentUser } = useAuth()
@@ -39,26 +45,26 @@ export const CreateTicketComp = ( { ticket } ) => {
     let eventName = ""
 
     const event = useQuery({
-        query: GET_EVENT, 
+        query: GET_EVENT,
         variables: {
-            eventId: [ticket.eventId],
+            ids: [ticket.eventId!],
         }
     });
 
     let eventData = event[0].data || {}
-    
+
     if(event && eventData  && !_.isEqual(eventData, {}) && eventData["event"]) {
         eventData = eventData["event"][0]
         console.log(ticket)
         console.log(eventData)
 
-        
+
         location = eventData["location"]
         eventName = eventData["name"]
     }
     let time = new Date(eventData["timeAndDate"])
-    const hourTime = time.getHours() 
-        + ':' + time.getMinutes() 
+    const hourTime = time.getHours()
+        + ':' + time.getMinutes()
     const dateTime = time.getDay() + "/" + time.getMonth() + "/" + time.getFullYear()
     if(currentUser) {
         firstName = currentUser["firstName"]
@@ -69,7 +75,7 @@ export const CreateTicketComp = ( { ticket } ) => {
       setOpen(false);
       navigate("/")
     };
-  
+
 
     return (
         <div>
@@ -87,7 +93,7 @@ export const CreateTicketComp = ( { ticket } ) => {
                 />
             </Grid>
             <DialogTitle style={{ textAlign:"center" }} id="alert-dialog-title">
-                {"Entry Ticket - "} 
+                {"Entry Ticket - "}
                 {eventName}
             </DialogTitle>
             <h6 style={{ textAlign:"center" }}>Present in the entry with id</h6>
@@ -98,9 +104,9 @@ export const CreateTicketComp = ( { ticket } ) => {
                 <h5>{dateTime}  {hourTime} </h5>
                 <h5> {location} </h5>
                 </DialogContentText>
-                <QRCode  
-                    value={ticket.barcode ? ticket.barcode : ""}
-                    size={256}
+                <QRCode
+                    value={ticket.barcode || ""}
+                    size={BARCODE_SIZE}
                 />
             </DialogContent>
             <DialogActions>
@@ -113,8 +119,8 @@ export const CreateTicketComp = ( { ticket } ) => {
         </div>
     );
 
-    
+
 }
 
 
-export default CreateTicketComp
+export default DisplayTicket

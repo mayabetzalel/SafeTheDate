@@ -1,10 +1,10 @@
-import { gql, useQuery } from "urql";
+import { useQuery } from "urql";
 import FetchingState from "../utils/fetchingState";
 import EventCard from "./EventCard/EventCard";
 import { graphql } from "../graphql";
 import { Event, Exact, FilterEventParams } from "../graphql/graphql";
-import { Grid, Pagination, PaginationItem } from "@mui/material";
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { Grid, Pagination } from "@mui/material";
+import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import { RoutePaths } from "../App";
@@ -29,6 +29,7 @@ const eventQuery = graphql(`
       name
       location
       timeAndDate
+      ticketsAmount
       type
       image
     }
@@ -82,12 +83,13 @@ const Events = ({ filterParams, customerId }: EventsProps) => {
   return (
     <FetchingState isFetching={fetching}>
       <GridHiddenScroll container sx={{ height: "inherit", overflowY: "auto" }}>
-        {data.event.map(({ id, name, type, location, timeAndDate, image }) => (
+        {data.event.map(({ id, name, type, location, timeAndDate, ticketsAmount, image }) => (
           <Grid key={id!} item sm={4} md={3}>
             <EventCard
               title={name!}
               header={type!}
               subheader={location!}
+              ticketsAmount={ticketsAmount!}
               image={image || undefined}
               onClick={() => navigate(`${RoutePaths.EVENT}/${id}`, {})}
               id={id || ""}
