@@ -5,7 +5,7 @@ const DEFAULT_LIMIT = 50;
 const FAILED_MUTATION_MESSAGE = "mutation createEvent failed";
 
 const eventResolvers: {
-  Query: Pick<QueryResolvers,  "event" | "eventCount">;
+  Query: Pick<QueryResolvers, "event" | "eventCount">;
   Mutation: Pick<MutationResolvers, "createEvent">;
 } = {
   Query: {
@@ -17,11 +17,11 @@ const eventResolvers: {
 
       let filter = {
         ...(ids && { _id: { $in: ids } }),
-        ...(name && { name: { $regex: name, $options: 'i' } }),
-        ...(location && { location: { $regex: location, $options: 'i' } }),
+        ...(name && { name: { $regex: name, $options: "i" } }),
+        ...(location && { location: { $regex: location, $options: "i" } }),
         ...((from || to) && {
           timeAndDate: {
-            ...(from && { $gte: new Date(from)}),
+            ...(from && { $gte: new Date(from) }),
             ...(to && { $lt: new Date(to) }),
           },
         }),
@@ -31,15 +31,27 @@ const eventResolvers: {
         .skip(skip)
         .limit(limit)
         .then((events) =>
-          events.map<Event>(({ name, location, timeAndDate, type, ticketsAmount, image, _id }) => ({
-            name,
-            location,
-            timeAndDate: new Date(timeAndDate).getTime(),
-            type,
-            ticketsAmount,
-            image,
-            id: _id.toString(),
-          }))
+          events.map<Event>(
+            ({
+              name,
+              location,
+              timeAndDate,
+              type,
+              ticketsAmount,
+               description,
+              image,
+              _id,
+            }) => ({
+              name,
+              location,
+              timeAndDate: new Date(timeAndDate).getTime(),
+              type,
+              ticketsAmount,
+              description,
+              image,
+              id: _id.toString(),
+            })
+          )
         );
 
       return events;
@@ -60,26 +72,36 @@ const eventResolvers: {
         }),
       };
 
-      return await EventModel.find(filter)
-        .count()
-        .exec();
+      return await EventModel.find(filter).count().exec();
     },
   },
   Mutation: {
     createEvent: async (parent, { inputEvent }, context, info) => {
-      const { name, location, timeAndDate = 0, type, ticketsAmount, image } = inputEvent;
+      const {
+        name,
+        location,
+        timeAndDate = 0,
+        type,
+        ticketsAmount,
+        description,
+        image,
+      } = inputEvent;
 
       try {
-        const newEvent = await EventModel.create({
+        await EventModel.create({
           name,
           location,
           timeAndDate: new Date(timeAndDate).toString(),
           type,
           ticketsAmount,
-          image
+          description,
+          image,
         });
+        console.log(`Event created succesfully | eventName: "${name}"`)
         return { message: "event created succesfully", code: 200 };
-      } catch {
+      } catch (e) {
+        console.error(`failed to create event...`)
+        console.error(e)
         return { message: FAILED_MUTATION_MESSAGE, code: 500 };
       }
     },

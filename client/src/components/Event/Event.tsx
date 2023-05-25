@@ -30,6 +30,7 @@ const EVENT_QUERY = graphql(`
       location
       ticketsAmount
       timeAndDate
+      description
       image
     }
   }
@@ -50,14 +51,14 @@ export const Event = () => {
   const publisherName = "publisher name";
   const [event, setEvent] = useState<Exact<EventType>>();
   const { id = "" } = useParams();
-  const [{ data, fetching }, reexecuteQuery] = useQuery<{
+  const [{ data, fetching }] = useQuery<{
     event: Exact<EventType>[];
   }>({
     query: EVENT_QUERY,
     variables: { ids: [id] },
   });
 
-  const [dataImage, reexecuteQueryImage] = useQuery<{
+  const [dataImage] = useQuery<{
     event: Exact<EventType>[];
   }>({
     query: EVENT_QUERY_IMAGE,
@@ -95,9 +96,8 @@ export const Event = () => {
           justifyContent={"space-between"}
           xs
         >
-          <Stack spacing={3}>
+          <Stack spacing={2}>
             <Typography variant={"h3"}>{event?.name}</Typography>
-            <Stack spacing={2}>
               <Stack direction={"row"} spacing={2} alignItems={"center"}>
                 <Avatar
                   sx={(theme) => ({ bgcolor: theme.palette.secondary.main })}
@@ -125,19 +125,11 @@ export const Event = () => {
                     new Date(event?.timeAndDate).toDateString()}
                 </Typography>
               </Stack>
-            </Stack>
             <Divider color={"grey"} variant="middle" />
             <Typography>
-              additional details of the event...additional details of the
-              event...additional details of the event...additional details of
-              the event...additional details of the event...additional details
-              of the event...additional details of the event of the
-              event...additional details of the event...additional details of
-              the event...additional details of the event...additional details
-              of the event...
+              {event?.description}
             </Typography>
-          </Stack>
-          <Grid>
+
             {currentUser ? (
               <PaymentForm amount={20} description={event?.name ?? "Event"} />
             ) : (
@@ -151,7 +143,7 @@ export const Event = () => {
                 Sign In For Purchase
               </Button>
             )}
-          </Grid>
+          </Stack>
         </Grid>
       </Grid>
     </FetchingState>

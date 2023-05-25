@@ -1,12 +1,12 @@
-import { createTheme } from "@mui/material/styles"
+import { createTheme } from "@mui/material/styles";
 
-export const primary = "#D9D9D9"
-export const secondary = "#BE9E45"
-export const background = "#1A1A1A"
+export const primary = "#D9D9D9";
+export const secondary = "#BE9E45";
+export const background = "#1A1A1A";
 
-const success = "#50dc63"
-const error = "#EB8282"
-const warning = "#f1c73f"
+const success = "#50dc63";
+const error = "#EB8282";
+const warning = "#f1c73f";
 
 const theme = createTheme({
   palette: {
@@ -98,13 +98,45 @@ const theme = createTheme({
     },
     MuiPaginationItem: {
       styleOverrides: {
-        outlined: ({theme}) => ({
+        outlined: ({ theme }) => ({
           color: theme.palette.primary.main,
-          border: `1px solid ${theme.palette.primary.dark}`
-        })
+          border: `1px solid ${theme.palette.primary.dark}`,
+        }),
       },
-    }
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          ":hover": {
+            borderColor: "red",
+          },
+        }),
+        colorSecondary: ({ theme }) => ({
+          color: theme.palette.background.paper,
+        }),
+        notchedOutline: ({ theme }) => ({
+          color: theme.palette.primary.main,
+          borderColor: theme.palette.primary.dark,
+          ":hover": {
+            borderColor: "red",
+          },
+        }),
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          color: theme.palette.primary.main,
+        }),
+      },
+      //.css-woy6y0-MuiInputBase-root-MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {},
+      },
+    },
   },
-})
+});
 
-export default theme
+export default theme;
