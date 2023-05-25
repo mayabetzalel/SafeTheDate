@@ -13,7 +13,6 @@ import logo from "../assets/logo.png";
 import { useAuth } from "../hooks/authController/AuthContext"  
 import { graphql } from "../graphql";
 import { useQuery } from "urql";
-import { PDFViewer } from '@react-pdf/renderer';
 import _ from 'lodash';
 
 const BARCODE_SIZE = 256
@@ -46,6 +45,7 @@ export const DisplayTicket= ( { ticket } ) => {
         }
     });
 
+    // if(event["ticketsAmount"]["firstHand"] > 0) {
     let eventData = event[0].data || {}
     
     if(event && eventData  && !_.isEqual(eventData, {}) && eventData["event"]) {
@@ -66,9 +66,9 @@ export const DisplayTicket= ( { ticket } ) => {
         lastName = currentUser["lastName"]
     }
     const handleClose = () => {
-      console.log(ticket)
-      setOpen(false);
-      navigate("/")
+        console.log(ticket)
+        setOpen(false);
+        navigate("/")
     };
   
 

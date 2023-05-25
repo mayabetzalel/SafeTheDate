@@ -6,6 +6,7 @@ import { useAuth } from "../../hooks/authController/AuthContext"
 import { InputTicket, MutationResponse, Ticket } from "../../graphql/graphql"
 import { graphql } from "../../graphql"
 import { useMutation } from "urql"
+import { useQuery } from "urql";
 
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 const LENGTH = 60;
@@ -17,6 +18,14 @@ const CREATE_TICKET_MUTATION = graphql(`
     }
   }
 `)
+
+const DECREASE_TICKET_AMOUNT = graphql(`
+    query updateTicketAmount($eventId: [String]) {
+        event(ids: $eventId) {
+            code
+        }
+    }
+`);
 
 function makeId() {
   let result = "";
@@ -52,6 +61,14 @@ const PaymentForm = ({
     { inputTicket: InputTicket }
   >(CREATE_TICKET_MUTATION)
 
+  // const [deacreaseTicketAmount, setDeacreaseTicketAmount] = 
+  // useQuery<
+  //   {
+  //     eventId: String
+  //   },
+  //   { inputTicket: InputTicket }
+  // >(DECREASE_TICKET_AMOUNT)
+
   useEffect(() => {
     if(createTicket && currentUser) {
 
@@ -69,11 +86,12 @@ const PaymentForm = ({
 
       setTicketData(inputTicket)
       setCurrentUser(currentUser || [])
-      CreateTicket({ inputTicket }).then((result) => {
+      CreateTicket({ inputTicket }).then(async (result) => {
         if (result.error) {
           console.error("Error creating ticket:", result.error)
           enqueueSnackbar("An error occurred", { variant: "error" })
         } else {
+          // await setDeacreaseTicketAmount(inputTicket.eventId)
           setShowTicket(true)
           enqueueSnackbar("Ticket created successfully", {variant: 'success'})
         }

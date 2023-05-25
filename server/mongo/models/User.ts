@@ -16,6 +16,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     type: Schema.Types.ObjectId,
     ref: "UserConfirmation",
   },
+  // credit: { type: Number, default: 0 }
 })
 
 const User = mongoose.model("User", UserSchema)
@@ -28,7 +29,8 @@ export interface IUser {
   lastName: string
   refreshToken: Types.ObjectId
   isConfirmed: boolean
-  userConfirmation: Types.ObjectId
+  userConfirmation: Types.ObjectId, 
+  creadit: number
 }
 
 export default User

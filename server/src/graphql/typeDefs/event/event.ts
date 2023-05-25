@@ -36,6 +36,10 @@ export default `
     }
 
     type Query {
+        updateTicketAmount(ids: [String], ticketsAmount: Int)
+    }
+
+    type Query {
         eventCount(filterParams: FilterEventParams, ids: [String]): Int!
     }
 

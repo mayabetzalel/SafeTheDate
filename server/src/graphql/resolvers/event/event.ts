@@ -14,6 +14,12 @@ const eventResolvers: {
       return await EventModel.find(filter)
     },
 
+    // updateTicketAmount: async(args) => {
+    //   await EventModel.findOneAndUpdate(
+    //     {"_id": args.id},
+    //     { "$set": {ticketsAmount: args.ticketsAmount}},
+    // )},
+
     event: async (parent, args, context, info) => {
       const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids } = args;
 
