@@ -9,39 +9,33 @@ import Spinner from "../utils/spinner"
 import { Center } from "../utils/center"
 import { useParams } from "react-router-dom"
 import { graphql } from "../graphql"
-// import { useQuery } from "urql"
+import { useQuery } from "urql"
+import { Event, Exact } from "../graphql/graphql"
 
-// const VALIDATE_TICKET_QUERY = graphql(`
-//   query isVallid($eventId: [String], $barcode: [String]) {
-//     isVallid(eventId: $eventId, barcode=$barcode) {
-//       iisVallid
-//     }
-//   }
-// `);
+const VALIDATE_TICKET_QUERY = graphql(`
+  query isVallid($eventId: String!, $barcode: String!) {
+    isVallid(eventId: $eventId, barcode: $barcode)
+  }
+`);
 
 export const ScanEvent = () => {
   const { id = "" } = useParams()
   const [code, setCode] = useState("")
 
-  const [isValidating, setIsValidating] = useState(false)
-  const [isValid, setIsValid] = useState(false)
+  // const [isValidating, setIsValidating] = useState(false)
+  // const [isValid, setIsValid] = useState(false)
   const [showIsValid, setShowIsValid] = useState(false)
 
   const videoRef = useRef<any>();
 
-  // const [{ data, fetching }, reexecuteQuery] = useQuery<{
-  //   isValid: Boolean
-  // }>({
-  //   query: VALIDATE_TICKET_QUERY,
-  //   variables: { eventId: [id], barcode: code },
-  // })
+  const [{ data: isValid, fetching: fetchingIsVallidData }, reexecuteQuery] = useQuery<{
+    isValid: boolean
+  }>({
+    query: VALIDATE_TICKET_QUERY,
+    variables: { eventId: id, barcode: code },
+  })
 
-  // const [{ isVallidData, fetchingIsVallidData}, reexecuteIsVallidQuery] = useQuery<{
-  //   event: Exact<Event>[]
-  // }>({
-  //   query: EVENT_QUERY,
-  //   variables: { ids: [id] },
-  // })
+  console.log(isValid, fetchingIsVallidData)
 
   async function decodeContinuously() {
     const codeReader = new BrowserQRCodeReader()
@@ -75,7 +69,7 @@ export const ScanEvent = () => {
   return (
     <Center>
       <h1>{`code : ${code}`}</h1>
-      {isValidating ? (
+      {fetchingIsVallidData ? (
         <Spinner />
       ) : (
         <>

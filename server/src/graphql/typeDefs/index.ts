@@ -116,7 +116,7 @@ export type QueryEventCountArgs = {
 
 export type QueryIsVallidArgs = {
   barcode: Scalars['String'];
-  eventId: Scalars['ID'];
+  eventId: Scalars['String'];
 };
 
 export type Ticket = {

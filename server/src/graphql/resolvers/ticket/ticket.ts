@@ -9,6 +9,13 @@ const ticketResolvers: {
   Query: Pick<QueryResolvers, "isVallid">;
   Mutation: Pick<MutationResolvers, "createTicket">
 } = {
+  Query: {
+    isVallid: async (parent, args, context, info) => {
+      const { eventId, barcode } = args;
+
+      return true
+    }
+  },
   Mutation: {
     createTicket: async (parent, { inputTicket }, context, info) => {
       const { _id, userId, eventId, barcode } = inputTicket;
@@ -27,13 +34,6 @@ const ticketResolvers: {
         return { message: FAILED_MUTATION_MESSAGE, code: 500 };
       }
     },
-  },
-  Query: {
-    isVallid: async (parent, args, context, info) => {
-      const { eventId, barcode } = args;
-
-      return true
-    }
   }
 }
 
