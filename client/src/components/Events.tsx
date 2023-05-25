@@ -9,7 +9,6 @@ import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import { RoutePaths } from "../App";
 import { floor } from "lodash";
-import { useAuth } from "../hooks/authController/AuthContext";
 
 const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
@@ -22,9 +21,8 @@ const eventQuery = graphql(`
     $filterParams: FilterEventParams
     $skip: Int!
     $limit: Int!
-    $customerId: String
   ) {
-    event(filterParams: $filterParams, skip: $skip, limit: $limit, customerId: $customerId) {
+    event(filterParams: $filterParams, skip: $skip, limit: $limit) {
       id
       name
       location
@@ -37,8 +35,8 @@ const eventQuery = graphql(`
 `);
 
 const eventCountQuery = graphql(`
-  query eventCountQuery($filterParams: FilterEventParams, $customerId: String ) {
-    eventCount(filterParams: $filterParams, customerId: $customerId)
+  query eventCountQuery($filterParams: FilterEventParams) {
+    eventCount(filterParams: $filterParams)
   }
 `);
 
@@ -46,33 +44,30 @@ const EVENTS_PER_FETCH = 12;
 
 interface EventsProps {
   filterParams?: FilterEventParams;
-  customerId?: string;
 }
 
-const Events = ({ filterParams, customerId }: EventsProps) => {
+const Events = ({ filterParams }: EventsProps) => {
   const [page, setPage] = useState(0);
   const navigate = useNavigate();
   const [{ data = { event: [] }, fetching, error }, reexecuteQuery] = useQuery<
     { event: Exact<Event>[] },
-    { filterParams: FilterEventParams; skip: number; limit: number; customerId: string; }
+    { filterParams: FilterEventParams; skip: number; limit: number }
   >({
     query: eventQuery,
     variables: {
       filterParams: filterParams || {},
       skip: page * EVENTS_PER_FETCH,
       limit: EVENTS_PER_FETCH,
-      customerId: customerId || ""
     },
   });
 
   const [{ data: dataCount = { eventCount: 0 } }] = useQuery<
     { eventCount: number },
-    { filterParams: FilterEventParams; customerId: string;}
+    { filterParams: FilterEventParams }
   >({
     query: eventCountQuery,
     variables: {
       filterParams: filterParams || {},
-      customerId: customerId || ""
     },
   });
 
@@ -92,7 +87,6 @@ const Events = ({ filterParams, customerId }: EventsProps) => {
               ticketsAmount={ticketsAmount!}
               image={image || undefined}
               onClick={() => navigate(`${RoutePaths.EVENT}/${id}`, {})}
-              id={id || ""}
             />
           </Grid>
         ))}

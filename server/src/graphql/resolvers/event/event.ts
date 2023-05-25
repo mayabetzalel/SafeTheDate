@@ -1,23 +1,16 @@
 import { QueryResolvers, MutationResolvers, Event } from "../../typeDefs";
 import { Event as EventModel } from "../../../../mongo/models/Event";
-import { Ticket as TicketModel } from "../../../../mongo/models/Ticket";
-import { Types } from "mongoose";
 
 const DEFAULT_LIMIT = 50;
 const FAILED_MUTATION_MESSAGE = "mutation createEvent failed";
 
 const eventResolvers: {
-  Query: Pick<QueryResolvers, "getEventById" | "event" | "eventCount">;
+  Query: Pick<QueryResolvers,  "event" | "eventCount">;
   Mutation: Pick<MutationResolvers, "createEvent">;
 } = {
   Query: {
-    getEventById: async (ids) => {
-      let filter = { ...(ids && { _id: { $in: ids } }) }
-      return await EventModel.find(filter)
-    },
-
     event: async (parent, args, context, info) => {
-      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids, customerId } = args;
+      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids } = args;
 
       // Those are filters to query the mongo
       let { name, location, from, to } = filterParams;
@@ -34,8 +27,7 @@ const eventResolvers: {
         }),
       };
 
-      // need to add user that created
-      let events = await EventModel.find({...filter, ...(customerId && { userId: customerId })})
+      const events = await EventModel.find(filter)
         .skip(skip)
         .limit(limit)
         .then((events) =>
@@ -53,7 +45,7 @@ const eventResolvers: {
       return events;
     },
     eventCount: async (parent, args, context, info) => {
-      const { filterParams = {}, ids, customerId } = args;
+      const { filterParams = {}, ids } = args;
 
       let { name, location, from, to } = filterParams;
       let filter = {
@@ -68,7 +60,7 @@ const eventResolvers: {
         }),
       };
 
-      return await EventModel.find({...filter, ...(customerId && { userId: customerId })})
+      return await EventModel.find(filter)
         .count()
         .exec();
     },

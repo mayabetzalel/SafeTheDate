@@ -5,7 +5,6 @@ interface TicketMongoType {
   userId: Types.ObjectId
   eventId: Types.ObjectId
   isSecondHand: Boolean,
-  onMarketTime: Date,
   price: Number,
   barcode: string
 }
@@ -21,18 +20,12 @@ const ticketSchema = new Schema<TicketMongoType>({
   },
   eventId: {
     type: Schema.Types.ObjectId,
-    ref: "Event",
-    required: true,
-    unique: true,
+    required: true
   },
   isSecondHand: {
     type: Boolean, 
     required: true
   }, 
-  onMarketTime: {
-    type: Date, 
-    required: false
-  },
   price: {
     type: Number, 
     required: true
