@@ -42,4 +42,8 @@ export default `
     type Mutation {
         createEvent(inputEvent: InputEvent!): MutationResponse!
     }
+
+    type Mutation {
+        decreaseTicketAmount(eventId: String!): MutationResponse!
+    } 
 `

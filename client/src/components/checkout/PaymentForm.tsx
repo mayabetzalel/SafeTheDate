@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 import React, { useState, useEffect } from "react"
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js"
 import { useSnackbar } from "notistack"
@@ -17,6 +18,15 @@ const CREATE_TICKET_MUTATION = graphql(`
     }
   }
 `)
+
+const DECREASE_TICKET_AMOUNT = graphql(`
+mutation decreaseTicketAmount($eventId: String!) {
+  decreaseTicketAmount(eventId: $eventId) {
+        message
+        code
+      }
+    }
+`);
 
 function makeId() {
   let result = "";
@@ -40,6 +50,7 @@ const PaymentForm = ({
   const [orderID, setOrderID] = useState(false)
   const [success, setSuccess] = useState(false)
   const [createTicket, setCreateTicket] = useState(false)
+  const [decrease, setDecrease] = useState(false)
   const { currentUser } = useAuth()
   const [ user, setCurrentUser] = useState<any[]>([])
   const [ isShowTicket, setShowTicket ] = useState(false)
@@ -51,6 +62,25 @@ const PaymentForm = ({
     },
     { inputTicket: InputTicket }
   >(CREATE_TICKET_MUTATION)
+
+  const [deacreaseTicketAmount, setDeacreaseTicketAmount] = 
+  useMutation<
+    {
+      eventId: string
+    },
+    { }
+  >(DECREASE_TICKET_AMOUNT)
+
+  useEffect(() => {
+    if(decrease) {
+      setDecrease(false)
+      const eventId = ticketData.eventId || ""
+      setDeacreaseTicketAmount({ eventId }).then((result) => {
+        if (result.error)
+          console.error("Error creating ticket:", result.error)
+      })
+    }
+  })
 
   useEffect(() => {
     if(createTicket && currentUser) {
@@ -74,6 +104,7 @@ const PaymentForm = ({
           console.error("Error creating ticket:", result.error)
           enqueueSnackbar("An error occurred", { variant: "error" })
         } else {
+          setDecrease(true)
           setShowTicket(true)
           enqueueSnackbar("Ticket created successfully", {variant: 'success'})
         }
