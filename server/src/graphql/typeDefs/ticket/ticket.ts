@@ -61,4 +61,8 @@ export default `
     type Mutation {
         createTicket(inputTicket: InputTicket!): MutationResponse!
     }
+
+    type Mutation {
+        changeSecondHandToFirstHand(filterTicketParams: FilterTicketParams) : MutationResponse!
+    }
 `

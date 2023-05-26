@@ -1,5 +1,6 @@
 import { QueryResolvers, MutationResolvers, Ticket, TicketResponse, Event } from "../../typeDefs"
 import { Ticket as TicketModel } from "../../../../mongo/models/Ticket"
+import { User as UserModel } from "../../../../mongo/models/User"
 import mongoose, { Types } from 'mongoose';
 import e = require("express");
 
@@ -8,7 +9,7 @@ const FAILED_MUTATION_MESSAGE = "mutation createTicket failed"
 
 const ticketResolvers: {
   Query: Pick<QueryResolvers, "ticket" | "ticketCount" | "isVallid" | "getAllSecondHandTicketsByEventId">;
-  Mutation: Pick<MutationResolvers, "createTicket" | "updateMarket">;
+  Mutation: Pick<MutationResolvers, "createTicket" | "updateMarket" | "changeSecondHandToFirstHand">;
 } = {
   Query: {
     ticket: async (parent, args, context, info) => {
@@ -108,6 +109,29 @@ const ticketResolvers: {
         return { message: FAILED_MUTATION_MESSAGE, code: 500 }
       }
     },
+
+    changeSecondHandToFirstHand: async (parent, { filterTicketParams }, context, info) => {
+      const { userId, barcode, eventId } = filterTicketParams
+      try{
+        console.log("hereeeeeeeeeeeeeeeeeeeeee")
+        let oldTicket = await TicketModel.findOne({
+          eventId: eventId, 
+          isSecondHand: true, 
+          // Add time ? 
+        })
+
+        // TODO: add to old user credit in the amount of ticket prev minus 2 shekels.
+
+        
+        
+        console.log("second hand ticket updated to first hand");
+        return { message: "second hand ticket updated succesfully", code: 200 };
+      } catch (error) {
+        console.log("failed with " + error);
+        return { message: FAILED_MUTATION_MESSAGE, code: 500 };
+      }
+    },
+
     createTicket: async (parent, { inputTicket }, context, info) => {
       const { _id,
         userId,
@@ -115,8 +139,8 @@ const ticketResolvers: {
         isSecondHand,
         price,
         barcode } = inputTicket
+      
       try {
-
         const newTicket = await TicketModel.create({
           _id: new mongoose.Types.ObjectId(),
           userId: new Types.ObjectId(userId),
