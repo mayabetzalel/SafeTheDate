@@ -17,7 +17,7 @@ const eventResolvers: {
     },
 
     event: async (parent, args, context, info) => {
-      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids, customerId } = args;
+      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids, userId } = args;
 
       // Those are filters to query the mongo
       let { name, location, from, to } = filterParams;
@@ -35,7 +35,7 @@ const eventResolvers: {
       };
 
       // need to add user that created
-      let events = await EventModel.find({...filter, ...(customerId && { userId: customerId })})
+      let events = await EventModel.find({...filter, ...(userId && { userId: userId })})
         .skip(skip)
         .limit(limit)
         .then((events) =>
@@ -53,7 +53,7 @@ const eventResolvers: {
       return events;
     },
     eventCount: async (parent, args, context, info) => {
-      const { filterParams = {}, ids, customerId } = args;
+      const { filterParams = {}, ids, userId } = args;
 
       let { name, location, from, to } = filterParams;
       let filter = {
@@ -68,7 +68,7 @@ const eventResolvers: {
         }),
       };
 
-      return await EventModel.find({...filter, ...(customerId && { userId: customerId })})
+      return await EventModel.find({...filter, ...(userId && { userId: userId })})
         .count()
         .exec();
     },

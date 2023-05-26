@@ -24,9 +24,9 @@ const ticketQuery = graphql(`
     $filterParams: FilterEventParams
     $skip: Int!
     $limit: Int!
-    $customerId: String
+    $userId: String
   ) {
-    ticket(filterParams: $filterParams, skip: $skip, limit: $limit, customerId: $customerId) {
+    ticket(filterParams: $filterParams, skip: $skip, limit: $limit, userId: $userId) {
       ticketId
       name
       location
@@ -40,8 +40,8 @@ const ticketQuery = graphql(`
 `);
 
 const ticketCountQuery = graphql(`
-  query TicketCountQuery($filterParams: FilterEventParams, $customerId: String) {
-    ticketCount(filterParams: $filterParams, customerId: $customerId)
+  query TicketCountQuery($filterParams: FilterEventParams, $userId: String) {
+    ticketCount(filterParams: $filterParams, userId: $userId)
   }
 `);
 
@@ -49,35 +49,35 @@ const EVENTS_PER_FETCH = 12;
 
 interface TicketsProps {
   filterParams?: FilterEventParams;
-  customerId?: string;
+  userId?: string;
 }
 
-const MyTickets = ({ filterParams, customerId }: TicketsProps) => {
+const MyTickets = ({ filterParams, userId }: TicketsProps) => {
   const { currentUser } = useAuth();
   const [tickets, setTickets] = useState<TicketResponse[]>([]);
   const [page, setPage] = useState(0);
   const navigate = useNavigate();
   const [{ data = { ticket: [] }, fetching, error }] = useQuery<
     { ticket: Exact<TicketResponse>[] },
-    { filterParams: FilterEventParams; skip: number; limit: number; customerId: string; }
+    { filterParams: FilterEventParams; skip: number; limit: number; userId: string; }
   >({
     query: ticketQuery,
     variables: {
       filterParams: filterParams || {},
       skip: page * EVENTS_PER_FETCH,
       limit: EVENTS_PER_FETCH,
-      customerId: currentUser?.['_id'] || ""
+      userId: currentUser?.['_id'] || ""
     },
   });
 
   const [{ data: dataCount = { ticketCount: 0 } }] = useQuery<
     { ticketCount: number },
-    { filterParams: FilterEventParams; customerId: string }
+    { filterParams: FilterEventParams; userId: string }
   >({
     query: ticketCountQuery,
     variables: {
       filterParams: filterParams || {},
-      customerId: currentUser?.['_id'] || ""
+      userId: currentUser?.['_id'] || ""
     },
   });
 

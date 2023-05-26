@@ -39,11 +39,11 @@ export default `
     }
 
     type Query {
-        ticket(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String], customerId: String): [TicketResponse!]!
+        ticket(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String], userId: String): [TicketResponse!]!
     }
 
     type Query {
-        ticketCount(filterParams: FilterEventParams, ids: [String], customerId: String): Int!
+        ticketCount(filterParams: FilterEventParams, ids: [String], userId: String): Int!
     }
 
     type Mutation {

@@ -42,7 +42,6 @@ export const MyTicket = (props: MyTicketCardProps) => {
                 console.error("Error updating ticket:", result.error);
                 enqueueSnackbar("An error occurred", { variant: "error" });
             } else {
-                // navigate("/");
                 localUpdateMarketTime(ticketId);
                 enqueueSnackbar(`Ticket is ${!isOnMarket ? "on" : "off"} market`, { variant: "success" });
                 console.log("Ticket updated:", result.data?.updateMarket);
