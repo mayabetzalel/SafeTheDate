@@ -18,10 +18,10 @@ export default `
     }
 
     type Query {
-        isVallid(eventId: ID!, barcode: String!): Boolean!
+        isVallid(eventId: ID!, barcode: String!): Boolean! @auth
     }
 
     type Mutation {
-        createTicket(inputTicket: InputTicket!): MutationResponse!
+        createTicket(inputTicket: InputTicket!): MutationResponse! @auth
     }
 `

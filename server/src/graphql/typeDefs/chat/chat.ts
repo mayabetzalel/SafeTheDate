@@ -13,6 +13,6 @@ export default  `
     }
 
     type Mutation {
-        chatCommand(inputMessage: InputMessage!): ChatResponse!
+        chatCommand(inputMessage: InputMessage!): ChatResponse! @auth
     }
 `
