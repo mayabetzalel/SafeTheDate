@@ -22,7 +22,7 @@ const CREATE_EVENT_MUTATION = graphql(`
       code
     }
   }
-  `);
+`);
 
 export const CreateEvent = () => {
   const eventNameRef = useRef<HTMLInputElement | null>();
@@ -34,12 +34,9 @@ export const CreateEvent = () => {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
-  const [createEventResult, createEvent] = useMutation<
-    {
-      createEvent: MutationResponse;
-    }
-  >(CREATE_EVENT_MUTATION);
-
+  const [createEventResult, createEvent] = useMutation<{
+    createEvent: MutationResponse;
+  }>(CREATE_EVENT_MUTATION);
 
   const onChangeImage = (imageList) => {
     // only allow one image to be uploaded
@@ -52,10 +49,14 @@ export const CreateEvent = () => {
     const inputEvent: InputEvent = {
       name: eventNameRef.current?.value || "",
       location: eventLocationRef.current?.value || "",
-      timeAndDate: Date.parse(eventTimeAndDateRef.current?.value || new Date().toString()),
+      timeAndDate: Date.parse(
+        eventTimeAndDateRef.current?.value || new Date().toString()
+      ),
       type: eventTypeRef.current?.value || "",
-      ticketsAmount: eventTicketAmoutRef.current?.value ? parseInt(eventTicketAmoutRef.current?.value) : 1,
-      image: image || ""
+      ticketsAmount: eventTicketAmoutRef.current?.value
+        ? parseInt(eventTicketAmoutRef.current?.value)
+        : 1,
+      image: image || "",
     };
 
     // Call the createEvent mutation with the inputEvent object
@@ -167,7 +168,7 @@ export const CreateEvent = () => {
                       placeholder="Tickets amount"
                       inputRef={eventTicketAmoutRef}
                       variant="outlined"
-                      type='number'
+                      type="number"
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start"></InputAdornment>

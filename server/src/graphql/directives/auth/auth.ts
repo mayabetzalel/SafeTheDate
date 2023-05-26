@@ -5,6 +5,8 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
+type x = ReturnType<any>
+
 export const authSchemaTransformer = (schema: GraphQLSchema) =>
   mapSchema(schema, {
     [MapperKind.OBJECT_FIELD]: (fieldConfig) => {
@@ -13,6 +15,8 @@ export const authSchemaTransformer = (schema: GraphQLSchema) =>
 
       if (authDirective && NEED_AUTH) {
         const originalResolver = fieldConfig.resolve;
+        const fieldType = fieldConfig.type;
+        console.log(fieldConfig);
         fieldConfig.resolve = async (source, args, context, info) => {
           const token = await context.request.cookieStore?.get("access_token");
 

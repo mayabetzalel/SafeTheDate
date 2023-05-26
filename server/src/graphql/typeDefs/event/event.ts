@@ -28,15 +28,11 @@ export default `
     }
 
     type Query {
-        getEventById(ids: [String]): [Event!]! @auth
+        event(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String], customerId: String): [Event!]!
     }
 
     type Query {
-        event(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String], customerId: String): [Event!]! @auth
-    }
-
-    type Query {
-        eventCount(filterParams: FilterEventParams, ids: [String], customerId: String): Int! @auth
+        eventCount(filterParams: FilterEventParams, ids: [String], customerId: String): Int!
     }
 
     type Mutation {

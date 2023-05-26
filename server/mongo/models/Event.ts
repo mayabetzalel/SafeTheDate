@@ -1,11 +1,12 @@
-import { Schema, model, Document, Model } from "mongoose"
+import { Schema, model, Document, Model, Types } from "mongoose";
 
 interface EventMongoType {
   name: string;
   location: string;
   timeAndDate: Date;
+  ownerId: Types.ObjectId;
   type: string;
-  ticketsAmount: number
+  ticketsAmount: number;
   image: string;
 }
 
@@ -31,11 +32,15 @@ const eventSchema = new Schema<EventMongoType>({
     type: Number,
     required: true,
   },
+  ownerId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+  },
   image: {
     type: String,
     required: false,
-  }
+  },
 });
 
 // Create Mongoose model for Event
-export const Event: Model<EventMongoType> = model("Event", eventSchema)
+export const Event: Model<EventMongoType> = model("Event", eventSchema);

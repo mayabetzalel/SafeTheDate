@@ -30,7 +30,7 @@ const ticketResolvers: {
         }),
       };
 
-      const unprocessedTickets = await TicketModel.find({...filter, ...(customerId && { userId: customerId }) })
+      const unprocessedTickets = await TicketModel.find({...filter, ...(customerId && { ownerId: customerId }) })
         .populate("eventId")
         .skip(skip)
         .limit(limit)
@@ -66,7 +66,7 @@ const ticketResolvers: {
         }),
       };
 
-      return await TicketModel.find({...filter, ...(customerId && { userId: customerId }) })
+      return await TicketModel.find({...filter, ...(customerId && { ownerId: customerId }) })
         .count()
         .exec();
 
@@ -87,10 +87,10 @@ const ticketResolvers: {
         let onMarket = ticket?.onMarketTime
 
         if ((eventDate && new Date() > eventDate) || !eventDate) {
-          
+
           let updatetime = await TicketModel.updateOne({ _id: new Types.ObjectId(ticketId) },
           { $set: { onMarketTime: onMarket ? null : new Date().getTime() } }, { upsert: true });
-          
+
           console.log("Ticket market time update: " + JSON.stringify(updatetime))
           return { message: "ticket updated succesfully", code: 200 }
         }
@@ -102,16 +102,17 @@ const ticketResolvers: {
     },
     createTicket: async (parent, { inputTicket }, context, info) => {
       const { _id,
-        userId,
         eventId,
         isSecondHand,
         price,
         barcode } = inputTicket
       try {
 
+        const userId = context.user._id;
+
         const newTicket = await TicketModel.create({
           _id: new mongoose.Types.ObjectId(),
-          userId: new Types.ObjectId(userId),
+          ownerId: new Types.ObjectId(userId),
           eventId: new Types.ObjectId(eventId),
           isSecondHand: isSecondHand,
           price: price,
@@ -125,7 +126,7 @@ const ticketResolvers: {
       }
     },
   },
-    
+
 }
 
 export default ticketResolvers
