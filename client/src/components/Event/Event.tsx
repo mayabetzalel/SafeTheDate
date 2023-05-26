@@ -6,16 +6,21 @@ import {
   Card,
   Stack,
   Divider,
-} from "@mui/material"
-import LocationOnIcon from "@mui/icons-material/LocationOn"
-import EventIcon from "@mui/icons-material/Event"
-import { useParams } from "react-router-dom"
-import { useQuery } from "urql"
-import { graphql } from "../../graphql"
-import FetchingState from "../../utils/fetchingState"
-import { useEffect, useState } from "react"
-import { Exact, Event as EventType } from "../../graphql/graphql"
-import PaymentForm from "../checkout/PaymentForm"
+  Button,
+} from "@mui/material";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import EventIcon from "@mui/icons-material/Event";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "urql";
+import { graphql } from "../../graphql";
+import FetchingState from "../../utils/fetchingState";
+import { useEffect, useState } from "react";
+import { Exact, Event as EventType } from "../../graphql/graphql";
+import PaymentForm from "../checkout/PaymentForm";
+import { useAuth } from "../../hooks/authController/AuthContext";
+import { Login, Logout } from "@mui/icons-material";
+import * as React from "react";
+import { RoutePaths } from "../../App";
 
 const EVENT_QUERY = graphql(`
   query event($ids: [String]) {
@@ -37,18 +42,20 @@ const EVENT_QUERY_IMAGE = graphql(`
       image
     }
   }
-`)
+`);
 
 export const Event = () => {
-  const publisherName = "publisher name"
-  const [event, setEvent] = useState<Exact<EventType>>()
-  const { id = "" } = useParams()
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
+  const publisherName = "publisher name";
+  const [event, setEvent] = useState<Exact<EventType>>();
+  const { id = "" } = useParams();
   const [{ data, fetching }, reexecuteQuery] = useQuery<{
-    event: Exact<EventType>[]
+    event: Exact<EventType>[];
   }>({
     query: EVENT_QUERY,
     variables: { ids: [id] },
-  })
+  });
 
   const [dataImage, reexecuteQueryImage] = useQuery<{
     event: Exact<EventType>[];
@@ -59,9 +66,9 @@ export const Event = () => {
 
   useEffect(() => {
     if (data?.event.length == 1) {
-      setEvent(data.event.at(0))
+      setEvent(data.event.at(0));
     }
-  }, [data])
+  }, [data]);
 
   return (
     <FetchingState isFetching={fetching}>
@@ -74,7 +81,10 @@ export const Event = () => {
           <Card sx={{ borderRadius: "40px", height: "100%" }}>
             <CardMedia
               sx={{ height: "100%" }}
-              image={dataImage.data?.event.at(0)?.image || "https://thumbs.dreamstime.com/b/nightclub-party-lightshow-18331890.jpg"}
+              image={
+                dataImage.data?.event.at(0)?.image ||
+                "https://thumbs.dreamstime.com/b/nightclub-party-lightshow-18331890.jpg"
+              }
             />
           </Card>
         </Grid>
@@ -101,7 +111,12 @@ export const Event = () => {
                 <Typography variant="h6">{event?.location}</Typography>
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
-                <Typography variant="h6"> {event?.ticketsAmount ? (event?.ticketsAmount + ' tickets avilable') : 'No avilable tickets'}</Typography>
+                <Typography variant="h6">
+                  {" "}
+                  {event?.ticketsAmount
+                    ? event?.ticketsAmount + " tickets avilable"
+                    : "No avilable tickets"}
+                </Typography>
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
                 <EventIcon />
@@ -123,10 +138,22 @@ export const Event = () => {
             </Typography>
           </Stack>
           <Grid>
-            <PaymentForm amount={20} description={event?.name ?? "Event"} />
+            {currentUser ? (
+              <PaymentForm amount={20} description={event?.name ?? "Event"} />
+            ) : (
+              <Button
+                variant={"text"}
+                color={"secondary"}
+                fullWidth
+                onClick={() => navigate(RoutePaths.LOGIN)}
+                endIcon={<Login />}
+              >
+                Sign In For Purchase
+              </Button>
+            )}
           </Grid>
         </Grid>
       </Grid>
     </FetchingState>
-  )
-}
+  );
+};

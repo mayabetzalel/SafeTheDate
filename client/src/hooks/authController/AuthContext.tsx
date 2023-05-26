@@ -21,6 +21,8 @@ const AuthContext = createContext({
     lastName: string,
     password: string
   ) => {},
+  resetPasswordSendMail: async (usernameOrMail: string) => {},
+  resetPassword: async (newPassword: string, token: string) => {},
   signIn: async (email: string, password: string) => {},
   signOut: async () => {},
   isUserSignedIn: () => {},
@@ -87,7 +89,27 @@ export const AuthContextProvider = ({
       checkIfSessionValid();
     } catch (error: any) {
       console.log("in error from user context signIn");
-      throw new Error(error);
+      throw new Error(error?.response?.data?.functionalityError?.message);
+    }
+  }
+
+  async function resetPasswordSendMail(usernameOrMail: string) {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      await backendAPI.auth.resetPasswordSendMail(usernameOrMail);
+    } catch (error: any) {
+      console.log("in error from user context resetPasswordSendMail");
+      throw new Error(error?.response?.data?.functionalityError?.message);
+    }
+  }
+
+  async function resetPassword(newPassword: string, token: string) {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      await backendAPI.auth.resetPassword(newPassword, token);
+    } catch (error: any) {
+      console.log("in error from user context resetPassword");
+      throw new Error(error?.response?.data?.functionalityError?.message);
     }
   }
 
@@ -130,6 +152,8 @@ export const AuthContextProvider = ({
     getUserProfilePicture,
     logWithGoogle,
     checkIfSessionValid,
+    resetPasswordSendMail,
+    resetPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

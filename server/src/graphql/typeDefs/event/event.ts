@@ -32,11 +32,11 @@ export default `
     }
 
     type Query {
-        event(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String]): [Event!]! @auth
+        event(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String], customerId: String): [Event!]! @auth
     }
 
     type Query {
-        eventCount(filterParams: FilterEventParams, ids: [String]): Int! @auth
+        eventCount(filterParams: FilterEventParams, ids: [String], customerId: String): Int! @auth
     }
 
     type Mutation {
