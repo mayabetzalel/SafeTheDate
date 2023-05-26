@@ -24,7 +24,6 @@ export default `
     }
 
     input InputTicket {
-        _id: ID!,
         userId: ID!,
         eventId: ID!,
         isSecondHand: Boolean!, 
@@ -46,6 +45,10 @@ export default `
         ticketCount(filterParams: FilterEventParams, ids: [String], customerId: String): Int!
     }
 
+    type Query {
+        getAllSecondHandTicketsByEventId(eventId: String!): Int!
+    }
+
     type Mutation {
         updateMarket(ticketId: String!): MutationResponse!
     }
@@ -56,5 +59,9 @@ export default `
 
     type Mutation {
         createTicket(inputTicket: InputTicket!): MutationResponse!
+    }
+
+    type Mutation {
+        changeSecondHandToFirstHand(filterTicketParams: FilterTicketParams) : MutationResponse!
     }
 `

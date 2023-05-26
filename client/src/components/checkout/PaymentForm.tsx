@@ -1,11 +1,14 @@
+/* eslint-disable no-debugger */
 import React, { useState, useEffect } from "react"
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js"
 import { useSnackbar } from "notistack"
 import DisplayTicket from "../CreateTicket"
 import { useAuth } from "../../hooks/authController/AuthContext"
-import { InputTicket, MutationResponse, Ticket } from "../../graphql/graphql"
+import { InputTicket, MutationResponse, Ticket, FilterTicketParams } from "../../graphql/graphql"
 import { graphql } from "../../graphql"
-import { useMutation } from "urql"
+import { useMutation, useQuery } from "urql"
+import _ from 'lodash';
+import { useLocation } from 'react-router-dom';
 
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 const LENGTH = 60;
@@ -17,6 +20,45 @@ const CREATE_TICKET_MUTATION = graphql(`
     }
   }
 `)
+
+const DECREASE_TICKET_AMOUNT = graphql(`
+mutation decreaseTicketAmount($eventId: String!) {
+  decreaseTicketAmount(eventId: $eventId) {
+        message
+        code
+      }
+    }
+`);
+
+const ALL_SECOND_HAND_TICKETS = graphql(`
+  query getAllSecondHandTicketsByEventId($eventId: String!) {
+    getAllSecondHandTicketsByEventId(eventId: $eventId)
+  }
+`);
+
+const GET_EVENT = graphql(`
+    query getEvantById($ids: [String]) {
+        event(ids: $ids) {
+            id
+            name
+            location
+            timeAndDate
+            type
+            image
+            ticketsAmount
+        }
+    }
+`);
+
+const UPDATE_TICKET_TO_FIRST_HAND = graphql(`
+  mutation changeSecondHandToFirstHand($filterTicketParams: FilterTicketParams!) {
+    changeSecondHandToFirstHand(filterTicketParams: $filterTicketParams) {
+      message
+      code
+    }
+  }
+`)
+
 
 function makeId() {
   let result = "";
@@ -40,33 +82,93 @@ const PaymentForm = ({
   const [orderID, setOrderID] = useState(false)
   const [success, setSuccess] = useState(false)
   const [createTicket, setCreateTicket] = useState(false)
+  const [decrease, setDecrease] = useState(false)
   const { currentUser } = useAuth()
   const [ user, setCurrentUser] = useState<any[]>([])
   const [ isShowTicket, setShowTicket ] = useState(false)
   const [ ticketData, setTicketData ] = useState<Partial<InputTicket>>({})
+  
   const [CreateTicketResult, CreateTicket] =
   useMutation<
     {
-        CreateTicket: MutationResponse
+      CreateTicket: MutationResponse
     },
     { inputTicket: InputTicket }
   >(CREATE_TICKET_MUTATION)
 
+  const [deacreaseTicketAmount, setDeacreaseTicketAmount] = 
+  useMutation<
+    {
+      eventId: string
+    },
+    { }
+  >(DECREASE_TICKET_AMOUNT)
+
+  const [updateTicket, updateSecondToFirst] = 
+  useMutation<
+    {
+      updateSecondToFirst: MutationResponse
+    },
+    { filterTicketParams: FilterTicketParams }
+  >(UPDATE_TICKET_TO_FIRST_HAND)
+
+  const { pathname } = useLocation();
+
+  const eventId = pathname.split("/")[2]
+
+  const [{ data: dataCount = { ticketCount: 0 } }] = useQuery<
+  { ticketCount: number }
+  >({
+    query: ALL_SECOND_HAND_TICKETS,
+    variables: { eventId }
+  });
+
+  const event = useQuery({
+      query: GET_EVENT,
+      variables: {
+          ids: [eventId!],
+      }
+  });
+
+  let eventData = event[0].data || {}
+  let ticketPrice = 60
+  if (event && eventData  && !_.isEqual(eventData, {}) && eventData["event"]) {
+    eventData = eventData["event"][0]
+    ticketPrice = event["price"] || 50
+  }
+
+  useEffect(() => {
+    if(decrease) {
+      setDecrease(false)
+      const eventId = ticketData.eventId || ""
+      setDeacreaseTicketAmount({ eventId }).then((result) => {
+        if (result.error)
+          console.error("Error creating ticket:", result.error)
+      })
+    }
+  })
+
   useEffect(() => {
     if(createTicket && currentUser) {
-
-      const url = window.location.href
-      const splittedUrl = url.lastIndexOf("/")
-
       const inputTicket: InputTicket = {
-        _id: "1",
         userId: currentUser['_id'] || "",
-        eventId: url.slice(splittedUrl + 1),
-        isSecondHand: true,
-        price: 50,
+        eventId: eventId,
+        isSecondHand: false,
+        price: ticketPrice, 
         barcode: makeId()
-      }
+      } 
+      
+      // SecondHandTicket
+      if (dataCount["getAllSecondHandTicketsByEventId"] > eventData["ticketsAmount"] - 1) {
 
+        updateSecondToFirst({ 
+          filterTicketParams: {
+            barcode: inputTicket.barcode, 
+            eventId: eventId, 
+            userId: currentUser['_id']
+          }
+        })
+      } 
       setTicketData(inputTicket)
       setCurrentUser(currentUser || [])
       CreateTicket({ inputTicket }).then((result) => {
@@ -74,12 +176,13 @@ const PaymentForm = ({
           console.error("Error creating ticket:", result.error)
           enqueueSnackbar("An error occurred", { variant: "error" })
         } else {
+          setDecrease(true)
           setShowTicket(true)
           enqueueSnackbar("Ticket created successfully", {variant: 'success'})
         }
       })
-        setCreateTicket(false)
-      }
+      setCreateTicket(false)
+    }
   })
 
   // creates a paypal order
@@ -142,7 +245,7 @@ const PaymentForm = ({
       />
       {
         isShowTicket?
-        <DisplayTicket ticket={ticketData}/>
+        <DisplayTicket ticket={ ticketData }/>
         : <></>
       }
     </PayPalScriptProvider>
