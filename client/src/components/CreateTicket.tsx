@@ -68,10 +68,9 @@ export const DisplayTicket= ( { ticket }: DisplayTicketProps ) => {
         firstName = currentUser["firstName"]
         lastName = currentUser["lastName"]
     }
-    const handleClose = () => {
-      console.log(ticket)
-      setOpen(false);
-      navigate("/")
+    const handleClose = async () => {
+      setOpen(false)
+      window.location.reload()
     };
 
 

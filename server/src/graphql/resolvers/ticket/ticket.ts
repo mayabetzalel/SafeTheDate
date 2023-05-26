@@ -6,6 +6,7 @@ import e = require("express");
 
 const DEFAULT_LIMIT = 50
 const FAILED_MUTATION_MESSAGE = "mutation createTicket failed"
+const SECOND_HAND_SELL_TICKET_COMMISION = 2
 
 const ticketResolvers: {
   Query: Pick<QueryResolvers, "ticket" | "ticketCount" | "isVallid" | "getAllSecondHandTicketsByEventId">;
@@ -112,25 +113,23 @@ const ticketResolvers: {
 
     changeSecondHandToFirstHand: async (parent, { filterTicketParams }, context, info) => {
       const { userId, barcode, eventId } = filterTicketParams
-      try{
-        let oldTicket = await TicketModel.findOne({
+      try {
+        let oldTicket = await TicketModel.find({
           eventId: eventId, 
-          isSecondHand: true, 
-          // Add time, Tal ?
-        })
+          isSecondHand: true
+        }).sort({"_id": 1, "onMarketTime": 1}).limit(1)
 
-        const creditToAdd = +oldTicket["price"] - 2
+        const creditToAdd = +oldTicket[0]["price"] - SECOND_HAND_SELL_TICKET_COMMISION
 
         // Add to old ticket's user credit - ticket price  minus 2 shekels.
         const updatedUserCredit = await UserModel.findOneAndUpdate(
-          { _id: oldTicket.userId }, 
+          { _id: oldTicket[0].userId }, 
           { $inc: { credit: creditToAdd } }
         )
 
         // TODO: Add email massage to user that it's ticket was sold.
-
         await TicketModel.deleteOne({
-          _id: oldTicket._id
+          _id: oldTicket[0]._id
         })
         
         console.log("second hand ticket updated to first hand");

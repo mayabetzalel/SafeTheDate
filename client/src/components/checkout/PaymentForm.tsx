@@ -131,8 +131,10 @@ const PaymentForm = ({
   });
 
   let eventData = event[0].data || {}
-  if(event && eventData  && !_.isEqual(eventData, {}) && eventData["event"]) {
+  let ticketPrice = 60
+  if (event && eventData  && !_.isEqual(eventData, {}) && eventData["event"]) {
     eventData = eventData["event"][0]
+    ticketPrice = event["price"] || 50
   }
 
   useEffect(() => {
@@ -152,7 +154,7 @@ const PaymentForm = ({
         userId: currentUser['_id'] || "",
         eventId: eventId,
         isSecondHand: false,
-        price: 20,  //TODO: Add price to event and use this price
+        price: ticketPrice, 
         barcode: makeId()
       } 
       
@@ -243,7 +245,7 @@ const PaymentForm = ({
       />
       {
         isShowTicket?
-        <DisplayTicket ticket={ticketData}/>
+        <DisplayTicket ticket={ ticketData }/>
         : <></>
       }
     </PayPalScriptProvider>
