@@ -6,7 +6,7 @@ import DisplayTicket from "../CreateTicket"
 import { useAuth } from "../../hooks/authController/AuthContext"
 import { InputTicket, MutationResponse, Ticket } from "../../graphql/graphql"
 import { graphql } from "../../graphql"
-import { useMutation } from "urql"
+import { useMutation, useQuery } from "urql"
 
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 const LENGTH = 60;
@@ -26,6 +26,12 @@ mutation decreaseTicketAmount($eventId: String!) {
         code
       }
     }
+`);
+
+const ALL_SECOND_HAND_TICKETS = graphql(`
+  query getAllSecondHandTicketsByEventId($eventId: String!) {
+    getAllSecondHandTicketsByEventId(eventId: $eventId)
+  }
 `);
 
 function makeId() {
@@ -55,6 +61,7 @@ const PaymentForm = ({
   const [ user, setCurrentUser] = useState<any[]>([])
   const [ isShowTicket, setShowTicket ] = useState(false)
   const [ ticketData, setTicketData ] = useState<Partial<InputTicket>>({})
+  
   const [CreateTicketResult, CreateTicket] =
   useMutation<
     {
@@ -71,6 +78,14 @@ const PaymentForm = ({
     { }
   >(DECREASE_TICKET_AMOUNT)
 
+  const eventId = "6438521ec77f55fc9f9c5d70"
+  const [GetAllSecondTickets, setGetAllSecondTickets] = 
+  useQuery({
+    query: ALL_SECOND_HAND_TICKETS,
+    variables: { eventId }
+  })
+
+//"6438521ec77f55fc9f9c5d70"
   useEffect(() => {
     if(decrease) {
       setDecrease(false)
@@ -96,6 +111,11 @@ const PaymentForm = ({
         price: 50,
         barcode: makeId()
       }
+
+      const eventId = "6438521ec77f55fc9f9c5d70" //inputTicket.eventId
+      const allSecondHandTickets = setGetAllSecondTickets({ eventId })
+      debugger
+      console.log(allSecondHandTickets)
 
       setTicketData(inputTicket)
       setCurrentUser(currentUser || [])

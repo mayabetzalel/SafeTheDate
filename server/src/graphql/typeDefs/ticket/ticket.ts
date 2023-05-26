@@ -46,6 +46,10 @@ export default `
         ticketCount(filterParams: FilterEventParams, ids: [String], customerId: String): Int!
     }
 
+    type Query {
+        getAllSecondHandTicketsByEventId(eventId: String!): String!
+    }
+
     type Mutation {
         updateMarket(ticketId: String!): MutationResponse!
     }

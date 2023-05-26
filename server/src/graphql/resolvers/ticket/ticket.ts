@@ -7,7 +7,7 @@ const DEFAULT_LIMIT = 50
 const FAILED_MUTATION_MESSAGE = "mutation createTicket failed"
 
 const ticketResolvers: {
-  Query: Pick<QueryResolvers, "ticket" | "ticketCount" | "isVallid">;
+  Query: Pick<QueryResolvers, "ticket" | "ticketCount" | "isVallid" | "getAllSecondHandTicketsByEventId">;
   Mutation: Pick<MutationResolvers, "createTicket" | "updateMarket">;
 } = {
   Query: {
@@ -74,6 +74,16 @@ const ticketResolvers: {
       const { eventId, barcode } = args;
 
       return true
+    }, 
+
+    getAllSecondHandTicketsByEventId: async (parent, { eventId }) => {
+      console.log("imahererererrere")
+      const tickets = await TicketModel.find({
+        isSecondHand: true, 
+        eventId: eventId
+      })
+      console.log(tickets)
+      return "" 
     }
   },
 
