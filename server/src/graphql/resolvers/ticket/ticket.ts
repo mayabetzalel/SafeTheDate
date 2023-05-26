@@ -13,7 +13,12 @@ const ticketResolvers: {
     isVallid: async (parent, args, context, info) => {
       const { eventId, barcode } = args;
 
-      return true
+      const ticket = await TicketModel.find({ eventId: eventId, barcode: barcode })
+      console.log(ticket)
+      console.log(!!ticket)
+
+      return !!ticket
+
     }
   },
   Mutation: {
