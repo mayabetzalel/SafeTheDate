@@ -34,6 +34,8 @@ const prefix = process.env.REACT_APP_BACKEND_AUTH_URL + "/api/auth";
 const REST_API = {
   auth: {
     signInWithEmailAndPassword: prefix + "/login",
+    resetPasswordSendMail: prefix + "/reset/token",
+    resetPassword: prefix + "/reset",
     getCurrentSession: prefix + "/session",
     confirmMail: prefix + "/confirm",
     regenerateAccessToken: prefix + "/token",
@@ -59,6 +61,19 @@ const backendAPI = {
           withCredentials: true,
         }
       );
+    },
+
+    async resetPasswordSendMail(usernameOrMail: string) {
+      return await axios.put(REST_API.auth.resetPasswordSendMail, {
+        usernameOrMail,
+      });
+    },
+
+    async resetPassword(newPassword: string, token: string) {
+      return await axios.put(REST_API.auth.resetPassword, {
+        password: newPassword,
+        token,
+      });
     },
 
     async loginAuthWithGoogle(accessToken: string) {
@@ -132,4 +147,4 @@ const backendAPI = {
   },
 };
 
-export default backendAPI
+export default backendAPI;

@@ -57,8 +57,8 @@ export const ScanEvent = () => {
   }, [isValid])
 
   useEffect(() => {
-    setTimeout(() => setShowIsValid(false), 3000)
-  }, [showIsValid])
+    setTimeout(() => setShowIsValid(false), 3000);
+  }, [showIsValid]);
 
   return (
     <Center>
@@ -94,4 +94,4 @@ export const ScanEvent = () => {
   )
 }
 
-export default ScanEvent
+export default ScanEvent;
