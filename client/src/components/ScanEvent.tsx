@@ -11,6 +11,11 @@ import { useParams } from "react-router-dom"
 import { graphql } from "../graphql"
 import { useQuery } from "urql"
 import { Event, Exact } from "../graphql/graphql"
+import FetchingState from "../utils/fetchingState"
+import { async } from "q"
+import { Code } from "@mui/icons-material"
+
+import { QrReader } from 'react-qr-reader';
 
 const VALIDATE_TICKET_QUERY = graphql(`
   query isVallid($eventId: String!, $barcode: String!) {
@@ -21,46 +26,35 @@ const VALIDATE_TICKET_QUERY = graphql(`
 export const ScanEvent = () => {
   const { id = "" } = useParams()
   const [code, setCode] = useState("")
-
-  // const [isValidating, setIsValidating] = useState(false)
-  // const [isValid, setIsValid] = useState(false)
   const [showIsValid, setShowIsValid] = useState(false)
+
+  // const [data, setData] = useState('No result');
 
   const videoRef = useRef<any>();
 
-  const [{ data: isValid, fetching: fetchingIsVallidData }, reexecuteQuery] = useQuery<{
+  const [{ data: isValid, fetching: fetchingIsVallid }, reexecuteQuery] = useQuery<{
     isValid: boolean
   }>({
     query: VALIDATE_TICKET_QUERY,
     variables: { eventId: id, barcode: code },
+    pause: !code?.length
   })
 
-  console.log(isValid, fetchingIsVallidData)
+  const handleScan = (result: any, error) => {
+    if (result) {
+      console.log("scaned: ", result?.text)
+      setCode(result?.text)
+    }
 
-  async function decodeContinuously() {
-    const codeReader = new BrowserQRCodeReader()
-
-    const videoInputDevices = await BrowserQRCodeReader.listVideoInputDevices();
-
-    // choose your media device (webcam, frontal camera, back camera, etc.)
-    const selectedDeviceId = videoInputDevices[0].deviceId;
-
-    codeReader.decodeFromVideoDevice(
-      selectedDeviceId,
-      videoRef.current,
-      (result, err) => {
-        if (result) {
-          // properly decoded qr code
-          console.log("Found QR code!", result)
-          result.getText() && setCode(result.getText())
-        }
-      }
-    )
+    if (error) {
+      // console.info(error)
+    }
   }
 
   useEffect(() => {
-    decodeContinuously()
-  }, [])
+    setShowIsValid(true)
+    setCode('')
+  }, [isValid])
 
   useEffect(() => {
     setTimeout(() => setShowIsValid(false), 3000)
@@ -68,34 +62,35 @@ export const ScanEvent = () => {
 
   return (
     <Center>
-      <h1>{`code : ${code}`}</h1>
-      {fetchingIsVallidData ? (
-        <Spinner />
-      ) : (
-        <>
-          <div style={{ visibility: showIsValid ? "hidden" : "visible" }}>
-            <video ref={videoRef} id="video" width="300" height="200" />
-          </div>
-          {showIsValid && (
-            <Box sx={{ color: isValid ? "success.main" : "error.main" }}>
-              <Center>
-                {isValid ? (
-                  <>
-                    <ValidIcon sx={{ fontSize: "10rem" }} />
-                    <Typography variant="h1">Valid</Typography>
-                  </>
-                ) : (
-                  <>
-                    <InvalidIcon sx={{ fontSize: "10rem" }} />
-                    <Typography variant="h1">Not Valid</Typography>
-                  </>
-                )}
-              </Center>
-            </Box>
-          )}
-        </>
-      )}
-    </Center>
+      <div style={{
+        width: '20rem', height: "20rem",
+      }}>
+        <QrReader
+          onResult={handleScan}
+          constraints={{ facingMode: 'user' }
+          }
+          videoStyle={{ width: '100%' }}
+        />
+      </div>
+      {fetchingIsVallid ?
+        <Spinner /> :
+        showIsValid &&
+        <Box sx={{ color: isValid ? "success.main" : "error.main" }}>
+          <Center>
+            {isValid ? (
+              <>
+                <ValidIcon sx={{ fontSize: "10rem" }} />
+                <Typography variant="h1">Valid</Typography>
+              </>
+            ) : (
+              <>
+                <InvalidIcon sx={{ fontSize: "10rem" }} />
+                <Typography variant="h1">Not Valid</Typography>
+              </>
+            )}
+          </Center>
+        </Box>}
+    </Center >
   )
 }
 
