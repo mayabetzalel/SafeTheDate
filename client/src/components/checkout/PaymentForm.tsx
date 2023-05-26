@@ -156,9 +156,9 @@ const PaymentForm = ({
         barcode: makeId()
       } 
       
+      // SecondHandTicket
       if (dataCount["getAllSecondHandTicketsByEventId"] > eventData["ticketsAmount"] - 1) {
-        
-        // SecondHandTicket
+
         updateSecondToFirst({ 
           filterTicketParams: {
             barcode: inputTicket.barcode, 

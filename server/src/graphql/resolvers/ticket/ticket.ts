@@ -113,16 +113,25 @@ const ticketResolvers: {
     changeSecondHandToFirstHand: async (parent, { filterTicketParams }, context, info) => {
       const { userId, barcode, eventId } = filterTicketParams
       try{
-        console.log("hereeeeeeeeeeeeeeeeeeeeee")
         let oldTicket = await TicketModel.findOne({
           eventId: eventId, 
           isSecondHand: true, 
-          // Add time ? 
+          // Add time, Tal ?
         })
 
-        // TODO: add to old user credit in the amount of ticket prev minus 2 shekels.
+        const creditToAdd = +oldTicket["price"] - 2
 
-        
+        // Add to old ticket's user credit - ticket price  minus 2 shekels.
+        const updatedUserCredit = await UserModel.findOneAndUpdate(
+          { _id: oldTicket.userId }, 
+          { $inc: { credit: creditToAdd } }
+        )
+
+        // TODO: Add email massage to user that it's ticket was sold.
+
+        await TicketModel.deleteOne({
+          _id: oldTicket._id
+        })
         
         console.log("second hand ticket updated to first hand");
         return { message: "second hand ticket updated succesfully", code: 200 };
