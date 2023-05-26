@@ -20,7 +20,6 @@ export const ScanEvent = () => {
   const [code, setCode] = useState("")
   const [showIsValid, setShowIsValid] = useState(false)
 
-
   const [{ data: isValidData, fetching: fetchingIsVallid }] = useQuery<{
     isValid: boolean
   }>({
@@ -29,18 +28,16 @@ export const ScanEvent = () => {
     pause: !code?.length
   })
 
-  const handleScan = (result: any, error: any) => {
+  const handleScan = (result: any) => {
     if (result) {
       console.log("scaned: ", result?.text)
       setCode(result?.text)
     }
-
-    if (error) {
-      console.info(error)
-    }
   }
 
   useEffect(() => {
+    if (!isValidData) return;
+
     setShowIsValid(true)
     setCode('')
   }, [isValidData])
@@ -74,16 +71,13 @@ export const ScanEvent = () => {
 
   return (
     <Center>
-      <div style={{
-        width: '20rem', height: "20rem",
-      }}>
-        <QrReader
-          onResult={handleScan}
-          constraints={{ facingMode: 'user' }
-          }
-          videoStyle={{ width: '100%' }}
-        />
-      </div>
+      <QrReader
+        onResult={handleScan}
+        constraints={{ facingMode: 'user' }}
+        videoContainerStyle={{
+          width: '20rem', height: "20rem",
+        }}
+      />
       {renderIsValidTicket()}
     </Center >
   )
