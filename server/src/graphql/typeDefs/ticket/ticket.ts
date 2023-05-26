@@ -47,7 +47,7 @@ export default `
     }
 
     type Query {
-        getAllSecondHandTicketsByEventId(eventId: String!): String!
+        getAllSecondHandTicketsByEventId(eventId: String!): Int!
     }
 
     type Mutation {

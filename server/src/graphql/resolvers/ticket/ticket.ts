@@ -77,13 +77,12 @@ const ticketResolvers: {
     }, 
 
     getAllSecondHandTicketsByEventId: async (parent, { eventId }) => {
-      console.log("imahererererrere")
       const tickets = await TicketModel.find({
         isSecondHand: true, 
         eventId: eventId
-      })
-      console.log(tickets)
-      return "" 
+      }).count()
+
+      return tickets
     }
   },
 

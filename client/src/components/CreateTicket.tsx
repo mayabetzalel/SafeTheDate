@@ -58,7 +58,6 @@ export const DisplayTicket= ( { ticket }: DisplayTicketProps ) => {
         console.log(ticket)
         console.log(eventData)
 
-
         location = eventData["location"]
         eventName = eventData["name"]
     }
