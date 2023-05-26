@@ -130,11 +130,9 @@ const PaymentForm = ({
   useEffect(() => {
     if(createTicket && currentUser) {
 
-      debugger
       if (dataCount["getAllSecondHandTicketsByEventId"] > eventData["ticketsAmount"] - 1) {
         //SecondHandTicket
       } else {
-        debugger
         const url = window.location.href
         const splittedUrl = url.lastIndexOf("/")
 
@@ -142,7 +140,7 @@ const PaymentForm = ({
           _id: "1",
           userId: currentUser['_id'] || "",
           eventId: url.slice(splittedUrl + 1),
-          isSecondHand: true,
+          isSecondHand: false,
           price: 50,
           barcode: makeId()
         } 
