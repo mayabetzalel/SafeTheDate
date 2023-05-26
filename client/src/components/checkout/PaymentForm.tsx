@@ -8,6 +8,7 @@ import { InputTicket, MutationResponse, Ticket, FilterTicketParams } from "../..
 import { graphql } from "../../graphql"
 import { useMutation, useQuery } from "urql"
 import _ from 'lodash';
+import { useLocation } from 'react-router-dom';
 
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 const LENGTH = 60;
@@ -111,10 +112,10 @@ const PaymentForm = ({
     { filterTicketParams: FilterTicketParams }
   >(UPDATE_TICKET_TO_FIRST_HAND)
 
-  const url = window.location.href
-  const splittedUrl = url.lastIndexOf("/")
+  const { pathname } = useLocation();
 
-  const eventId = url.slice(splittedUrl + 1)
+  const eventId = pathname.split("/")[2]
+
   const [{ data: dataCount = { ticketCount: 0 } }] = useQuery<
   { ticketCount: number }
   >({
@@ -148,7 +149,6 @@ const PaymentForm = ({
   useEffect(() => {
     if(createTicket && currentUser) {
       const inputTicket: InputTicket = {
-        _id: "1",   // TODO: remove _id
         userId: currentUser['_id'] || "",
         eventId: eventId,
         isSecondHand: false,

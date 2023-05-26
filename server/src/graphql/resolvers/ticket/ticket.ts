@@ -142,7 +142,7 @@ const ticketResolvers: {
     },
 
     createTicket: async (parent, { inputTicket }, context, info) => {
-      const { _id,
+      const {
         userId,
         eventId,
         isSecondHand,

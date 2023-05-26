@@ -24,7 +24,6 @@ export default `
     }
 
     input InputTicket {
-        _id: ID!,
         userId: ID!,
         eventId: ID!,
         isSecondHand: Boolean!, 

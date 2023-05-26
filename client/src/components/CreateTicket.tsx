@@ -13,9 +13,8 @@ import logo from "../assets/logo.png";
 import { useAuth } from "../hooks/authController/AuthContext"
 import { graphql } from "../graphql";
 import { useQuery } from "urql";
-import { PDFViewer } from '@react-pdf/renderer';
 import _ from 'lodash';
-import {InputTicket} from "../graphql/graphql";
+import { InputTicket } from "../graphql/graphql";
 
 const BARCODE_SIZE = 256
 const GET_EVENT = graphql(`
