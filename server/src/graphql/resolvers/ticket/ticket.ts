@@ -1,6 +1,5 @@
 import { QueryResolvers, MutationResolvers, Ticket, TicketResponse, Event } from "../../typeDefs"
 import { Ticket as TicketModel } from "../../../../mongo/models/Ticket"
-import { Event as EventModel } from "../../../../mongo/models/Event";
 import mongoose, { Types } from 'mongoose';
 import e = require("express");
 

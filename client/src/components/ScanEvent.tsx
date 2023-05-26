@@ -1,20 +1,12 @@
-import React, { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { Box, Typography } from "@mui/material"
 import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined"
 import InvalidIcon from "@mui/icons-material/CancelOutlined"
-import {
-  BrowserQRCodeReader,
-} from "@zxing/browser"
 import Spinner from "../utils/spinner"
 import { Center } from "../utils/center"
 import { useParams } from "react-router-dom"
 import { graphql } from "../graphql"
 import { useQuery } from "urql"
-import { Event, Exact } from "../graphql/graphql"
-import FetchingState from "../utils/fetchingState"
-import { async } from "q"
-import { Code } from "@mui/icons-material"
-
 import { QrReader } from 'react-qr-reader';
 
 const VALIDATE_TICKET_QUERY = graphql(`
@@ -28,11 +20,8 @@ export const ScanEvent = () => {
   const [code, setCode] = useState("")
   const [showIsValid, setShowIsValid] = useState(false)
 
-  // const [data, setData] = useState('No result');
 
-  const videoRef = useRef<any>();
-
-  const [{ data: isValidData, fetching: fetchingIsVallid }, reexecuteQuery] = useQuery<{
+  const [{ data: isValidData, fetching: fetchingIsVallid }] = useQuery<{
     isValid: boolean
   }>({
     query: VALIDATE_TICKET_QUERY,
@@ -40,14 +29,14 @@ export const ScanEvent = () => {
     pause: !code?.length
   })
 
-  const handleScan = (result: any, error) => {
+  const handleScan = (result: any, error: any) => {
     if (result) {
       console.log("scaned: ", result?.text)
       setCode(result?.text)
     }
 
     if (error) {
-      // console.info(error)
+      console.info(error)
     }
   }
 
