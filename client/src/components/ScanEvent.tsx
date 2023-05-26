@@ -32,7 +32,7 @@ export const ScanEvent = () => {
 
   const videoRef = useRef<any>();
 
-  const [{ data: isValid, fetching: fetchingIsVallid }, reexecuteQuery] = useQuery<{
+  const [{ data: isValidData, fetching: fetchingIsVallid }, reexecuteQuery] = useQuery<{
     isValid: boolean
   }>({
     query: VALIDATE_TICKET_QUERY,
@@ -54,11 +54,34 @@ export const ScanEvent = () => {
   useEffect(() => {
     setShowIsValid(true)
     setCode('')
-  }, [isValid])
+  }, [isValidData])
 
   useEffect(() => {
-    setTimeout(() => setShowIsValid(false), 3000);
+    showIsValid &&
+      setTimeout(() => setShowIsValid(false), 3000);
   }, [showIsValid]);
+
+  const renderIsValidTicket = () => {
+    if (fetchingIsVallid) return <Spinner />
+
+    if (!showIsValid) return <></>;
+
+    return <Box sx={{ color: isValidData?.isValid ? "success.main" : "error.main" }}>
+      <Center>
+        {isValidData?.isValid ? (
+          <>
+            <ValidIcon sx={{ fontSize: "10rem" }} />
+            <Typography variant="h1">Valid</Typography>
+          </>
+        ) : (
+          <>
+            <InvalidIcon sx={{ fontSize: "10rem" }} />
+            <Typography variant="h1">Not Valid</Typography>
+          </>
+        )}
+      </Center>
+    </Box>
+  }
 
   return (
     <Center>
@@ -72,24 +95,7 @@ export const ScanEvent = () => {
           videoStyle={{ width: '100%' }}
         />
       </div>
-      {fetchingIsVallid ?
-        <Spinner /> :
-        showIsValid &&
-        <Box sx={{ color: isValid ? "success.main" : "error.main" }}>
-          <Center>
-            {isValid ? (
-              <>
-                <ValidIcon sx={{ fontSize: "10rem" }} />
-                <Typography variant="h1">Valid</Typography>
-              </>
-            ) : (
-              <>
-                <InvalidIcon sx={{ fontSize: "10rem" }} />
-                <Typography variant="h1">Not Valid</Typography>
-              </>
-            )}
-          </Center>
-        </Box>}
+      {renderIsValidTicket()}
     </Center >
   )
 }

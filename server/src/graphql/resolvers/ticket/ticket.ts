@@ -15,12 +15,9 @@ const ticketResolvers: {
     isVallid: async (parent, args, context, info) => {
       const { eventId, barcode } = args;
 
-      const ticket = await TicketModel.find({ eventId: eventId, barcode: barcode })
-      console.log(ticket)
-      console.log(!!ticket)
+      const ticket = await TicketModel.findOne({ eventId: eventId, barcode: barcode })
 
       return !!ticket
-
     },
     ticket: async (parent, args, context, info) => {
       const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids, customerId } = args;
@@ -80,11 +77,6 @@ const ticketResolvers: {
         .count()
         .exec();
 
-    },
-    isVallid: async (parent, args, context, info) => {
-      const { eventId, barcode } = args;
-
-      return true
     }
   },
 
