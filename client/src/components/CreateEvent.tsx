@@ -131,7 +131,7 @@ export const CreateEvent = () => {
               }}
             />
           </Grid>
-          <Grid item xs={5}>
+          <Grid item xs={8}>
             <TextField
               fullWidth
               color={"secondary"}
@@ -145,7 +145,7 @@ export const CreateEvent = () => {
               }}
             />
           </Grid>
-          <Grid item xs={5}>
+          <Grid item xs={2}>
             <TextField
               fullWidth
               color={"secondary"}
