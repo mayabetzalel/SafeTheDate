@@ -84,7 +84,7 @@ const EventCard = ({
             {title}
           </Typography>
           <Typography variant="body1" align={"center"}>
-            {ticketsAmount ? (ticketsAmount + ' tickets avilable ' + ticketPrice + ' NIS') : 'No tickets avilable'}
+            {ticketsAmount ? (ticketsAmount + ' tickets avilable ' + (ticketPrice && ticketPrice + ' NIS')) : 'No tickets avilable'}
           </Typography>
         </CardContent >
         <CardMedia sx={{ height: TICKET_HEIGHT }} image={image} />
