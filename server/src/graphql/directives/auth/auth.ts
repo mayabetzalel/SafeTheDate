@@ -40,7 +40,9 @@ export const authSchemaTransformer = (schema: GraphQLSchema) =>
             return originalResolver(source, args, context, info);
           }
           console.log("Auth failed");
-          return [];
+          return new GraphQLError(
+              `Auth failed! please add token to the request`
+          );
         };
       }
 
