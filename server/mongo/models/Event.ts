@@ -1,9 +1,10 @@
-import { Schema, model, Document, Model } from "mongoose";
+import { Schema, model, Document, Model, Types } from "mongoose";
 
 interface EventMongoType {
   name: string;
   location: string;
   timeAndDate: Date;
+  ownerId: Types.ObjectId;
   type: string;
   ticketsAmount: number
   ticketPrice: number
@@ -40,6 +41,10 @@ const eventSchema = new Schema<EventMongoType>({
   description: {
     type: String,
     required: false,
+  },
+  ownerId: {
+    type: Schema.Types.ObjectId,
+    required: true,
   },
   image: {
     type: String,

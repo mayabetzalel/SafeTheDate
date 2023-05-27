@@ -7,15 +7,10 @@ const DEFAULT_LIMIT = 50;
 const FAILED_MUTATION_MESSAGE = "mutation createEvent failed";
 
 const eventResolvers: {
-  Query: Pick<QueryResolvers, "getEventById" | "event" | "eventCount">;
+  Query: Pick<QueryResolvers, "event" | "eventCount">;
   Mutation: Pick<MutationResolvers, "createEvent" | "decreaseTicketAmount">;
 } = {
   Query: {
-    getEventById: async (ids) => {
-      let filter = { ...(ids && { _id: { $in: ids } }) }
-      return await EventModel.find(filter)
-    },
-
     event: async (parent, args, context, info) => {
       const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids, userId } = args;
 
@@ -35,7 +30,7 @@ const eventResolvers: {
       };
 
       // need to add user that created
-      let events = await EventModel.find({ ...filter, ...(userId && { userId: userId }) })
+      let events = await EventModel.find({...filter, ...(userId && { ownerId: userId })})
         .skip(skip)
         .limit(limit)
         .then((events) =>
@@ -82,7 +77,7 @@ const eventResolvers: {
         }),
       };
 
-      return await EventModel.find({...filter, ...(userId && { userId: userId })}).count().exec();
+      return await EventModel.find({...filter, ...(userId && { ownerId: userId })}).count().exec();
     },
   },
   Mutation: {
@@ -97,6 +92,7 @@ const eventResolvers: {
         ticketPrice,
         image,
       } = inputEvent;
+      const userId = context.user._id;
 
       try {
         await EventModel.create({
@@ -107,7 +103,8 @@ const eventResolvers: {
           ticketsAmount,
           description,
           ticketPrice,
-          image,
+          ownerId: userId,
+          image
         });
         console.log(`Event created succesfully | eventName: "${name}"`)
         return { message: "event created succesfully", code: 200 };

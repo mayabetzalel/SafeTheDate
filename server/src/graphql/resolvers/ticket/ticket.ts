@@ -38,7 +38,7 @@ const ticketResolvers: {
         }),
       };
 
-      const unprocessedTickets = await TicketModel.find({...filter, ...(userId && { userId: userId }) })
+      const unprocessedTickets = await TicketModel.find({...filter, ...(userId && { ownerId: userId }) })
         .populate("eventId")
         .skip(skip)
         .limit(limit)
@@ -74,7 +74,7 @@ const ticketResolvers: {
         }),
       };
 
-      return await TicketModel.find({...filter, ...(userId && { userId: userId }) })
+      return await TicketModel.find({...filter, ...(userId && { ownerId: userId }) })
         .count()
         .exec();
 
@@ -100,7 +100,7 @@ const ticketResolvers: {
         if ((eventDate && new Date() > eventDate) || !eventDate) {
 
           let updatetime = await TicketModel.updateOne({ _id: new Types.ObjectId(ticketId) },
-            { $set: { onMarketTime: onMarket ? null : new Date().getTime() } }, { upsert: true });
+          { $set: { onMarketTime: onMarket ? null : new Date().getTime() } }, { upsert: true });
 
           console.log("Ticket market time update: " + JSON.stringify(updatetime))
           return { message: "ticket updated succesfully", code: 200 }
@@ -113,7 +113,7 @@ const ticketResolvers: {
     },
 
     changeSecondHandToFirstHand: async (parent, { filterTicketParams }, context, info) => {
-      const { userId, barcode, eventId } = filterTicketParams
+      const { barcode, eventId } = filterTicketParams
       try {
         let oldTicket = await TicketModel.find({
           eventId: eventId,
@@ -124,7 +124,7 @@ const ticketResolvers: {
 
         // Add to old ticket's user credit - ticket price  minus 2 shekels.
         const updatedUserCredit = await UserModel.findOneAndUpdate(
-          { _id: oldTicket[0].userId },
+          { _id: oldTicket[0].ownerId },
           { $inc: { credit: creditToAdd } }
         )
 
@@ -143,16 +143,18 @@ const ticketResolvers: {
 
     createTicket: async (parent, { inputTicket }, context, info) => {
       const {
-        userId,
         eventId,
         isSecondHand,
         price,
         barcode } = inputTicket
 
       try {
+
+        const userId = context.user._id;
+
         const newTicket = await TicketModel.create({
           _id: new mongoose.Types.ObjectId(),
-          userId: new Types.ObjectId(userId),
+          ownerId: new Types.ObjectId(userId),
           eventId: new Types.ObjectId(eventId),
           isSecondHand: isSecondHand,
           price: price,

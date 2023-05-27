@@ -1,7 +1,7 @@
 export default `
     type Ticket {
         _id: ID
-        userId: ID
+        ownerId: ID
         eventId: ID
         isSecondHand: Boolean
         onMarketTime: Float
@@ -11,7 +11,7 @@ export default `
 
     type TicketResponse {
         ticketId: String
-        userId: String
+        ownerId: String
         eventId: String
         barcode: String
         isSecondHand: Boolean
@@ -24,7 +24,6 @@ export default `
     }
 
     input InputTicket {
-        userId: ID!,
         eventId: ID!,
         isSecondHand: Boolean!, 
         price: Float!,
@@ -38,11 +37,11 @@ export default `
     }
 
     type Query {
-        ticket(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String], userId: String): [TicketResponse!]!
+        ticket(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String]): [TicketResponse!]!
     }
 
     type Query {
-        ticketCount(filterParams: FilterEventParams, ids: [String], userId: String): Int!
+        ticketCount(filterParams: FilterEventParams, ids: [String]): Int!
     }
 
     type Query {
@@ -58,7 +57,7 @@ export default `
     }
 
     type Mutation {
-        createTicket(inputTicket: InputTicket!): MutationResponse!
+        createTicket(inputTicket: InputTicket!): MutationResponse! @auth
     }
 
     type Mutation {

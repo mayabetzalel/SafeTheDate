@@ -57,7 +57,7 @@ export const CreateEvent = () => {
       type: eventTypeRef.current?.value || "",
       ticketsAmount: eventTicketAmoutRef.current?.value
         ? parseInt(eventTicketAmoutRef.current?.value)
-        : 1,
+       : 1,
       description: eventDescriptionRef.current?.value
         ? eventDescriptionRef.current?.value
         : "",
@@ -167,7 +167,7 @@ export const CreateEvent = () => {
                 label="Tickets Price"
                 inputRef={eventTicketPriceRef}
                 variant="outlined"
-                type='number'
+                      type="number"
                 InputProps={{
                   startAdornment: (
                       <InputAdornment position="start"></InputAdornment>

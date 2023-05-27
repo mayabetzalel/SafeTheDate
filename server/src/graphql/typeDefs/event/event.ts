@@ -32,10 +32,6 @@ export default `
     }
 
     type Query {
-        getEventById(ids: [String]): [Event!]!
-    }
-
-    type Query {
         event(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String], userId: String): [Event!]!
     }
 
@@ -44,7 +40,7 @@ export default `
     }
 
     type Mutation {
-        createEvent(inputEvent: InputEvent!): MutationResponse!
+        createEvent(inputEvent: InputEvent!): MutationResponse! @auth
     }
 
     type Mutation {

@@ -1,9 +1,18 @@
-import { Client, Provider, cacheExchange, fetchExchange } from "urql";
+import {
+  Client,
+  Provider,
+  cacheExchange,
+  fetchExchange,
+  createClient,
+} from "urql";
 import { PropsWithChildren } from "react";
 
-const client = new Client({
+const client = createClient({
   url: process.env.REACT_APP_BACKEND_URL + "/graphql",
   exchanges: [cacheExchange, fetchExchange],
+  fetchOptions: {
+    credentials: 'include'
+  }
 });
 
 const GraphqlClientProvider = ({ children }: PropsWithChildren) => (
