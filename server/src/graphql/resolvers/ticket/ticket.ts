@@ -113,7 +113,7 @@ const ticketResolvers: {
     },
 
     changeSecondHandToFirstHand: async (parent, { filterTicketParams }, context, info) => {
-      const { userId, barcode, eventId } = filterTicketParams
+      const { barcode, eventId } = filterTicketParams
       try {
         let oldTicket = await TicketModel.find({
           eventId: eventId,
@@ -124,7 +124,7 @@ const ticketResolvers: {
 
         // Add to old ticket's user credit - ticket price  minus 2 shekels.
         const updatedUserCredit = await UserModel.findOneAndUpdate(
-          { _id: oldTicket[0].userId },
+          { _id: oldTicket[0].ownerId },
           { $inc: { credit: creditToAdd } }
         )
 
@@ -143,7 +143,6 @@ const ticketResolvers: {
 
     createTicket: async (parent, { inputTicket }, context, info) => {
       const {
-        userId,
         eventId,
         isSecondHand,
         price,
