@@ -121,7 +121,7 @@ export const Event = () => {
               <Stack direction="row" spacing={1} alignItems="center">
                 <Typography variant="h6">
                   {event?.ticketsAmount
-                    ? event?.ticketsAmount + " tickets avilable" + (event?.ticketPrice || 0) + 'NIS'
+                    ? event?.ticketsAmount + " tickets avilable " + (event?.ticketPrice && (event?.ticketPrice + ' NIS'))
                     : "No avilable tickets"}
                 </Typography>
               </Stack>

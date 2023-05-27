@@ -80,6 +80,9 @@ export const CreateEvent = () => {
 
   return (
     <>
+      <Typography variant="h3" align="center" gutterBottom color={"white"}>
+        Create The Next Event
+      </Typography>
       <Grid container padding={10}>
         <Grid item xs={3}>
           <ImagePicker image={image} onChangeImage={onChangeImage} buttonTitle={"Pick an image"} />

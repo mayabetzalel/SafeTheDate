@@ -50,24 +50,22 @@ const SideChatbot = () => {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? "chat-popover" : undefined;
-
-  const ChatButtonComponent = ChatButtonPrimary;
+  const id = open ? 'chat-popover' : undefined;
 
   return (
-    <ChatButtonContainer theme={muiTheme}>
+    <>
       <Draggable>
-        <div>
-          <ChatButtonComponent
+        <ChatButtonContainer theme={muiTheme}>
+          <ChatButtonPrimary
             onClick={handleChatClick}
             variant="contained"
-            startIcon={<ChatIcon />}
-          >
-            Captain
-          </ChatButtonComponent>
-        </div>
+            startIcon={<ChatIcon />}>
+            Chat With The Captain
+          </ChatButtonPrimary>
+        </ChatButtonContainer>
       </Draggable>
       <Popover
+        sx={{ '& .MuiPaper-root': { borderRadius: '10px' } }}
         id={id}
         open={open}
         anchorEl={anchorEl}
@@ -87,7 +85,7 @@ const SideChatbot = () => {
           </div>
         </ChatPopUp>
       </Popover>
-    </ChatButtonContainer>
+    </>
   );
 };
 

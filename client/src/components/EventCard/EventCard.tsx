@@ -3,7 +3,6 @@ import Card from "@mui/material/Card";
 import {
   Avatar,
   Box,
-  Button,
   CardContent,
   CardHeader,
   CardMedia,
@@ -14,7 +13,7 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
-const TICKET_HEIGHT = 250;
+const TICKET_HEIGHT = '20rem';
 
 interface EventCardProps {
   header: string;
@@ -58,7 +57,8 @@ const EventCard = ({
 
   return (
     <Box padding={1}>
-      <Card onClick={onClick}>
+      <Card onClick={onClick}
+        sx={{ borderRadius: '10px' }}>
         <CardHeader
           avatar={
             <Avatar sx={(theme) => ({ bgcolor: theme.palette.secondary.main })}>
@@ -69,7 +69,6 @@ const EventCard = ({
           subheader={subheader}
           action={
             <>
-
               <IconButton
                 onClick={handleMenuOpen}
                 sx={{ ml: "auto", color: "black" }}
@@ -80,14 +79,14 @@ const EventCard = ({
             </>
           }
         />
-        <CardContent>
+        < CardContent >
           <Typography variant="h5" align="center">
             {title}
           </Typography>
-          {ticketsAmount && <Typography variant="body1" align={"center"}>
-            {ticketsAmount + ' tickets avilable ' + ticketPrice + ' NIS'}
-          </Typography>}
-        </CardContent>
+          <Typography variant="body1" align={"center"}>
+            {ticketsAmount ? (ticketsAmount + ' tickets avilable ' + (ticketPrice && ticketPrice + ' NIS')) : 'No tickets avilable'}
+          </Typography>
+        </CardContent >
         <CardMedia sx={{ height: TICKET_HEIGHT }} image={image} />
         <Menu
           anchorEl={anchorEl}
@@ -111,8 +110,8 @@ const EventCard = ({
             </MenuItem>
           ))}
         </Menu>
-      </Card>
-    </Box>
+      </Card >
+    </Box >
   );
 };
 
