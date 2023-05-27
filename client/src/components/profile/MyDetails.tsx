@@ -1,14 +1,13 @@
-import { Grid, Stack, Typography, Button } from "@mui/material";
+import { Stack, Typography, Button } from "@mui/material";
 import { styled } from "@mui/system";
 import { useAuth } from "../../hooks/authController/AuthContext";
-import { useState } from "react";
-import ImageUploader from "react-images-uploading";
+import { useState } from "react"
 
 import shadowPersonImage from "../../assets/shadow-person.png";
 import ImagePicker from "../ImagePicker";
 import { useMutation, useQuery } from "urql";
 import { graphql } from "../../graphql";
-import { Exact, MutationResponse, UserResponse} from "../../graphql/graphql";
+import { Exact, MutationResponse, UserResponse } from "../../graphql/graphql";
 import { useSnackbar } from "notistack";
 
 const CircleImage = styled("img")({
@@ -19,10 +18,6 @@ const CircleImage = styled("img")({
   backgroundRepeat: "no-repeat",
   backgroundSize: "cover",
   backgroundPosition: "center",
-});
-
-const EditButton = styled(Button)({
-  marginTop: "16px",
 });
 
 const USER_QUERY = graphql(`
@@ -87,7 +82,7 @@ export const MyDetails = () => {
 
   return (
     <Stack spacing={3} alignItems="center">
-      <CircleImage src={image || data.user?.image || shadowPersonImage} alt="uploaded"/>
+      <CircleImage src={image || data.user?.image || shadowPersonImage} alt="uploaded" />
       <ImagePicker image={editedImage} onChangeImage={onChangeImage} buttonTitle="Edit image" />
       {editedImage && <Button onClick={saveImage} variant="contained" color="primary">Save Image</Button>}
       <Typography variant="h4" color="primary">
