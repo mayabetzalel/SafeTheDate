@@ -13,6 +13,13 @@ const ticketResolvers: {
   Mutation: Pick<MutationResolvers, "createTicket" | "updateMarket" | "changeSecondHandToFirstHand">;
 } = {
   Query: {
+    isVallid: async (parent, args, context, info) => {
+      const { eventId, barcode } = args;
+
+      const ticket = await TicketModel.findOne({ eventId: eventId, barcode: barcode })
+
+      return !!ticket
+    },
     ticket: async (parent, args, context, info) => {
       const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids, customerId } = args;
 
@@ -31,7 +38,7 @@ const ticketResolvers: {
         }),
       };
 
-      const unprocessedTickets = await TicketModel.find({...filter, ...(customerId && { userId: customerId }) })
+      const unprocessedTickets = await TicketModel.find({ ...filter, ...(customerId && { userId: customerId }) })
         .populate("eventId")
         .skip(skip)
         .limit(limit)
@@ -67,20 +74,14 @@ const ticketResolvers: {
         }),
       };
 
-      return await TicketModel.find({...filter, ...(customerId && { userId: customerId }) })
+      return await TicketModel.find({ ...filter, ...(customerId && { userId: customerId }) })
         .count()
         .exec();
 
     },
-    isVallid: async (parent, args, context, info) => {
-      const { eventId, barcode } = args;
-
-      return true
-    }, 
-
     getAllSecondHandTicketsByEventId: async (parent, { eventId }) => {
       const tickets = await TicketModel.find({
-        isSecondHand: true, 
+        isSecondHand: true,
         eventId: eventId
       }).count()
 
@@ -97,10 +98,10 @@ const ticketResolvers: {
         let onMarket = ticket?.onMarketTime
 
         if ((eventDate && new Date() > eventDate) || !eventDate) {
-          
+
           let updatetime = await TicketModel.updateOne({ _id: new Types.ObjectId(ticketId) },
-          { $set: { onMarketTime: onMarket ? null : new Date().getTime() } }, { upsert: true });
-          
+            { $set: { onMarketTime: onMarket ? null : new Date().getTime() } }, { upsert: true });
+
           console.log("Ticket market time update: " + JSON.stringify(updatetime))
           return { message: "ticket updated succesfully", code: 200 }
         }
@@ -115,15 +116,15 @@ const ticketResolvers: {
       const { userId, barcode, eventId } = filterTicketParams
       try {
         let oldTicket = await TicketModel.find({
-          eventId: eventId, 
+          eventId: eventId,
           isSecondHand: true
-        }).sort({"_id": 1, "onMarketTime": 1}).limit(1)
+        }).sort({ "_id": 1, "onMarketTime": 1 }).limit(1)
 
         const creditToAdd = +oldTicket[0]["price"] - SECOND_HAND_SELL_TICKET_COMMISION
 
         // Add to old ticket's user credit - ticket price  minus 2 shekels.
         const updatedUserCredit = await UserModel.findOneAndUpdate(
-          { _id: oldTicket[0].userId }, 
+          { _id: oldTicket[0].userId },
           { $inc: { credit: creditToAdd } }
         )
 
@@ -131,7 +132,7 @@ const ticketResolvers: {
         await TicketModel.deleteOne({
           _id: oldTicket[0]._id
         })
-        
+
         console.log("second hand ticket updated to first hand");
         return { message: "second hand ticket updated succesfully", code: 200 };
       } catch (error) {
@@ -147,7 +148,7 @@ const ticketResolvers: {
         isSecondHand,
         price,
         barcode } = inputTicket
-      
+
       try {
         const newTicket = await TicketModel.create({
           _id: new mongoose.Types.ObjectId(),
@@ -164,8 +165,9 @@ const ticketResolvers: {
         return { message: FAILED_MUTATION_MESSAGE, code: 500 };
       }
     },
+
   },
-    
+
 }
 
 export default ticketResolvers

@@ -7,8 +7,11 @@ import {
   Stack,
   Divider,
   Button,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import EventIcon from "@mui/icons-material/Event";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "urql";
@@ -21,6 +24,7 @@ import { useAuth } from "../../hooks/authController/AuthContext";
 import { Login, Logout } from "@mui/icons-material";
 import * as React from "react";
 import { RoutePaths } from "../../App";
+import { Center } from "../../utils/center";
 
 const EVENT_QUERY = graphql(`
   query event($ids: [String]) {
@@ -99,6 +103,9 @@ export const Event = () => {
             <Typography variant={"h3"}>{event?.name}</Typography>
             <Stack spacing={2}>
               <Stack direction={"row"} spacing={2} alignItems={"center"}>
+                <Tooltip title="scan event tickets">
+                  <IconButton onClick={() => navigate(`${RoutePaths.SCAN_EVENT}/${id}`, {})}> <QrCodeScannerIcon fontSize="large" /></IconButton>
+                </Tooltip>
                 <Avatar
                   sx={(theme) => ({ bgcolor: theme.palette.secondary.main })}
                 >
