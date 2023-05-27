@@ -21,7 +21,7 @@ const ticketResolvers: {
       return !!ticket
     },
     ticket: async (parent, args, context, info) => {
-      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids, customerId } = args;
+      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids, userId } = args;
 
       // Those are filters to query the mongo
       let { name, location, from, to } = filterParams;
@@ -38,7 +38,7 @@ const ticketResolvers: {
         }),
       };
 
-      const unprocessedTickets = await TicketModel.find({ ...filter, ...(customerId && { userId: customerId }) })
+      const unprocessedTickets = await TicketModel.find({...filter, ...(userId && { userId: userId }) })
         .populate("eventId")
         .skip(skip)
         .limit(limit)
@@ -59,7 +59,7 @@ const ticketResolvers: {
       return tickets;
     },
     ticketCount: async (parent, args, context, info) => {
-      const { filterParams = {}, ids, customerId } = args;
+      const { filterParams = {}, ids, userId } = args;
 
       let { name, location, from, to, } = filterParams;
       let filter = {
@@ -74,7 +74,7 @@ const ticketResolvers: {
         }),
       };
 
-      return await TicketModel.find({ ...filter, ...(customerId && { userId: customerId }) })
+      return await TicketModel.find({...filter, ...(userId && { userId: userId }) })
         .count()
         .exec();
 

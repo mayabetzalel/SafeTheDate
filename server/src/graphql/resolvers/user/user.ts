@@ -1,4 +1,4 @@
-import { MutationResolvers } from "../../typeDefs"
+import { MutationResolvers, QueryResolvers } from "../../typeDefs"
 import { User as UserModel } from "../../../../mongo/models/User"
 import mongoose, { Types } from 'mongoose';
 
@@ -6,8 +6,19 @@ import mongoose, { Types } from 'mongoose';
 const FAILED_MUTATION_MESSAGE = "mutation upadteCredit failed"
 
 const userResolvers: {
-    Mutation: Pick<MutationResolvers, "updateCredit">;
-  } = {
+    Query: Pick<QueryResolvers, "user">;
+    Mutation: Pick<MutationResolvers, "updateCredit" | "updateImage">;
+} = {
+    Query: {
+        user: async (parent, args, context, info) => {
+            const { userId } = args;
+
+            const userData = await UserModel.findOne(
+                { _id: new Types.ObjectId(userId)  }
+            )
+            return userData;
+        }
+    },
     Mutation: {
         updateCredit: async (userId: any, newCredit) => {
             try {
@@ -18,6 +29,20 @@ const userResolvers: {
                 return { message: "user credit updated succesfully", code: 200 }
             } catch (error) {
                 console.log("failed with " + error)
+                return { message: FAILED_MUTATION_MESSAGE, code: 500 }
+            }
+        },
+        updateImage: async (parent, args, context, info) => {
+            try {
+                const { userId, image } = args;
+
+                await UserModel.updateOne(
+                    { _id: new Types.ObjectId(userId) },
+                    { $set: { image: image } }
+                )
+                return { message: "user credit updated succesfully", code: 200 }
+            } catch (error) {
+                console.log("failed with to save image" + error)
                 return { message: FAILED_MUTATION_MESSAGE, code: 500 }
             }
         }
