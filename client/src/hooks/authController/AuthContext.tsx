@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 
 import backendAPI from "../../api";
-import React, { useState, useContext, createContext, useEffect } from "react";
+import { useState, useContext, createContext, useEffect } from "react";
 import { googleLogout } from "@react-oauth/google";
 interface IUser {
   email: string;
@@ -20,16 +20,16 @@ const AuthContext = createContext({
     firstName: string,
     lastName: string,
     password: string
-  ) => {},
-  resetPasswordSendMail: async (usernameOrMail: string) => {},
-  resetPassword: async (newPassword: string, token: string) => {},
-  signIn: async (email: string, password: string) => {},
-  signOut: async () => {},
-  isUserSignedIn: () => {},
-  getUser: () => {},
-  getUserProfilePicture: () => {},
-  logWithGoogle: async (accessToken: string) => {},
-  checkIfSessionValid: async () => {},
+  ) => { },
+  resetPasswordSendMail: async (usernameOrMail: string) => { },
+  resetPassword: async (newPassword: string, token: string) => { },
+  signIn: async (email: string, password: string) => { },
+  signOut: async () => { },
+  isUserSignedIn: () => { },
+  getUser: () => { },
+  getUserProfilePicture: () => { },
+  logWithGoogle: async (accessToken: string) => { },
+  checkIfSessionValid: async () => { },
 });
 
 export function useAuth() {

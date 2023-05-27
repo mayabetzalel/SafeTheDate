@@ -35,7 +35,7 @@ const eventResolvers: {
       };
 
       // need to add user that created
-      let events = await EventModel.find({...filter, ...(userId && { userId: userId })})
+      let events = await EventModel.find({ ...filter, ...(userId && { userId: userId }) })
         .skip(skip)
         .limit(limit)
         .then((events) =>
@@ -47,6 +47,7 @@ const eventResolvers: {
               type,
               ticketsAmount,
                description,
+               ticketPrice,
               image,
               _id,
             }) => ({
@@ -56,6 +57,7 @@ const eventResolvers: {
               type,
               ticketsAmount,
               description,
+              ticketPrice,
               image,
               id: _id.toString(),
             })
@@ -92,6 +94,7 @@ const eventResolvers: {
         type,
         ticketsAmount,
         description,
+        ticketPrice,
         image,
       } = inputEvent;
 
@@ -103,6 +106,7 @@ const eventResolvers: {
           type,
           ticketsAmount,
           description,
+          ticketPrice,
           image,
         });
         console.log(`Event created succesfully | eventName: "${name}"`)
@@ -120,15 +124,15 @@ const eventResolvers: {
 
         await EventModel.updateOne(
           { _id: new Types.ObjectId(eventId) },
-          { $set: { ticketsAmount: ticketAmount - 1} }
+          { $set: { ticketsAmount: ticketAmount - 1 } }
         );
         return { message: "tickets amount updated succesfully", code: 200 }
 
       } catch (error) {
-          console.log("failed with " + error)
-          return { message: FAILED_MUTATION_MESSAGE, code: 500 }
+        console.log("failed with " + error)
+        return { message: FAILED_MUTATION_MESSAGE, code: 500 }
       }
-  }
+    }
   },
 };
 

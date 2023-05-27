@@ -31,6 +31,7 @@ export const CreateEvent = () => {
   const eventTypeRef = useRef<HTMLInputElement | null>();
   const eventTicketAmoutRef = useRef<HTMLInputElement | null>();
   const eventDescriptionRef = useRef<HTMLInputElement | null>();
+  const eventTicketPriceRef = useRef<HTMLInputElement | null>();
   const [image, setImage] = useState(undefined);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
@@ -60,6 +61,7 @@ export const CreateEvent = () => {
       description: eventDescriptionRef.current?.value
         ? eventDescriptionRef.current?.value
         : "",
+      ticketPrice: eventTicketPriceRef.current?.value ? parseInt(eventTicketPriceRef.current?.value) : 1,
       image: image || "",
     };
 
@@ -126,7 +128,7 @@ export const CreateEvent = () => {
               }}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={5}>
             <TextField
               fullWidth
               color={"secondary"}
@@ -140,7 +142,7 @@ export const CreateEvent = () => {
               }}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={5}>
             <TextField
               fullWidth
               color={"secondary"}
@@ -153,6 +155,21 @@ export const CreateEvent = () => {
                   <InputAdornment position="start"></InputAdornment>
                 ),
               }}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <TextField
+                fullWidth
+                color={"secondary"}
+                label="Tickets Price"
+                inputRef={eventTicketPriceRef}
+                variant="outlined"
+                type='number'
+                InputProps={{
+                  startAdornment: (
+                      <InputAdornment position="start"></InputAdornment>
+                  ),
+                }}
             />
           </Grid>
           <Grid item xs={12}>

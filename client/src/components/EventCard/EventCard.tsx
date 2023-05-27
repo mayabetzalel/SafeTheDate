@@ -22,6 +22,7 @@ interface EventCardProps {
   title: string;
   image?: string;
   ticketsAmount?: number
+  ticketPrice?: number
   onClick?: () => void;
   menuItems?: { label: string; onClick: (id: string) => void }[];
   id: string;
@@ -31,6 +32,7 @@ const EventCard = ({
   header,
   title,
   ticketsAmount,
+  ticketPrice,
   image = "https://thumbs.dreamstime.com/b/nightclub-party-lightshow-18331890.jpg",
   subheader,
   onClick,
@@ -67,7 +69,7 @@ const EventCard = ({
           subheader={subheader}
           action={
             <>
- 
+
               <IconButton
                 onClick={handleMenuOpen}
                 sx={{ ml: "auto", color: "black" }}
@@ -83,7 +85,7 @@ const EventCard = ({
             {title}
           </Typography>
           {ticketsAmount && <Typography variant="body1" align={"center"}>
-            {ticketsAmount + ' tickets avilable'}
+            {ticketsAmount + ' tickets avilable ' + ticketPrice + ' NIS'}
           </Typography>}
         </CardContent>
         <CardMedia sx={{ height: TICKET_HEIGHT }} image={image} />
