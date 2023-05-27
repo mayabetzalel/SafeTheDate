@@ -8,7 +8,7 @@ const FAILED_MUTATION_MESSAGE = "mutation createEvent failed";
 
 const eventResolvers: {
   Query: Pick<QueryResolvers, "getEventById" | "event" | "eventCount">;
-  Mutation: Pick<MutationResolvers, "createEvent">;
+  Mutation: Pick<MutationResolvers, "createEvent" | "decreaseTicketAmount">;
 } = {
   Query: {
     getEventById: async (ids) => {
@@ -91,6 +91,22 @@ const eventResolvers: {
         return { message: FAILED_MUTATION_MESSAGE, code: 500 };
       }
     },
+    decreaseTicketAmount: async (parent, { eventId }) => {
+      try {
+        let event = await EventModel.findOne({ _id: new Types.ObjectId(eventId) });
+        let ticketAmount = event?.ticketsAmount
+
+        await EventModel.updateOne(
+          { _id: new Types.ObjectId(eventId) },
+          { $set: { ticketsAmount: ticketAmount - 1} }
+        );
+        return { message: "tickets amount updated succesfully", code: 200 }
+
+      } catch (error) {
+          console.log("failed with " + error)
+          return { message: FAILED_MUTATION_MESSAGE, code: 500 }
+      }
+  }
   },
 };
 
