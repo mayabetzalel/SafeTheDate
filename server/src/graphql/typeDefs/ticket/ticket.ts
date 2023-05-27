@@ -24,7 +24,6 @@ export default `
     }
 
     input InputTicket {
-        _id: ID!,
         userId: ID!,
         eventId: ID!,
         isSecondHand: Boolean!, 
@@ -39,11 +38,15 @@ export default `
     }
 
     type Query {
-        ticket(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String], customerId: String): [TicketResponse!]!
+        ticket(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String], userId: String): [TicketResponse!]!
     }
 
     type Query {
-        ticketCount(filterParams: FilterEventParams, ids: [String], customerId: String): Int!
+        ticketCount(filterParams: FilterEventParams, ids: [String], userId: String): Int!
+    }
+
+    type Query {
+        getAllSecondHandTicketsByEventId(eventId: String!): Int!
     }
 
     type Mutation {
@@ -51,10 +54,14 @@ export default `
     }
 
     type Query {
-        isVallid(eventId: ID!, barcode: String!): Boolean! @auth
+        isVallid(eventId: String!, barcode: String!): Boolean! @auth
     }
 
     type Mutation {
         createTicket(inputTicket: InputTicket!): MutationResponse! @auth
+    }
+
+    type Mutation {
+        changeSecondHandToFirstHand(filterTicketParams: FilterTicketParams) : MutationResponse!
     }
 `

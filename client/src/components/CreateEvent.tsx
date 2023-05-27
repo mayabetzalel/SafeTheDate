@@ -181,7 +181,7 @@ export const CreateEvent = () => {
             </Stack>
           </Grid>
           <Grid item xs={3}>
-            <ImagePicker image={image} onChangeImage={onChangeImage} />
+            <ImagePicker image={image} onChangeImage={onChangeImage} buttonTitle={"Pick an image"}/>
           </Grid>
         </Grid>
       </Paper>

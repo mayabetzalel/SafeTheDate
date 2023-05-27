@@ -1,7 +1,6 @@
 import { Schema, model, Types, Model } from "mongoose"
 
 interface TicketMongoType {
-  _id: Types.ObjectId
   ownerId: Types.ObjectId
   eventId: Types.ObjectId
   isSecondHand: Boolean,
@@ -11,10 +10,6 @@ interface TicketMongoType {
 }
 
 const ticketSchema = new Schema<TicketMongoType>({
-  _id: {
-    type: Schema.Types.ObjectId,
-    required: true
-  },
   ownerId: {
     type: Schema.Types.ObjectId,
     required: true

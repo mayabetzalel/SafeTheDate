@@ -4,6 +4,7 @@ import {
   FormFieldError,
   HttpStatus,
   IToken,
+  TokenPayload,
 } from "../utils/types";
 import { FunctionalityError, serverErrorCodes } from "../utils/error";
 import { RegisterDTO } from "../dto-types/register.req";
@@ -270,7 +271,9 @@ class AuthService {
     if (!token || !this.verifyTokenExpiration(token as IToken)) {
       throw new FunctionalityError(serverErrorCodes.NoSuchRefreshToken);
     }
-    return this.createTokensPack(token.user);
+    let {image, ...userWithoutImage} = token.user;
+
+    return this.createTokensPack(userWithoutImage);
   }
   async confirmUser(confirmationId: IUserConfirmation["_id"]) {
     const user = await this.userConfirmationTableIntegrator
@@ -318,7 +321,9 @@ class AuthService {
       );
     }
 
-    return this.createTokensPack(user);
+    let {image, ...userWithoutImage} = user;
+
+    return this.createTokensPack(userWithoutImage);
   }
   async loginRegisterWithGoogle({
     accessToken,
@@ -351,7 +356,9 @@ class AuthService {
         .lean();
       if (dbUser) {
         // we need to login
-        return this.createTokensPack(dbUser);
+        let {image, ...userWithoutImage} = dbUser;
+
+        return this.createTokensPack(userWithoutImage);
       } else {
         // we need to register
         let createdUser: any = null;
@@ -388,7 +395,9 @@ class AuthService {
         if (!createdUser) {
           throw new FunctionalityError(serverErrorCodes.ServiceUnavilable);
         }
-        return this.createTokensPack(createdUser);
+        let {image, ...userWithoutImage} = createdUser;
+
+        return this.createTokensPack(userWithoutImage);
       }
     } catch (error) {
       throw new FunctionalityError(
@@ -410,7 +419,7 @@ class AuthService {
 
     return { expiryDate: expiredAt, token };
   }
-  private async createRefreshToken(user: IUser): Promise<IToken> {
+  private async createRefreshToken(user: TokenPayload): Promise<IToken> {
     const token = this.generateRefreshToken();
     console.log(user._id.valueOf());
     console.log(user);
@@ -466,7 +475,7 @@ class AuthService {
     });
   }
 
-  private async createTokensPack(user: IUser) {
+  private async createTokensPack(user: TokenPayload) {
     const { password, ...tokenPayload } = user;
     const refreshToken = await this.createRefreshToken(user);
     const accessToken = await this.createAccessToken(tokenPayload);

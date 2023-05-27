@@ -8,11 +8,11 @@ const FAILED_MUTATION_MESSAGE = "mutation createEvent failed";
 
 const eventResolvers: {
   Query: Pick<QueryResolvers, "event" | "eventCount">;
-  Mutation: Pick<MutationResolvers, "createEvent">;
+  Mutation: Pick<MutationResolvers, "createEvent" | "decreaseTicketAmount">;
 } = {
   Query: {
     event: async (parent, args, context, info) => {
-      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids, customerId } = args;
+      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids, userId } = args;
 
       // Those are filters to query the mongo
       let { name, location, from, to } = filterParams;
@@ -30,7 +30,7 @@ const eventResolvers: {
       };
 
       // need to add user that created
-      let events = await EventModel.find({...filter, ...(customerId && { ownerId: customerId })})
+      let events = await EventModel.find({...filter, ...(userId && { ownerId: userId })})
         .skip(skip)
         .limit(limit)
         .then((events) =>
@@ -48,7 +48,7 @@ const eventResolvers: {
       return events;
     },
     eventCount: async (parent, args, context, info) => {
-      const { filterParams = {}, ids, customerId } = args;
+      const { filterParams = {}, ids, userId } = args;
 
       let { name, location, from, to } = filterParams;
       let filter = {
@@ -63,7 +63,7 @@ const eventResolvers: {
         }),
       };
 
-      return await EventModel.find({...filter, ...(customerId && { ownerId: customerId })})
+      return await EventModel.find({...filter, ...(userId && { ownerId: userId })})
         .count()
         .exec();
     },
@@ -88,6 +88,22 @@ const eventResolvers: {
         return { message: FAILED_MUTATION_MESSAGE, code: 500 };
       }
     },
+    decreaseTicketAmount: async (parent, { eventId }) => {
+      try {
+        let event = await EventModel.findOne({ _id: new Types.ObjectId(eventId) });
+        let ticketAmount = event?.ticketsAmount
+
+        await EventModel.updateOne(
+          { _id: new Types.ObjectId(eventId) },
+          { $set: { ticketsAmount: ticketAmount - 1} }
+        );
+        return { message: "tickets amount updated succesfully", code: 200 }
+
+      } catch (error) {
+          console.log("failed with " + error)
+          return { message: FAILED_MUTATION_MESSAGE, code: 500 }
+      }
+  }
   },
 };
 
