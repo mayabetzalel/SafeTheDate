@@ -33,9 +33,6 @@ export const MyTicket = (props: MyTicketCardProps) => {
             updateMarket: MutationResponse;
         }>(CREATE_EVENT_MUTATION);
 
-    console.log(updateMarketStatusResult);
-
-
     function onMarketChange(ticketId: string) {
         updateMarketStatus({ ticketId }).then((result) => {
             if (result.error) {
@@ -55,7 +52,7 @@ export const MyTicket = (props: MyTicketCardProps) => {
 
     const menuItems = [
         { label: `Ticket ${!isOnMarket ? "on" : "off"} market`, onClick: onMarketChange },
-        {label: "Show ticket details", onClick: setChosenTicket}
+        { label: "Show ticket details", onClick: setChosenTicket }
     ]
 
     return (
