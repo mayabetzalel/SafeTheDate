@@ -22,9 +22,9 @@ const eventQuery = graphql(`
     $filterParams: FilterEventParams
     $skip: Int!
     $limit: Int!
-    $customerId: String
+    $userId: String
   ) {
-    event(filterParams: $filterParams, skip: $skip, limit: $limit, customerId: $customerId) {
+    event(filterParams: $filterParams, skip: $skip, limit: $limit, userId: $userId) {
       id
       name
       location
@@ -37,8 +37,8 @@ const eventQuery = graphql(`
 `);
 
 const eventCountQuery = graphql(`
-  query eventCountQuery($filterParams: FilterEventParams, $customerId: String ) {
-    eventCount(filterParams: $filterParams, customerId: $customerId)
+  query eventCountQuery($filterParams: FilterEventParams, $userId: String ) {
+    eventCount(filterParams: $filterParams, userId: $userId)
   }
 `);
 
@@ -46,33 +46,33 @@ const EVENTS_PER_FETCH = 12;
 
 interface EventsProps {
   filterParams?: FilterEventParams;
-  customerId?: string;
+  userId?: string;
 }
 
-const Events = ({ filterParams, customerId }: EventsProps) => {
+const Events = ({ filterParams, userId }: EventsProps) => {
   const [page, setPage] = useState(0);
   const navigate = useNavigate();
   const [{ data = { event: [] }, fetching, error }, reexecuteQuery] = useQuery<
     { event: Exact<Event>[] },
-    { filterParams: FilterEventParams; skip: number; limit: number; customerId: string; }
+    { filterParams: FilterEventParams; skip: number; limit: number; userId: string; }
   >({
     query: eventQuery,
     variables: {
       filterParams: filterParams || {},
       skip: page * EVENTS_PER_FETCH,
       limit: EVENTS_PER_FETCH,
-      customerId: customerId || ""
+      userId: userId || ""
     },
   });
 
   const [{ data: dataCount = { eventCount: 0 } }] = useQuery<
     { eventCount: number },
-    { filterParams: FilterEventParams; customerId: string;}
+    { filterParams: FilterEventParams; userId: string;}
   >({
     query: eventCountQuery,
     variables: {
       filterParams: filterParams || {},
-      customerId: customerId || ""
+      userId: userId || ""
     },
   });
 
