@@ -4,5 +4,5 @@ import Events from "../Events"
 export const MyEvents = () => {
   const { currentUser } = useAuth();
 
-  return <Events customerId={currentUser?.["_id"]}/>
+  return <Events userId={currentUser?.["_id"]}/>
 }

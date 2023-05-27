@@ -5,10 +5,11 @@ import ImageUploading from "react-images-uploading";
 interface ImagePickerProps {
     image: string | undefined;
     onChangeImage: (ImageListType) => void;
+    buttonTitle: string;
 }
 
 function ImagePicker(props: ImagePickerProps) {
-    const {image, onChangeImage} = props;
+    const {image, onChangeImage, buttonTitle} = props;
 
     const maxNumber = 1;
     const acceptType = ["jpg", "jpeg", "png"];
@@ -27,7 +28,7 @@ function ImagePicker(props: ImagePickerProps) {
                         ) : (
                             <div>
                                 <Button variant="contained" color="primary" >
-                                    Pick an image
+                                    {buttonTitle}
                                 </Button>
                                 {isDragging && <div>Drop here</div>}
                             </div>

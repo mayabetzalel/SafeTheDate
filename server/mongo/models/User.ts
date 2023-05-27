@@ -10,7 +10,8 @@ interface UserMongoType {
   refreshToken: Types.ObjectId
   isConfirmed: boolean
   userConfirmation: Types.ObjectId
-  credit: number
+  credit: number, 
+  image: string
 }
 
 
@@ -29,7 +30,8 @@ const UserSchema = new Schema<UserMongoType>({
     type: Schema.Types.ObjectId,
     ref: "UserConfirmation",
   },
-  credit: { type: Number, default: 0, required: false }
+  credit: { type: Number, default: 0, required: false },
+  image: { type: String}
 })
 
 

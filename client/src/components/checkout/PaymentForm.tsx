@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react"
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js"
 import { useSnackbar } from "notistack"
-import DisplayTicket from "../CreateTicket"
+import DisplayTicket from "../DisplayTicketUsingEvent"
 import { useAuth } from "../../hooks/authController/AuthContext"
 import { InputTicket, MutationResponse, Ticket, FilterTicketParams } from "../../graphql/graphql"
 import { graphql } from "../../graphql"

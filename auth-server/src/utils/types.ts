@@ -85,4 +85,6 @@ export interface IToken {
   expiryDate: Date
 }
 
-export type AccessTokenPayload = Omit<IUser, "password">
+export type TokenPayload = Omit<IUser, "image">
+
+export type AccessTokenPayload = Omit<IUser, "password" | "image">
