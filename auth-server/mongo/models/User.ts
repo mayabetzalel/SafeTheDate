@@ -31,6 +31,7 @@ export interface IUser {
   refreshToken: Types.ObjectId
   isConfirmed: boolean
   userConfirmation: Types.ObjectId
+  image: string
 }
 
 export default User
