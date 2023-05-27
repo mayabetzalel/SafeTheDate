@@ -74,7 +74,7 @@ export const CreateEvent = () => {
   return (
     <Stack spacing={5}>
       <Typography variant="h3" align="center" gutterBottom color={"white"}>
-        Event Form
+        Create The Next Event
       </Typography>
       <Paper>
         <Grid container padding={10}>

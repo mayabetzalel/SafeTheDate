@@ -1,4 +1,4 @@
-import { Box, Container } from "@mui/material";
+import { Container } from "@mui/material";
 import Login from "./components/Login";
 import UserConfirmation from "./components/UserConfirmation";
 import Signup from "./components/Signup";
@@ -8,7 +8,6 @@ import PrivateRoute from "./utils/PrivateRoute";
 import { CreateEvent } from "./components/CreateEvent";
 import { Event } from "./components/Event/Event";
 import { ImportTicket } from "./components/ImportTicket";
-import Captain from "./components/Captain";
 import CaptainEvents from "./components/CapatinEvents";
 import ScanEvent from "./components/ScanEvent";
 import MyTickets from "./components/profile/MyTickets";
