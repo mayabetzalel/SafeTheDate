@@ -30,6 +30,8 @@ export const CreateEvent = () => {
   const eventTimeAndDateRef = useRef<HTMLInputElement | null>();
   const eventTypeRef = useRef<HTMLInputElement | null>();
   const eventTicketAmoutRef = useRef<HTMLInputElement | null>();
+  const eventDescriptionRef = useRef<HTMLInputElement | null>();
+  const eventTicketPriceRef = useRef<HTMLInputElement | null>();
   const [image, setImage] = useState(undefined);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
@@ -55,13 +57,17 @@ export const CreateEvent = () => {
       type: eventTypeRef.current?.value || "",
       ticketsAmount: eventTicketAmoutRef.current?.value
         ? parseInt(eventTicketAmoutRef.current?.value)
-        : 1,
+       : 1,
+      description: eventDescriptionRef.current?.value
+        ? eventDescriptionRef.current?.value
+        : "",
+      ticketPrice: eventTicketPriceRef.current?.value ? parseInt(eventTicketPriceRef.current?.value) : 1,
       image: image || "",
     };
 
     // Call the createEvent mutation with the inputEvent object
     createEvent({ inputEvent }).then((result) => {
-      if (result.error) {
+      if (result.data?.createEvent.code == 500) {
         console.error("Error creating event:", result.error);
         enqueueSnackbar("An error occurred", { variant: "error" });
       } else {
@@ -73,118 +79,119 @@ export const CreateEvent = () => {
   }
 
   return (
-    <Stack spacing={5}>
+    <>
       <Typography variant="h3" align="center" gutterBottom color={"white"}>
-        Event Form
+        Create The Next Event
       </Typography>
-      <Paper>
-        <Grid container padding={10}>
-          <Grid item xs={9}>
-            <Stack spacing={3}>
-              <Grid container justifyContent={"center"}>
-                <Grid item xs={3}>
-                  <Typography variant="h4">Name of Event</Typography>
-                </Grid>
-                <Grid item xs={5}>
-                  <TextField
-                    fullWidth
-                    placeholder="Name of Event"
-                    color={"secondary"}
-                    inputRef={eventNameRef}
-                    variant="outlined"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start"></InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-              </Grid>
-              <Grid container justifyContent={"center"}>
-                <Grid item xs={3}>
-                  <Typography variant="h4">Location</Typography>
-                </Grid>
-                <Grid item xs={5}>
-                  <TextField
-                    fullWidth
-                    placeholder="Location"
-                    color={"secondary"}
-                    inputRef={eventLocationRef}
-                    variant="outlined"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start"></InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-              </Grid>
-              <Grid container justifyContent={"center"}>
-                <Grid item xs={3}>
-                  <Typography variant="h4">Time and Date</Typography>
-                </Grid>
-                <Grid item xs={5}>
-                  <TextField
-                    fullWidth
-                    placeholder="Time and Date"
-                    color={"secondary"}
-                    inputRef={eventTimeAndDateRef}
-                    variant="outlined"
-                    type="datetime-local"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start"></InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-              </Grid>
-              <Grid container justifyContent={"center"}>
-                <Grid item xs={3}>
-                  <Typography variant="h4">Type of Event</Typography>
-                </Grid>
-                <Grid item xs={5}>
-                  <TextField
-                    fullWidth
-                    color={"secondary"}
-                    placeholder="Type of Event"
-                    inputRef={eventTypeRef}
-                    variant="outlined"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start"></InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid container justifyContent={"center"}>
-                  <Grid item xs={3}>
-                    <Typography variant="h4">Amout of tickets</Typography>
-                  </Grid>
-                  <Grid item xs={5}>
-                    <TextField
-                      fullWidth
-                      color={"secondary"}
-                      placeholder="Tickets amount"
-                      inputRef={eventTicketAmoutRef}
-                      variant="outlined"
-                      type="number"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start"></InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Stack>
+      <Grid container padding={10}>
+        <Grid item xs={3}>
+          <ImagePicker image={image} onChangeImage={onChangeImage} buttonTitle={"Pick an image"} />
+        </Grid>
+        <Grid item container xs={9} spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Name of Event"
+              color={"secondary"}
+              variant="outlined"
+              inputRef={eventNameRef}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start"></InputAdornment>
+                ),
+              }}
+            />
           </Grid>
-          <Grid item xs={3}>
-            <ImagePicker image={image} onChangeImage={onChangeImage} buttonTitle={"Pick an image"}/>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Location"
+              color={"secondary"}
+              inputRef={eventLocationRef}
+              variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start"></InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Time and Date"
+              color={"secondary"}
+              inputRef={eventTimeAndDateRef}
+              variant="outlined"
+              type="datetime-local"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start"></InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={8}>
+            <TextField
+              fullWidth
+              color={"secondary"}
+              label="Type of Event"
+              inputRef={eventTypeRef}
+              variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start"></InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <TextField
+              fullWidth
+              color={"secondary"}
+              label="Tickets amount"
+              inputRef={eventTicketAmoutRef}
+              variant="outlined"
+              type="number"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start"></InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <TextField
+                fullWidth
+                color={"secondary"}
+                label="Tickets Price"
+                inputRef={eventTicketPriceRef}
+                variant="outlined"
+                      type="number"
+                InputProps={{
+                  startAdornment: (
+                      <InputAdornment position="start"></InputAdornment>
+                  ),
+                }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              multiline
+              color={"secondary"}
+              label="Description"
+              inputRef={eventDescriptionRef}
+              variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start"></InputAdornment>
+                ),
+              }}
+            />
           </Grid>
         </Grid>
-      </Paper>
+      </Grid>
       <Grid container justifyContent={"space-around"}>
         <Grid item xs={1}>
           <Button fullWidth variant="outlined" color="secondary">
@@ -202,6 +209,6 @@ export const CreateEvent = () => {
           </Button>
         </Grid>
       </Grid>
-    </Stack>
+    </>
   );
 };

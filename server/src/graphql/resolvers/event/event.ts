@@ -19,11 +19,11 @@ const eventResolvers: {
 
       let filter = {
         ...(ids && { _id: { $in: ids } }),
-        ...(name && { name: { $regex: name, $options: 'i' } }),
-        ...(location && { location: { $regex: location, $options: 'i' } }),
+        ...(name && { name: { $regex: name, $options: "i" } }),
+        ...(location && { location: { $regex: location, $options: "i" } }),
         ...((from || to) && {
           timeAndDate: {
-            ...(from && { $gte: new Date(from)}),
+            ...(from && { $gte: new Date(from) }),
             ...(to && { $lt: new Date(to) }),
           },
         }),
@@ -34,15 +34,29 @@ const eventResolvers: {
         .skip(skip)
         .limit(limit)
         .then((events) =>
-          events.map<Event>(({ name, location, timeAndDate, type, ticketsAmount, image, _id }) => ({
-            name,
-            location,
-            timeAndDate: new Date(timeAndDate).getTime(),
-            type,
-            ticketsAmount,
-            image,
-            id: _id.toString(),
-          }))
+          events.map<Event>(
+            ({
+              name,
+              location,
+              timeAndDate,
+              type,
+              ticketsAmount,
+               description,
+               ticketPrice,
+              image,
+              _id,
+            }) => ({
+              name,
+              location,
+              timeAndDate: new Date(timeAndDate).getTime(),
+              type,
+              ticketsAmount,
+              description,
+              ticketPrice,
+              image,
+              id: _id.toString(),
+            })
+          )
         );
 
       return events;
@@ -63,28 +77,40 @@ const eventResolvers: {
         }),
       };
 
-      return await EventModel.find({...filter, ...(userId && { ownerId: userId })})
-        .count()
-        .exec();
+      return await EventModel.find({...filter, ...(userId && { ownerId: userId })}).count().exec();
     },
   },
   Mutation: {
     createEvent: async (parent, { inputEvent }, context, info) => {
-      const { name, location, timeAndDate = 0, type, ticketsAmount, image } = inputEvent;
+      const {
+        name,
+        location,
+        timeAndDate = 0,
+        type,
+        ticketsAmount,
+        description,
+        ticketPrice,
+        image,
+      } = inputEvent;
       const userId = context.user._id;
 
       try {
-        const newEvent = await EventModel.create({
+        await EventModel.create({
           name,
           location,
           timeAndDate: new Date(timeAndDate).toString(),
           type,
           ticketsAmount,
+          description,
+          ticketPrice,
           ownerId: userId,
           image
         });
+        console.log(`Event created succesfully | eventName: "${name}"`)
         return { message: "event created succesfully", code: 200 };
-      } catch {
+      } catch (e) {
+        console.error(`failed to create event...`)
+        console.error(e)
         return { message: FAILED_MUTATION_MESSAGE, code: 500 };
       }
     },
@@ -95,15 +121,15 @@ const eventResolvers: {
 
         await EventModel.updateOne(
           { _id: new Types.ObjectId(eventId) },
-          { $set: { ticketsAmount: ticketAmount - 1} }
+          { $set: { ticketsAmount: ticketAmount - 1 } }
         );
         return { message: "tickets amount updated succesfully", code: 200 }
 
       } catch (error) {
-          console.log("failed with " + error)
-          return { message: FAILED_MUTATION_MESSAGE, code: 500 }
+        console.log("failed with " + error)
+        return { message: FAILED_MUTATION_MESSAGE, code: 500 }
       }
-  }
+    }
   },
 };
 

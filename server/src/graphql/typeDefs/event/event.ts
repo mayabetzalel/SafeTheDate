@@ -6,6 +6,8 @@ export default `
         timeAndDate: Float
         type: String
         ticketsAmount: Int
+        ticketPrice: Int
+        description: String
         image: Upload
     }
 
@@ -17,6 +19,8 @@ export default `
         timeAndDate: Float!
         type: String!
         ticketsAmount: Int!
+        description: String!
+        ticketPrice: Int!
         image: Upload
     }
 

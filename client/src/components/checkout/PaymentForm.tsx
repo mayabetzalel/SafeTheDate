@@ -46,6 +46,7 @@ const GET_EVENT = graphql(`
             type
             image
             ticketsAmount
+            ticketPrice
         }
     }
 `);
@@ -84,61 +85,61 @@ const PaymentForm = ({
   const [createTicket, setCreateTicket] = useState(false)
   const [decrease, setDecrease] = useState(false)
   const { currentUser } = useAuth()
-  const [ user, setCurrentUser] = useState<any[]>([])
-  const [ isShowTicket, setShowTicket ] = useState(false)
-  const [ ticketData, setTicketData ] = useState<Partial<InputTicket>>({})
-  
+  const [user, setCurrentUser] = useState<any[]>([])
+  const [isShowTicket, setShowTicket] = useState(false)
+  const [ticketData, setTicketData] = useState<Partial<InputTicket>>({})
+
   const [CreateTicketResult, CreateTicket] =
-  useMutation<
-    {
-      CreateTicket: MutationResponse
-    },
-    { inputTicket: InputTicket }
-  >(CREATE_TICKET_MUTATION)
+    useMutation<
+      {
+        CreateTicket: MutationResponse
+      },
+      { inputTicket: InputTicket }
+    >(CREATE_TICKET_MUTATION)
 
-  const [deacreaseTicketAmount, setDeacreaseTicketAmount] = 
-  useMutation<
-    {
-      eventId: string
-    },
-    { }
-  >(DECREASE_TICKET_AMOUNT)
+  const [deacreaseTicketAmount, setDeacreaseTicketAmount] =
+    useMutation<
+      {
+        eventId: string
+      },
+      {}
+    >(DECREASE_TICKET_AMOUNT)
 
-  const [updateTicket, updateSecondToFirst] = 
-  useMutation<
-    {
-      updateSecondToFirst: MutationResponse
-    },
-    { filterTicketParams: FilterTicketParams }
-  >(UPDATE_TICKET_TO_FIRST_HAND)
+  const [updateTicket, updateSecondToFirst] =
+    useMutation<
+      {
+        updateSecondToFirst: MutationResponse
+      },
+      { filterTicketParams: FilterTicketParams }
+    >(UPDATE_TICKET_TO_FIRST_HAND)
 
   const { pathname } = useLocation();
 
   const eventId = pathname.split("/")[2]
 
   const [{ data: dataCount = { ticketCount: 0 } }] = useQuery<
-  { ticketCount: number }
+    { ticketCount: number }
   >({
     query: ALL_SECOND_HAND_TICKETS,
     variables: { eventId }
   });
 
   const event = useQuery({
-      query: GET_EVENT,
-      variables: {
-          ids: [eventId!],
-      }
+    query: GET_EVENT,
+    variables: {
+      ids: [eventId!],
+    }
   });
 
   let eventData = event[0].data || {}
   let ticketPrice = 60
-  if (event && eventData  && !_.isEqual(eventData, {}) && eventData["event"]) {
+  if (event && eventData && !_.isEqual(eventData, {}) && eventData["event"]) {
     eventData = eventData["event"][0]
     ticketPrice = event["price"] || 50
   }
 
   useEffect(() => {
-    if(decrease) {
+    if (decrease) {
       setDecrease(false)
       const eventId = ticketData.eventId || ""
       setDeacreaseTicketAmount({ eventId }).then((result) => {
@@ -149,26 +150,26 @@ const PaymentForm = ({
   })
 
   useEffect(() => {
-    if(createTicket && currentUser) {
+    if (createTicket && currentUser) {
       const inputTicket: InputTicket = {
         userId: currentUser['_id'] || "",
         eventId: eventId,
         isSecondHand: false,
-        price: ticketPrice, 
+        price: ticketPrice,
         barcode: makeId()
-      } 
-      
+      }
+
       // SecondHandTicket
       if (dataCount["getAllSecondHandTicketsByEventId"] > eventData["ticketsAmount"] - 1) {
 
-        updateSecondToFirst({ 
+        updateSecondToFirst({
           filterTicketParams: {
-            barcode: inputTicket.barcode, 
-            eventId: eventId, 
+            barcode: inputTicket.barcode,
+            eventId: eventId,
             userId: currentUser['_id']
           }
         })
-      } 
+      }
       setTicketData(inputTicket)
       setCurrentUser(currentUser || [])
       CreateTicket({ inputTicket }).then((result) => {
@@ -178,7 +179,7 @@ const PaymentForm = ({
         } else {
           setDecrease(true)
           setShowTicket(true)
-          enqueueSnackbar("Ticket created successfully", {variant: 'success'})
+          enqueueSnackbar("Ticket created successfully", { variant: 'success' })
         }
       })
       setCreateTicket(false)
@@ -244,9 +245,9 @@ const PaymentForm = ({
         createOrder={createOrder}
       />
       {
-        isShowTicket?
-        <DisplayTicket ticket={ ticketData }/>
-        : <></>
+        isShowTicket ?
+          <DisplayTicket ticket={ticketData} />
+          : <></>
       }
     </PayPalScriptProvider>
   )

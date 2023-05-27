@@ -1,17 +1,14 @@
-import { gql, useQuery } from "urql";
+import { useQuery } from "urql";
 import FetchingState from "../../utils/fetchingState";
-import EventCard from "../EventCard/EventCard";
 import { graphql } from "../../graphql";
-import { Event, Exact, FilterEventParams, InputTicket, TicketResponse } from "../../graphql/graphql";
-import { Grid, Pagination, PaginationItem } from "@mui/material";
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { Exact, FilterEventParams, TicketResponse } from "../../graphql/graphql";
+import { Grid, Pagination } from "@mui/material";
+import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
-import { RoutePaths } from "../../App";
 import { floor } from "lodash";
 import { MyTicket } from "./MyTicket";
 import { useAuth } from "../../hooks/authController/AuthContext";
-import CreateTicket from "../DisplayTicketUsingEvent";
 
 const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
@@ -87,7 +84,7 @@ const MyTickets = ({ filterParams, userId }: TicketsProps) => {
 
       let updatedTickets = [...prev];
 
-      updatedTickets[ticketIndex].onMarketTime = prev[ticketIndex].onMarketTime ? 0 : new Date().getTime(); 
+      updatedTickets[ticketIndex].onMarketTime = prev[ticketIndex].onMarketTime ? 0 : new Date().getTime();
       return updatedTickets;
     })
   }

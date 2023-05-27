@@ -63,9 +63,6 @@ export const EventsPage = () => {
   return (
     <Stack spacing={3} sx={{height: "100%"}}>
       <TextField
-        InputProps={{
-          sx: (theme) => ({ backgroundColor: theme.palette.background.paper }),
-        }}
         value={searchText}
         color={"secondary"}
         onChange={(e) => setSearchText(e.target.value)}

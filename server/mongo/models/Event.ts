@@ -6,7 +6,9 @@ interface EventMongoType {
   timeAndDate: Date;
   ownerId: Types.ObjectId;
   type: string;
-  ticketsAmount: number;
+  ticketsAmount: number
+  ticketPrice: number
+  description: string;
   image: string;
 }
 
@@ -31,6 +33,14 @@ const eventSchema = new Schema<EventMongoType>({
   ticketsAmount: {
     type: Number,
     required: true,
+  },
+  ticketPrice: {
+    type: Number,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: false,
   },
   ownerId: {
     type: Schema.Types.ObjectId,
