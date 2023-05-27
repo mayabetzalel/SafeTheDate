@@ -13,9 +13,8 @@ import logo from "../assets/logo.png";
 import { useAuth } from "../hooks/authController/AuthContext"
 import { graphql } from "../graphql";
 import { useQuery } from "urql";
-import { PDFViewer } from '@react-pdf/renderer';
 import _ from 'lodash';
-import {InputTicket} from "../graphql/graphql";
+import { InputTicket } from "../graphql/graphql";
 
 const BARCODE_SIZE = 256
 const GET_EVENT = graphql(`
@@ -58,7 +57,6 @@ export const DisplayTicket= ( { ticket }: DisplayTicketProps ) => {
         console.log(ticket)
         console.log(eventData)
 
-
         location = eventData["location"]
         eventName = eventData["name"]
     }
@@ -70,10 +68,9 @@ export const DisplayTicket= ( { ticket }: DisplayTicketProps ) => {
         firstName = currentUser["firstName"]
         lastName = currentUser["lastName"]
     }
-    const handleClose = () => {
-      console.log(ticket)
-      setOpen(false);
-      navigate("/")
+    const handleClose = async () => {
+      setOpen(false)
+      window.location.reload()
     };
 
 

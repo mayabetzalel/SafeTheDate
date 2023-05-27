@@ -1,14 +1,16 @@
 import { QueryResolvers, MutationResolvers, Ticket, TicketResponse, Event } from "../../typeDefs"
 import { Ticket as TicketModel } from "../../../../mongo/models/Ticket"
+import { User as UserModel } from "../../../../mongo/models/User"
 import mongoose, { Types } from 'mongoose';
 import e = require("express");
 
 const DEFAULT_LIMIT = 50
 const FAILED_MUTATION_MESSAGE = "mutation createTicket failed"
+const SECOND_HAND_SELL_TICKET_COMMISION = 2
 
 const ticketResolvers: {
-  Query: Pick<QueryResolvers, "ticket" | "ticketCount" | "isVallid">;
-  Mutation: Pick<MutationResolvers, "createTicket" | "updateMarket">;
+  Query: Pick<QueryResolvers, "ticket" | "ticketCount" | "isVallid" | "getAllSecondHandTicketsByEventId">;
+  Mutation: Pick<MutationResolvers, "createTicket" | "updateMarket" | "changeSecondHandToFirstHand">;
 } = {
   Query: {
     isVallid: async (parent, args, context, info) => {
@@ -76,6 +78,14 @@ const ticketResolvers: {
         .count()
         .exec();
 
+    },
+    getAllSecondHandTicketsByEventId: async (parent, { eventId }) => {
+      const tickets = await TicketModel.find({
+        isSecondHand: true,
+        eventId: eventId
+      }).count()
+
+      return tickets
     }
   },
 
@@ -101,15 +111,45 @@ const ticketResolvers: {
         return { message: FAILED_MUTATION_MESSAGE, code: 500 }
       }
     },
+
+    changeSecondHandToFirstHand: async (parent, { filterTicketParams }, context, info) => {
+      const { userId, barcode, eventId } = filterTicketParams
+      try {
+        let oldTicket = await TicketModel.find({
+          eventId: eventId,
+          isSecondHand: true
+        }).sort({ "_id": 1, "onMarketTime": 1 }).limit(1)
+
+        const creditToAdd = +oldTicket[0]["price"] - SECOND_HAND_SELL_TICKET_COMMISION
+
+        // Add to old ticket's user credit - ticket price  minus 2 shekels.
+        const updatedUserCredit = await UserModel.findOneAndUpdate(
+          { _id: oldTicket[0].userId },
+          { $inc: { credit: creditToAdd } }
+        )
+
+        // TODO: Add email massage to user that it's ticket was sold.
+        await TicketModel.deleteOne({
+          _id: oldTicket[0]._id
+        })
+
+        console.log("second hand ticket updated to first hand");
+        return { message: "second hand ticket updated succesfully", code: 200 };
+      } catch (error) {
+        console.log("failed with " + error);
+        return { message: FAILED_MUTATION_MESSAGE, code: 500 };
+      }
+    },
+
     createTicket: async (parent, { inputTicket }, context, info) => {
-      const { _id,
+      const {
         userId,
         eventId,
         isSecondHand,
         price,
         barcode } = inputTicket
-      try {
 
+      try {
         const newTicket = await TicketModel.create({
           _id: new mongoose.Types.ObjectId(),
           userId: new Types.ObjectId(userId),

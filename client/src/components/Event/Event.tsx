@@ -120,7 +120,7 @@ export const Event = () => {
               <Stack direction="row" spacing={1} alignItems="center">
                 <Typography variant="h6">
                   {" "}
-                  {event?.ticketsAmount
+                  { event?.ticketsAmount
                     ? event?.ticketsAmount + " tickets avilable"
                     : "No avilable tickets"}
                 </Typography>
@@ -146,8 +146,10 @@ export const Event = () => {
           </Stack>
           <Grid>
             {currentUser ? (
-              <PaymentForm amount={20} description={event?.name ?? "Event"} />
-            ) : (
+             <div> 
+                { event?.ticketsAmount? <PaymentForm amount={20} description={event?.name ?? "Event"} /> : <></> }
+              </div>
+             ) : (
               <Button
                 variant={"text"}
                 color={"secondary"}
