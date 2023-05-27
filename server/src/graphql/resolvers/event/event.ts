@@ -28,23 +28,24 @@ const eventResolvers: {
         ...(location && { location: { $regex: location, $options: 'i' } }),
         ...((from || to) && {
           timeAndDate: {
-            ...(from && { $gte: new Date(from)}),
+            ...(from && { $gte: new Date(from) }),
             ...(to && { $lt: new Date(to) }),
           },
         }),
       };
 
       // need to add user that created
-      let events = await EventModel.find({...filter, ...(userId && { userId: userId })})
+      let events = await EventModel.find({ ...filter, ...(userId && { userId: userId }) })
         .skip(skip)
         .limit(limit)
         .then((events) =>
-          events.map<Event>(({ name, location, timeAndDate, type, ticketsAmount, image, _id }) => ({
+          events.map<Event>(({ name, location, timeAndDate, type, ticketsAmount, ticketPrice, image, _id }) => ({
             name,
             location,
             timeAndDate: new Date(timeAndDate).getTime(),
             type,
             ticketsAmount,
+            ticketPrice,
             image,
             id: _id.toString(),
           }))
@@ -68,14 +69,14 @@ const eventResolvers: {
         }),
       };
 
-      return await EventModel.find({...filter, ...(userId && { userId: userId })})
+      return await EventModel.find({ ...filter, ...(userId && { userId: userId }) })
         .count()
         .exec();
     },
   },
   Mutation: {
     createEvent: async (parent, { inputEvent }, context, info) => {
-      const { name, location, timeAndDate = 0, type, ticketsAmount, image } = inputEvent;
+      const { name, location, timeAndDate = 0, type, ticketsAmount, ticketPrice, image } = inputEvent;
 
       try {
         const newEvent = await EventModel.create({
@@ -84,6 +85,7 @@ const eventResolvers: {
           timeAndDate: new Date(timeAndDate).toString(),
           type,
           ticketsAmount,
+          ticketPrice,
           image
         });
         return { message: "event created succesfully", code: 200 };
@@ -98,15 +100,15 @@ const eventResolvers: {
 
         await EventModel.updateOne(
           { _id: new Types.ObjectId(eventId) },
-          { $set: { ticketsAmount: ticketAmount - 1} }
+          { $set: { ticketsAmount: ticketAmount - 1 } }
         );
         return { message: "tickets amount updated succesfully", code: 200 }
 
       } catch (error) {
-          console.log("failed with " + error)
-          return { message: FAILED_MUTATION_MESSAGE, code: 500 }
+        console.log("failed with " + error)
+        return { message: FAILED_MUTATION_MESSAGE, code: 500 }
       }
-  }
+    }
   },
 };
 

@@ -14,7 +14,6 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const TICKET_HEIGHT = '20rem';
-const TICKET_HEADER_HEIGHT = '5rem';
 
 interface EventCardProps {
   header: string;
@@ -22,6 +21,7 @@ interface EventCardProps {
   title: string;
   image?: string;
   ticketsAmount?: number
+  ticketPrice?: number
   onClick?: () => void;
   menuItems?: { label: string; onClick: (id: string) => void }[];
   id: string;
@@ -31,6 +31,7 @@ const EventCard = ({
   header,
   title,
   ticketsAmount,
+  ticketPrice,
   image = "https://thumbs.dreamstime.com/b/nightclub-party-lightshow-18331890.jpg",
   subheader,
   onClick,
@@ -78,15 +79,14 @@ const EventCard = ({
             </>
           }
         />
-        <CardContent
-          sx={{ maxHeight: TICKET_HEADER_HEIGHT }}>
+        < CardContent >
           <Typography variant="h5" align="center">
             {title}
           </Typography>
           <Typography variant="body1" align={"center"}>
-            {ticketsAmount ? (ticketsAmount + ' tickets avilable') : 'No tickets avilable'}
+            {ticketsAmount ? (ticketsAmount + ' tickets avilable ' + ticketPrice + ' NIS') : 'No tickets avilable'}
           </Typography>
-        </CardContent>
+        </CardContent >
         <CardMedia sx={{ height: TICKET_HEIGHT }} image={image} />
         <Menu
           anchorEl={anchorEl}
@@ -110,8 +110,8 @@ const EventCard = ({
             </MenuItem>
           ))}
         </Menu>
-      </Card>
-    </Box>
+      </Card >
+    </Box >
   );
 };
 

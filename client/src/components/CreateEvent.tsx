@@ -30,6 +30,7 @@ export const CreateEvent = () => {
   const eventTimeAndDateRef = useRef<HTMLInputElement | null>();
   const eventTypeRef = useRef<HTMLInputElement | null>();
   const eventTicketAmoutRef = useRef<HTMLInputElement | null>();
+  const eventTicketPriceRef = useRef<HTMLInputElement | null>();
   const [image, setImage] = useState(undefined);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
@@ -55,6 +56,7 @@ export const CreateEvent = () => {
       timeAndDate: Date.parse(eventTimeAndDateRef.current?.value || new Date().toString()),
       type: eventTypeRef.current?.value || "",
       ticketsAmount: eventTicketAmoutRef.current?.value ? parseInt(eventTicketAmoutRef.current?.value) : 1,
+      ticketPrice: eventTicketPriceRef.current?.value ? parseInt(eventTicketPriceRef.current?.value) : 1,
       image: image || ""
     };
 
@@ -176,11 +178,31 @@ export const CreateEvent = () => {
                     />
                   </Grid>
                 </Grid>
+                <Grid container justifyContent={"center"}>
+                  <Grid item xs={3}>
+                    <Typography variant="h4">Price</Typography>
+                  </Grid>
+                  <Grid item xs={5}>
+                    <TextField
+                      fullWidth
+                      color={"secondary"}
+                      placeholder="Tickets Price"
+                      inputRef={eventTicketPriceRef}
+                      variant="outlined"
+                      type='number'
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start"></InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                </Grid>
               </Grid>
             </Stack>
           </Grid>
           <Grid item xs={3}>
-            <ImagePicker image={image} onChangeImage={onChangeImage} buttonTitle={"Pick an image"}/>
+            <ImagePicker image={image} onChangeImage={onChangeImage} buttonTitle={"Pick an image"} />
           </Grid>
         </Grid>
       </Paper>

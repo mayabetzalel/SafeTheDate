@@ -33,6 +33,7 @@ const EVENT_QUERY = graphql(`
       name
       location
       ticketsAmount
+      ticketPrice
       timeAndDate
       image
     }
@@ -119,9 +120,8 @@ export const Event = () => {
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
                 <Typography variant="h6">
-                  {" "}
-                  { event?.ticketsAmount
-                    ? event?.ticketsAmount + " tickets avilable"
+                  {event?.ticketsAmount
+                    ? event?.ticketsAmount + " tickets avilable" + (event?.ticketPrice || 0) + 'NIS'
                     : "No avilable tickets"}
                 </Typography>
               </Stack>
@@ -146,10 +146,10 @@ export const Event = () => {
           </Stack>
           <Grid>
             {currentUser ? (
-             <div> 
-                { event?.ticketsAmount? <PaymentForm amount={20} description={event?.name ?? "Event"} /> : <></> }
+              <div>
+                {event?.ticketsAmount ? <PaymentForm amount={20} description={event?.name ?? "Event"} /> : <></>}
               </div>
-             ) : (
+            ) : (
               <Button
                 variant={"text"}
                 color={"secondary"}
