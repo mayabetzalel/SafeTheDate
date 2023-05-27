@@ -1,105 +1,86 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Box, Typography } from "@mui/material";
-import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
-import InvalidIcon from "@mui/icons-material/CancelOutlined";
-import { BrowserQRCodeReader } from "@zxing/browser";
-import Spinner from "../utils/spinner";
-import { Center } from "../utils/center";
-import { useParams } from "react-router-dom";
-import { graphql } from "../graphql";
-// import { useQuery } from "urql"
+import { useState, useEffect } from "react"
+import { Box, Typography } from "@mui/material"
+import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined"
+import InvalidIcon from "@mui/icons-material/CancelOutlined"
+import Spinner from "../utils/spinner"
+import { Center } from "../utils/center"
+import { useParams } from "react-router-dom"
+import { graphql } from "../graphql"
+import { useQuery } from "urql"
+import { QrReader } from 'react-qr-reader';
 
-// const VALIDATE_TICKET_QUERY = graphql(`
-//   query isVallid($eventId: [String], $barcode: [String]) {
-//     isVallid(eventId: $eventId, barcode=$barcode) {
-//       iisVallid
-//     }
-//   }
-// `);
+const VALIDATE_TICKET_QUERY = graphql(`
+  query isVallid($eventId: String!, $barcode: String!) {
+    isVallid(eventId: $eventId, barcode: $barcode)
+  }
+`);
 
 export const ScanEvent = () => {
-  const { id = "" } = useParams();
-  const [code, setCode] = useState("");
+  const { id = "" } = useParams()
+  const [code, setCode] = useState("")
+  const [showIsValid, setShowIsValid] = useState(false)
 
-  const [isValidating, setIsValidating] = useState(false);
-  const [isValid, setIsValid] = useState(false);
-  const [showIsValid, setShowIsValid] = useState(false);
+  const [{ data: isValidData, fetching: fetchingIsVallid }] = useQuery<{
+    isValid: boolean
+  }>({
+    query: VALIDATE_TICKET_QUERY,
+    variables: { eventId: id, barcode: code },
+    pause: !code?.length
+  })
 
-  const videoRef = useRef<any>();
-
-  // const [{ data, fetching }, reexecuteQuery] = useQuery<{
-  //   isValid: Boolean
-  // }>({
-  //   query: VALIDATE_TICKET_QUERY,
-  //   variables: { eventId: [id], barcode: code },
-  // })
-
-  // const [{ isVallidData, fetchingIsVallidData}, reexecuteIsVallidQuery] = useQuery<{
-  //   event: Exact<Event>[]
-  // }>({
-  //   query: EVENT_QUERY,
-  //   variables: { ids: [id] },
-  // })
-
-  async function decodeContinuously() {
-    const codeReader = new BrowserQRCodeReader();
-
-    const videoInputDevices = await BrowserQRCodeReader.listVideoInputDevices();
-
-    // choose your media device (webcam, frontal camera, back camera, etc.)
-    const selectedDeviceId = videoInputDevices[0].deviceId;
-
-    codeReader.decodeFromVideoDevice(
-      selectedDeviceId,
-      videoRef.current,
-      (result, err) => {
-        if (result) {
-          // properly decoded qr code
-          console.log("Found QR code!", result);
-          setCode(result.getText());
-        }
-      }
-    );
+  const handleScan = (result: any) => {
+    if (result) {
+      console.log("scaned: ", result?.text)
+      setCode(result?.text)
+    }
   }
 
   useEffect(() => {
-    decodeContinuously();
-  }, []);
+    if (!isValidData) return;
+
+    setShowIsValid(true)
+    setCode('')
+  }, [isValidData])
 
   useEffect(() => {
-    setTimeout(() => setShowIsValid(false), 3000);
+    showIsValid &&
+      setTimeout(() => setShowIsValid(false), 3000);
   }, [showIsValid]);
+
+  const renderIsValidTicket = () => {
+    if (fetchingIsVallid) return <Spinner />
+
+    if (!showIsValid) return <></>;
+
+    return <Box sx={{ color: isValidData?.isValid ? "success.main" : "error.main" }}>
+      <Center>
+        {isValidData?.isValid ? (
+          <>
+            <ValidIcon sx={{ fontSize: "10rem" }} />
+            <Typography variant="h1">Valid</Typography>
+          </>
+        ) : (
+          <>
+            <InvalidIcon sx={{ fontSize: "10rem" }} />
+            <Typography variant="h1">Not Valid</Typography>
+          </>
+        )}
+      </Center>
+    </Box>
+  }
 
   return (
     <Center>
-      {isValidating ? (
-        <Spinner />
-      ) : (
-        <>
-          <div style={{ visibility: showIsValid ? "hidden" : "visible" }}>
-            <video ref={videoRef} id="video" width="300" height="200" />
-          </div>
-          {showIsValid && (
-            <Box sx={{ color: isValid ? "success.main" : "error.main" }}>
-              <Center>
-                {isValid ? (
-                  <>
-                    <ValidIcon sx={{ fontSize: "10rem" }} />
-                    <Typography variant="h1">Valid</Typography>
-                  </>
-                ) : (
-                  <>
-                    <InvalidIcon sx={{ fontSize: "10rem" }} />
-                    <Typography variant="h1">Not Valid</Typography>
-                  </>
-                )}
-              </Center>
-            </Box>
-          )}
-        </>
-      )}
-    </Center>
-  );
-};
+      <QrReader
+        onResult={handleScan}
+        constraints={{ facingMode: 'user' }}
+        videoContainerStyle={{
+          width: '20rem', height: "20rem",
+        }}
+      />
+      {renderIsValidTicket()}
+    </Center >
+  )
+}
 
 export default ScanEvent;

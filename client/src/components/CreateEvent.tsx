@@ -80,7 +80,7 @@ export const CreateEvent = () => {
     <>
       <Grid container padding={10}>
         <Grid item xs={3}>
-          <ImagePicker image={image} onChangeImage={onChangeImage} />
+          <ImagePicker image={image} onChangeImage={onChangeImage} buttonTitle={"Pick an image"} />
         </Grid>
         <Grid item container xs={9} spacing={2}>
           <Grid item xs={12}>

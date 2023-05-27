@@ -30,14 +30,22 @@ export default `
     }
 
     type Query {
-        event(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String]): [Event!]!
+        getEventById(ids: [String]): [Event!]!
     }
 
     type Query {
-        eventCount(filterParams: FilterEventParams, ids: [String]): Int!
+        event(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String], userId: String): [Event!]!
+    }
+
+    type Query {
+        eventCount(filterParams: FilterEventParams, ids: [String], userId: String): Int!
     }
 
     type Mutation {
         createEvent(inputEvent: InputEvent!): MutationResponse!
     }
+
+    type Mutation {
+        decreaseTicketAmount(eventId: String!): MutationResponse!
+    } 
 `
