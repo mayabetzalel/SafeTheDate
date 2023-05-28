@@ -37,11 +37,11 @@ export default `
     }
 
     type Query {
-        ticket(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String]): [TicketResponse!]!
+        ticket(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String]): [TicketResponse!]! @auth
     }
 
     type Query {
-        ticketCount(filterParams: FilterEventParams, ids: [String]): Int!
+        ticketCount(filterParams: FilterEventParams, ids: [String]): Int! @auth
     }
 
     type Query {

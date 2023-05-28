@@ -21,9 +21,8 @@ const ticketQuery = graphql(`
     $filterParams: FilterEventParams
     $skip: Int!
     $limit: Int!
-    $userId: String
   ) {
-    ticket(filterParams: $filterParams, skip: $skip, limit: $limit, userId: $userId) {
+    ticket(filterParams: $filterParams, skip: $skip, limit: $limit) {
       ticketId
       name
       location
@@ -37,8 +36,8 @@ const ticketQuery = graphql(`
 `);
 
 const ticketCountQuery = graphql(`
-  query TicketCountQuery($filterParams: FilterEventParams, $userId: String) {
-    ticketCount(filterParams: $filterParams, userId: $userId)
+  query TicketCountQuery($filterParams: FilterEventParams) {
+    ticketCount(filterParams: $filterParams)
   }
 `);
 
