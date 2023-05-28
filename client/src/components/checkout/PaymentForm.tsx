@@ -152,7 +152,6 @@ const PaymentForm = ({
   useEffect(() => {
     if (createTicket && currentUser) {
       const inputTicket: InputTicket = {
-        userId: currentUser['_id'] || "",
         eventId: eventId,
         isSecondHand: false,
         price: ticketPrice,
@@ -166,7 +165,6 @@ const PaymentForm = ({
           filterTicketParams: {
             barcode: inputTicket.barcode,
             eventId: eventId,
-            userId: currentUser['_id']
           }
         })
       }

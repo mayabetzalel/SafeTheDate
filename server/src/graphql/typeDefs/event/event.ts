@@ -8,6 +8,7 @@ export default `
         ticketsAmount: Int
         ticketPrice: Int
         description: String
+        ownerId: String
         image: Upload
     }
 
