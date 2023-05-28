@@ -33,7 +33,9 @@ const EVENT_QUERY = graphql(`
       name
       location
       ticketsAmount
+      ticketPrice
       timeAndDate
+      description
       image
     }
   }
@@ -54,14 +56,14 @@ export const Event = () => {
   const publisherName = "publisher name";
   const [event, setEvent] = useState<Exact<EventType>>();
   const { id = "" } = useParams();
-  const [{ data, fetching }, reexecuteQuery] = useQuery<{
+  const [{ data, fetching }] = useQuery<{
     event: Exact<EventType>[];
   }>({
     query: EVENT_QUERY,
     variables: { ids: [id] },
   });
 
-  const [dataImage, reexecuteQueryImage] = useQuery<{
+  const [dataImage] = useQuery<{
     event: Exact<EventType>[];
   }>({
     query: EVENT_QUERY_IMAGE,
@@ -99,9 +101,8 @@ export const Event = () => {
           justifyContent={"space-between"}
           xs
         >
-          <Stack spacing={3}>
+          <Stack spacing={2}>
             <Typography variant={"h3"}>{event?.name}</Typography>
-            <Stack spacing={2}>
               <Stack direction={"row"} spacing={2} alignItems={"center"}>
                 <Tooltip title="scan event tickets">
                   <IconButton onClick={() => navigate(`${RoutePaths.SCAN_EVENT}/${id}`, {})}> <QrCodeScannerIcon fontSize="large" /></IconButton>
@@ -119,9 +120,8 @@ export const Event = () => {
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
                 <Typography variant="h6">
-                  {" "}
-                  { event?.ticketsAmount
-                    ? event?.ticketsAmount + " tickets avilable"
+                  {event?.ticketsAmount
+                    ? event?.ticketsAmount + " tickets avilable " + (event?.ticketPrice && (event?.ticketPrice + ' NIS'))
                     : "No avilable tickets"}
                 </Typography>
               </Stack>
@@ -132,24 +132,16 @@ export const Event = () => {
                     new Date(event?.timeAndDate).toDateString()}
                 </Typography>
               </Stack>
-            </Stack>
             <Divider color={"grey"} variant="middle" />
             <Typography>
-              additional details of the event...additional details of the
-              event...additional details of the event...additional details of
-              the event...additional details of the event...additional details
-              of the event...additional details of the event of the
-              event...additional details of the event...additional details of
-              the event...additional details of the event...additional details
-              of the event...
+              {event?.description}
             </Typography>
-          </Stack>
-          <Grid>
+
             {currentUser ? (
-             <div> 
-                { event?.ticketsAmount? <PaymentForm amount={20} description={event?.name ?? "Event"} /> : <></> }
+              <div>
+                {event?.ticketsAmount ? <PaymentForm amount={20} description={event?.name ?? "Event"} /> : <></>}
               </div>
-             ) : (
+            ) : (
               <Button
                 variant={"text"}
                 color={"secondary"}
@@ -160,7 +152,7 @@ export const Event = () => {
                 Sign In For Purchase
               </Button>
             )}
-          </Grid>
+          </Stack>
         </Grid>
       </Grid>
     </FetchingState>

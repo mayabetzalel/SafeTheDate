@@ -1,7 +1,8 @@
-import { createSchema } from "graphql-yoga"
-import { loadFilesSync } from "@graphql-tools/load-files"
-import { mergeTypeDefs, mergeResolvers } from "@graphql-tools/merge"
-import { join } from "path"
+import { createSchema } from "graphql-yoga";
+import { loadFilesSync } from "@graphql-tools/load-files";
+import { mergeTypeDefs, mergeResolvers } from "@graphql-tools/merge";
+import { join } from "path";
+import { authSchemaTransformer } from "./directives/auth/auth";
 
 const getSchema = async () => {
   const typeDefs = mergeTypeDefs(
@@ -9,15 +10,17 @@ const getSchema = async () => {
       extensions: ["ts"],
       ignoreIndex: true,
     })
-  )
+  );
 
   const resolvers = mergeResolvers(
     await loadFilesSync(join(__dirname, "\\resolvers\\**\\*.ts"))
-  )
+  );
 
-  return createSchema({
-    typeDefs,
-    resolvers,
-  })
-}
-export default getSchema
+  return authSchemaTransformer(
+    createSchema({
+      typeDefs,
+      resolvers,
+    })
+  );
+};
+export default getSchema;

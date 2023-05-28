@@ -6,6 +6,8 @@ export default `
         timeAndDate: Float
         type: String
         ticketsAmount: Int
+        ticketPrice: Int
+        description: String
         image: Upload
     }
 
@@ -17,6 +19,8 @@ export default `
         timeAndDate: Float!
         type: String!
         ticketsAmount: Int!
+        description: String!
+        ticketPrice: Int!
         image: Upload
     }
 
@@ -28,10 +32,6 @@ export default `
     }
 
     type Query {
-        getEventById(ids: [String]): [Event!]!
-    }
-
-    type Query {
         event(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String], userId: String): [Event!]!
     }
 
@@ -40,7 +40,7 @@ export default `
     }
 
     type Mutation {
-        createEvent(inputEvent: InputEvent!): MutationResponse!
+        createEvent(inputEvent: InputEvent!): MutationResponse! @auth
     }
 
     type Mutation {
