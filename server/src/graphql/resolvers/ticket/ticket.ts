@@ -21,8 +21,9 @@ const ticketResolvers: {
       return !!ticket
     },
     ticket: async (parent, args, context, info) => {
-      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids, userId } = args;
+      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids } = args;
 
+      const userId = context.user._id;
       // Those are filters to query the mongo
       let { name, location, from, to } = filterParams;
 
@@ -59,8 +60,9 @@ const ticketResolvers: {
       return tickets;
     },
     ticketCount: async (parent, args, context, info) => {
-      const { filterParams = {}, ids, userId } = args;
+      const { filterParams = {}, ids } = args;
 
+      const userId = context.user._id;
       let { name, location, from, to, } = filterParams;
       let filter = {
         ...(ids && { _id: { $in: ids } }),
