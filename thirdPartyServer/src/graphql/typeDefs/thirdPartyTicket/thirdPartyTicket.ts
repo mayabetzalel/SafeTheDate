@@ -8,8 +8,27 @@ export default `
         ownerEmail: String
     }
 
+    #Ticket for an event
+    type ThirdPartyEvent {
+        id: String
+        name: String
+        location: String
+        timeAndDate: Float
+        type: String
+        ticketsAmount: Int
+        image: Upload
+    }
+
+    scalar Upload
+    
+    #Ticket for an event
+    type ReturnedData {
+        ticket: ThirdPartyTicket!
+        event: ThirdPartyEvent!
+    }
+
     type Query {
-        validateTicket(id: String): ThirdPartyTicket!
+        validateTicketAndImport(id: String): ReturnedData!
     }
 
     type Mutation {

@@ -9,7 +9,7 @@ export default `
     }
 
     type Query {
-        validateTicket(id: String): ThirdPartyTicket!
+        validateTicketAndImport(id: String): ThirdPartyTicket! @auth
     }
 
     type Mutation {

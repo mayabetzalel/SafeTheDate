@@ -1,6 +1,6 @@
 import { Schema, model, Document, Model } from "mongoose";
 
-interface EventMongoType {
+interface ThirdPartyEventsSchemaMongoType {
   name: string;
   location: string;
   timeAndDate: Date;
@@ -10,7 +10,7 @@ interface EventMongoType {
 }
 
 // Define Mongoose schema for Event
-const eventSchema = new Schema<EventMongoType>({
+const thirdPartyEventsSchema = new Schema<ThirdPartyEventsSchemaMongoType>({
   name: {
     type: String,
     unique: true,
@@ -39,4 +39,7 @@ const eventSchema = new Schema<EventMongoType>({
 });
 
 // Create Mongoose model for Event
-export const Event: Model<EventMongoType> = model("Event", eventSchema);
+export const ThirdPartyEvents: Model<ThirdPartyEventsSchemaMongoType> = model(
+  "thirdPartyEvents",
+  thirdPartyEventsSchema
+);
