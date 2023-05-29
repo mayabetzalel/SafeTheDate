@@ -21,15 +21,14 @@ import { useEffect, useState } from "react";
 import { Exact, Event as EventType } from "../../graphql/graphql";
 import PaymentForm from "../checkout/PaymentForm";
 import { useAuth } from "../../hooks/authController/AuthContext";
-import { Login, Logout } from "@mui/icons-material";
-import * as React from "react";
+import { Login } from "@mui/icons-material";
 import { RoutePaths } from "../../App";
-import { Center } from "../../utils/center";
 
 const EVENT_QUERY = graphql(`
   query event($ids: [String]) {
     event(ids: $ids) {
       id
+      ownerId
       name
       location
       ticketsAmount
@@ -103,35 +102,35 @@ export const Event = () => {
         >
           <Stack spacing={2}>
             <Typography variant={"h3"}>{event?.name}</Typography>
-              <Stack direction={"row"} spacing={2} alignItems={"center"}>
-                <Tooltip title="scan event tickets">
-                  <IconButton onClick={() => navigate(`${RoutePaths.SCAN_EVENT}/${id}`, {})}> <QrCodeScannerIcon fontSize="large" /></IconButton>
-                </Tooltip>
-                <Avatar
-                  sx={(theme) => ({ bgcolor: theme.palette.secondary.main })}
-                >
-                  {publisherName.charAt(0)}
-                </Avatar>
-                <Typography variant="h6">{publisherName}</Typography>
-              </Stack>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <LocationOnIcon />
-                <Typography variant="h6">{event?.location}</Typography>
-              </Stack>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Typography variant="h6">
-                  {event?.ticketsAmount
-                    ? event?.ticketsAmount + " tickets avilable " + (event?.ticketPrice && (event?.ticketPrice + ' NIS'))
-                    : "No avilable tickets"}
-                </Typography>
-              </Stack>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <EventIcon />
-                <Typography variant="h6">
-                  {event?.timeAndDate &&
-                    new Date(event?.timeAndDate).toDateString()}
-                </Typography>
-              </Stack>
+            <Stack direction={"row"} spacing={2} alignItems={"center"}>
+              {event?.ownerId === currentUser?.['_id'] && <Tooltip title="scan event tickets">
+                <IconButton onClick={() => navigate(`${RoutePaths.SCAN_EVENT}/${id}`, {})}> <QrCodeScannerIcon fontSize="large" /></IconButton>
+              </Tooltip>}
+              <Avatar
+                sx={(theme) => ({ bgcolor: theme.palette.secondary.main })}
+              >
+                {publisherName.charAt(0)}
+              </Avatar>
+              <Typography variant="h6">{publisherName}</Typography>
+            </Stack>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <LocationOnIcon />
+              <Typography variant="h6">{event?.location}</Typography>
+            </Stack>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Typography variant="h6">
+                {event?.ticketsAmount
+                  ? event?.ticketsAmount + " tickets avilable " + (event?.ticketPrice && (event?.ticketPrice + ' NIS'))
+                  : "No avilable tickets"}
+              </Typography>
+            </Stack>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <EventIcon />
+              <Typography variant="h6">
+                {event?.timeAndDate &&
+                  new Date(event?.timeAndDate).toDateString()}
+              </Typography>
+            </Stack>
             <Divider color={"grey"} variant="middle" />
             <Typography>
               {event?.description}

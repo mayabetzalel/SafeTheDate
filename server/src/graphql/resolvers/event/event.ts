@@ -30,22 +30,24 @@ const eventResolvers: {
       };
 
       // need to add user that created
-      let events = await EventModel.find({...filter, ...(userId && { ownerId: userId })})
+      let events = await EventModel.find({ ...filter, ...(userId && { ownerId: userId }) })
         .skip(skip)
         .limit(limit)
         .then((events) =>
           events.map<Event>(
             ({
+              ownerId,
               name,
               location,
               timeAndDate,
               type,
               ticketsAmount,
-               description,
-               ticketPrice,
+              description,
+              ticketPrice,
               image,
               _id,
             }) => ({
+              ownerId: ownerId.toString(),
               name,
               location,
               timeAndDate: new Date(timeAndDate).getTime(),
@@ -77,7 +79,7 @@ const eventResolvers: {
         }),
       };
 
-      return await EventModel.find({...filter, ...(userId && { ownerId: userId })}).count().exec();
+      return await EventModel.find({ ...filter, ...(userId && { ownerId: userId }) }).count().exec();
     },
   },
   Mutation: {
