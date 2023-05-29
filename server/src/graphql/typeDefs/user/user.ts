@@ -10,14 +10,11 @@ export default `
         isConfirmed: Boolean
         userConfirmation: ID
         creadit: Float
-    }   
-
-    type UserResponse {
         image: Upload
-    }
+    }   
     
     type Query {
-        user(userId: String!): UserResponse!
+        user(userId: String!): User!
     } 
 
     type Mutation {

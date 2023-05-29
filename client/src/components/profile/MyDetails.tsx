@@ -7,7 +7,7 @@ import shadowPersonImage from "../../assets/shadow-person.png";
 import ImagePicker from "../ImagePicker";
 import { useMutation, useQuery } from "urql";
 import { graphql } from "../../graphql";
-import { Exact, MutationResponse, UserResponse } from "../../graphql/graphql";
+import { Exact, MutationResponse, User } from "../../graphql/graphql";
 import { useSnackbar } from "notistack";
 
 const CircleImage = styled("img")({
@@ -44,7 +44,7 @@ export const MyDetails = () => {
   const [image, setImage] = useState(undefined);
 
   const [{ data = { user: {} }, fetching, error }] = useQuery<
-    { user: Exact<UserResponse> },
+    { user: Pick<User, "image"> },
     { userId: string; }
   >({
     query: USER_QUERY,
