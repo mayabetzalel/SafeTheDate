@@ -20,8 +20,9 @@ export const authSchemaTransformer = (schema: GraphQLSchema) =>
           const token = await context.request.cookieStore?.get("access_token");
 
           if (!!token) {
-            // @ts-ignore
+
             try {
+              // @ts-ignore
               const user = await axios
                   .get("http://localhost:5000/api/auth/session", {
                     headers: {

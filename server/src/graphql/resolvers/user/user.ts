@@ -17,28 +17,14 @@ const userResolvers: {
       })
         .exec()
         .then(
-          ({
-            _id,
-            username,
-            password,
-            email,
-            firstName,
-            lastName,
-            refreshToken,
-            isConfirmed,
-            userConfirmation,
-            image,
-          }) => {
+          ({ _id, username, email, firstName, lastName, credit, image }) => {
             return {
-              _id: _id.toString(),
+              _id: _id?.toString(),
               username,
-              password,
               email,
               firstName,
               lastName,
-              refreshToken: refreshToken.toString(),
-              isConfirmed,
-              userConfirmation: userConfirmation.toString(),
+              credit,
               image,
             };
           }
