@@ -1,20 +1,19 @@
 import { Schema, model, Document, Model, Types } from "mongoose";
 
-interface EventMongoType {
+interface ThirdPartyEventsSchemaMongoType {
   name: string;
   location: string;
   timeAndDate: Date;
-  ownerId: Types.ObjectId;
   type: string;
   ticketsAmount: number;
+  image: string;
+  ownerId: Types.ObjectId;
   ticketPrice: number;
   description: string;
-  image: string;
-  isExternal: boolean;
 }
 
 // Define Mongoose schema for Event
-const eventSchema = new Schema<EventMongoType>({
+const thirdPartyEventsSchema = new Schema<ThirdPartyEventsSchemaMongoType>({
   name: {
     type: String,
     unique: true,
@@ -23,11 +22,6 @@ const eventSchema = new Schema<EventMongoType>({
   location: {
     type: String,
     required: true,
-  },
-  isExternal: {
-    type: Boolean,
-    required: true,
-    default: false,
   },
   timeAndDate: {
     type: Date,
@@ -60,4 +54,7 @@ const eventSchema = new Schema<EventMongoType>({
 });
 
 // Create Mongoose model for Event
-export const Event: Model<EventMongoType> = model("Event", eventSchema);
+export const ThirdPartyEvents: Model<ThirdPartyEventsSchemaMongoType> = model(
+  "thirdPartyEvents",
+  thirdPartyEventsSchema
+);

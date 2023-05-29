@@ -1,5 +1,6 @@
 import { QueryResolvers, MutationResolvers } from "../../typeDefs";
 import { ThirdPartyTickets } from "../../../../mongo/models/ThirdPartyTickets";
+import { ThirdPartyEvents } from "../../../../mongo/models/ThirdPartyEvents";
 const LENGTH = 60;
 
 function makeId() {
@@ -16,24 +17,45 @@ function makeId() {
 }
 
 const thirdPartyTicketsResolvers: {
-  Query: Pick<QueryResolvers, "validateTicket">;
+  Query: Pick<QueryResolvers, "validateTicketAndImport">;
   Mutation: Pick<MutationResolvers, "generateTicketForCurrentEvent">;
 } = {
   Query: {
-    validateTicket: async (parent, args, context, info) => {
+    validateTicketAndImport: async (parent, args, context, info) => {
       try {
-        console.log("validateTicket");
+        console.log("validateTicketAndImport");
         const { id } = args;
         const ticket = await ThirdPartyTickets.findOne({
-          qrCodeId: id,
-        });
+          barcode: id,
+        })
+          .lean()
+          .then((result) => ({
+            ...result,
+            id: result._id.toString(),
+            onMarketTime: new Date(),
+            isSecondHand: true,
+            ownerId: result.ownerId.toString(),
+            eventId: result.eventId.toString(),
+          }));
+
         if (ticket) {
-          return ticket;
+          const event = await ThirdPartyEvents.findOne({
+            _id: ticket?.eventId,
+          })
+            .lean()
+            .then((event1) => ({
+              ...event1,
+              ownerId: event1.ownerId.toString(),
+              timeAndDate: new Date(event1.timeAndDate).getTime(),
+              id: event1._id.toString(),
+            }));
+          console.log(event);
+          return { ticket, event };
         }
-        return {};
+        return { ticket: {}, event: {} };
       } catch (error) {
         console.log(error);
-        return {};
+        return { ticket: {}, event: {} };
       }
     },
   },
@@ -44,8 +66,8 @@ const thirdPartyTicketsResolvers: {
         const { id } = args;
 
         const newId = makeId(); // Generate a new qr id
-        const filter = { qrCodeId: id };
-        const update = { $set: { qrCodeId: newId } };
+        const filter = { barcode: id };
+        const update = { $set: { barcode: newId } };
         const options = { returnOriginal: false };
 
         const result = await ThirdPartyTickets.findOneAndUpdate(
