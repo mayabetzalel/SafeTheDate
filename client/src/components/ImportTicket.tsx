@@ -21,17 +21,17 @@ export const ImportTicket = () => {
           image
           location
           name
-          ticketsAmount
           timeAndDate
+          ticketsAmount
           type
         }
         ticket {
           barcode
           eventId
+          id
           isSecondHand
           onMarketTime
           ownerId
-          ticketId
         }
       }
     }
