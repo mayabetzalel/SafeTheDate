@@ -47,6 +47,16 @@ export const CreateEvent = () => {
     }
   };
 
+  const handleDiscard = () => {
+    if (eventDescriptionRef.current) eventDescriptionRef.current.value = '';
+    if (eventLocationRef.current) eventLocationRef.current.value = '';
+    if (eventNameRef.current) eventNameRef.current.value = '';
+    if (eventTicketAmoutRef.current) eventTicketAmoutRef.current.value = '';
+    if (eventTicketPriceRef.current) eventTicketPriceRef.current.value = '';
+    if (eventTimeAndDateRef.current) eventTimeAndDateRef.current.value = '';
+    if (eventTypeRef.current) eventTypeRef.current.value = '';
+  };
+
   function handleEventCreation() {
     const inputEvent: InputEvent = {
       name: eventNameRef.current?.value || "",
@@ -57,7 +67,7 @@ export const CreateEvent = () => {
       type: eventTypeRef.current?.value || "",
       ticketsAmount: eventTicketAmoutRef.current?.value
         ? parseInt(eventTicketAmoutRef.current?.value)
-       : 1,
+        : 1,
       description: eventDescriptionRef.current?.value
         ? eventDescriptionRef.current?.value
         : "",
@@ -95,11 +105,6 @@ export const CreateEvent = () => {
               color={"secondary"}
               variant="outlined"
               inputRef={eventNameRef}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start"></InputAdornment>
-                ),
-              }}
             />
           </Grid>
           <Grid item xs={6}>
@@ -109,11 +114,6 @@ export const CreateEvent = () => {
               color={"secondary"}
               inputRef={eventLocationRef}
               variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start"></InputAdornment>
-                ),
-              }}
             />
           </Grid>
           <Grid item xs={6}>
@@ -124,11 +124,6 @@ export const CreateEvent = () => {
               inputRef={eventTimeAndDateRef}
               variant="outlined"
               type="datetime-local"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start"></InputAdornment>
-                ),
-              }}
             />
           </Grid>
           <Grid item xs={8}>
@@ -138,11 +133,6 @@ export const CreateEvent = () => {
               label="Type of Event"
               inputRef={eventTypeRef}
               variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start"></InputAdornment>
-                ),
-              }}
             />
           </Grid>
           <Grid item xs={2}>
@@ -153,26 +143,16 @@ export const CreateEvent = () => {
               inputRef={eventTicketAmoutRef}
               variant="outlined"
               type="number"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start"></InputAdornment>
-                ),
-              }}
             />
           </Grid>
           <Grid item xs={2}>
             <TextField
-                fullWidth
-                color={"secondary"}
-                label="Tickets Price"
-                inputRef={eventTicketPriceRef}
-                variant="outlined"
-                      type="number"
-                InputProps={{
-                  startAdornment: (
-                      <InputAdornment position="start"></InputAdornment>
-                  ),
-                }}
+              fullWidth
+              color={"secondary"}
+              label="Tickets Price"
+              inputRef={eventTicketPriceRef}
+              variant="outlined"
+              type="number"
             />
           </Grid>
           <Grid item xs={12}>
@@ -183,18 +163,13 @@ export const CreateEvent = () => {
               label="Description"
               inputRef={eventDescriptionRef}
               variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start"></InputAdornment>
-                ),
-              }}
             />
           </Grid>
         </Grid>
       </Grid>
       <Grid container justifyContent={"space-around"}>
         <Grid item xs={1}>
-          <Button fullWidth variant="outlined" color="secondary">
+          <Button fullWidth variant="outlined" color="secondary" onClick={handleDiscard}>
             Discard
           </Button>
         </Grid>
