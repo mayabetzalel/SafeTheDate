@@ -16,11 +16,23 @@ export const ImportTicket = () => {
   const VALIDATE_TICKET_QUERY = graphql(`
     query validateTicketAndImport($id: String) {
       validateTicketAndImport(id: $id) {
-        eventName
-        id
-        ownerEmail
-        price
-        qrCodeId
+        event {
+          id
+          image
+          location
+          name
+          ticketsAmount
+          timeAndDate
+          type
+        }
+        ticket {
+          barcode
+          eventId
+          isSecondHand
+          onMarketTime
+          ownerId
+          ticketId
+        }
       }
     }
   `);

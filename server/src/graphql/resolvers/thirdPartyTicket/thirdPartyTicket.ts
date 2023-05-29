@@ -23,7 +23,7 @@ const thirdPartyTicketsResolvers: {
           if (validateTicketAndImport.ticket.ownerId === context.user.id) {
             await EventModel.findOneAndUpdate(
               {
-                _id: validateTicketAndImport.event._id,
+                _id: validateTicketAndImport.event.id,
               },
               { ...validateTicketAndImport.event },
               { upsert: true, new: true }
@@ -31,7 +31,7 @@ const thirdPartyTicketsResolvers: {
 
             await TicketModel.findOneAndUpdate(
               {
-                _id: validateTicketAndImport.ticket._id,
+                _id: validateTicketAndImport.ticket.id,
               },
               { ...validateTicketAndImport.ticket, isSecondHand: true },
               { upsert: true, new: true }

@@ -27,7 +27,17 @@ const thirdPartyTicketsResolvers: {
         const { id } = args;
         const ticket = await ThirdPartyTickets.findOne({
           barcode: id,
-        });
+        })
+          .lean()
+          .then((result) => ({
+            ...result,
+            id: result._id.toString(),
+            isSecondHand: true,
+            ownerId: result.ownerId.toString(),
+            eventId: result.eventId.toString(),
+            onMarketTime: new Date(result.onMarketTime).getTime(),
+          }));
+
         if (ticket) {
           const event = await ThirdPartyEvents.findOne({
             _id: ticket?.eventId,
