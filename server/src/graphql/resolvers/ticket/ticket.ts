@@ -24,7 +24,6 @@ const ticketResolvers: {
       const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids } = args;
 
       const userId = context.user._id;
-      console.log(userId);
       // Those are filters to query the mongo
       let { name, location, from, to } = filterParams;
 
@@ -154,7 +153,7 @@ const ticketResolvers: {
       try {
 
         const userId = context.user._id;
-        console.log(userId)
+
         const newTicket = await TicketModel.create({
           _id: new mongoose.Types.ObjectId(),
           ownerId: new Types.ObjectId(userId),
