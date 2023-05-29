@@ -70,13 +70,14 @@ export const Event = () => {
     variables: { ids: [id] },
   });
 
-  const [{ data: userData = { user: {} } }] = useQuery<
+  const [{ data: userData = { user: {} } }, reexecuteUserQuery] = useQuery<
     { user: Pick<User, "username"> },
     { userId: string }
   >({
+    pause: true,
     query: USER_QUERY,
     variables: {
-      userId: currentUser?.["_id"],
+      userId: event?.ownerId || "",
     },
   });
 
@@ -92,6 +93,11 @@ export const Event = () => {
       setEvent(data.event.at(0));
     }
   }, [data]);
+
+  useEffect(() => {
+    if (event?.ownerId)
+    reexecuteUserQuery()
+  }, [event])
 
   return (
     <FetchingState isFetching={fetching}>

@@ -10,7 +10,7 @@ import { PropsWithChildren } from "react";
 const client = createClient({
   url: process.env.REACT_APP_BACKEND_URL + "/graphql",
   exchanges: [cacheExchange, fetchExchange],
-  requestPolicy: "cache-and-network",
+  requestPolicy: "network-only",
   fetchOptions: {
     credentials: 'include'
   }

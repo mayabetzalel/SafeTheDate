@@ -18,7 +18,6 @@ const ticketSchema = new Schema<TicketMongoType>({
     type: Schema.Types.ObjectId,
     ref: "Event",
     required: true,
-    unique: true,
   },
   isSecondHand: {
     type: Boolean,
