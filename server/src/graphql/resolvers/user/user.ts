@@ -36,9 +36,9 @@ const userResolvers: {
               email,
               firstName,
               lastName,
-              refreshToken,
+              refreshToken: refreshToken.toString(),
               isConfirmed,
-              userConfirmation,
+              userConfirmation: userConfirmation.toString(),
               image,
             };
           }
