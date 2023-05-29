@@ -43,6 +43,7 @@ const eventResolvers: {
               ticketsAmount,
                description,
                ticketPrice,
+                ownerId,
               image,
               _id,
             }) => ({
@@ -53,6 +54,7 @@ const eventResolvers: {
               ticketsAmount,
               description,
               ticketPrice,
+              ownerId: ownerId.toString(),
               image,
               id: _id.toString(),
             })
