@@ -4,7 +4,6 @@ interface ThirdPartyTicketsMongoType {
   barcode: string;
   price: number;
   eventId: Types.ObjectId;
-  onMarketTime: Date;
   ownerId: Types.ObjectId;
 }
 // Define Mongoose schema for Event
@@ -23,10 +22,6 @@ const thirdPartyTicketsSchema = new Schema<ThirdPartyTicketsMongoType>({
   ownerId: {
     type: Schema.Types.ObjectId,
     required: true,
-  },
-  onMarketTime: {
-    type: Date,
-    required: false,
   },
 });
 

@@ -1,4 +1,4 @@
-import { Schema, model, Document, Model } from "mongoose";
+import { Schema, model, Document, Model, Types } from "mongoose";
 
 interface ThirdPartyEventsSchemaMongoType {
   name: string;
@@ -7,6 +7,9 @@ interface ThirdPartyEventsSchemaMongoType {
   type: string;
   ticketsAmount: number;
   image: string;
+  ownerId: Types.ObjectId;
+  ticketPrice: number;
+  description: string;
 }
 
 // Define Mongoose schema for Event
@@ -30,6 +33,18 @@ const thirdPartyEventsSchema = new Schema<ThirdPartyEventsSchemaMongoType>({
   },
   ticketsAmount: {
     type: Number,
+    required: true,
+  },
+  ticketPrice: {
+    type: Number,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: false,
+  },
+  ownerId: {
+    type: Schema.Types.ObjectId,
     required: true,
   },
   image: {

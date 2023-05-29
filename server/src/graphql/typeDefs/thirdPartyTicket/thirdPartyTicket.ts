@@ -7,6 +7,7 @@ export default `
         barcode: String
         isSecondHand: Boolean
         onMarketTime: Float
+        price: Float
     }
 
     #Ticket for an event
@@ -17,6 +18,9 @@ export default `
         timeAndDate: Float
         type: String
         ticketsAmount: Int
+        ticketPrice: Int
+        description: String
+        ownerId: String
         image: Upload
     }
 

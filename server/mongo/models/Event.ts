@@ -10,6 +10,7 @@ interface EventMongoType {
   ticketPrice: number;
   description: string;
   image: string;
+  isExternal: boolean;
 }
 
 // Define Mongoose schema for Event
@@ -22,6 +23,11 @@ const eventSchema = new Schema<EventMongoType>({
   location: {
     type: String,
     required: true,
+  },
+  isExternal: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
   timeAndDate: {
     type: Date,

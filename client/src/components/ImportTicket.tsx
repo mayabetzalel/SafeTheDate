@@ -1,6 +1,6 @@
 import { graphql } from "../graphql";
 import { useQuery } from "urql";
-import { Exact, ThirdPartyTicket } from "../graphql/graphql";
+import { Exact, ReturnedData, ThirdPartyTicket } from "../graphql/graphql";
 import { useState, useEffect, useRef } from "react";
 import { Box, Typography } from "@mui/material";
 import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
@@ -21,24 +21,24 @@ export const ImportTicket = () => {
           image
           location
           name
-          timeAndDate
           ticketsAmount
+          timeAndDate
           type
         }
         ticket {
           barcode
           eventId
-          id
           isSecondHand
           onMarketTime
           ownerId
+          id
         }
       }
     }
   `);
 
   const [{ data: isValidData, fetching: fetchingIsVallid }] = useQuery<{
-    validateTicket: Exact<ThirdPartyTicket>;
+    validateTicketAndImport: Exact<ReturnedData>;
   }>({
     query: VALIDATE_TICKET_QUERY,
     variables: {
@@ -73,14 +73,16 @@ export const ImportTicket = () => {
     return (
       <Box
         sx={{
-          color: isValidData?.validateTicket.id ? "success.main" : "error.main",
+          color: isValidData?.validateTicketAndImport?.ticket?.id
+            ? "success.main"
+            : "error.main",
         }}
       >
         <Center>
-          {isValidData?.validateTicket.id ? (
+          {isValidData?.validateTicketAndImport?.ticket?.id ? (
             <>
               <ValidIcon sx={{ fontSize: "10rem" }} />
-              <Typography variant="h1">Valid</Typography>
+              <Typography variant="h1">Imported</Typography>
             </>
           ) : (
             <>

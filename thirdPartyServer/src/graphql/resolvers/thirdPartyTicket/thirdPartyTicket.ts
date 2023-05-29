@@ -32,20 +32,24 @@ const thirdPartyTicketsResolvers: {
           .then((result) => ({
             ...result,
             id: result._id.toString(),
+            onMarketTime: new Date(),
             isSecondHand: true,
             ownerId: result.ownerId.toString(),
             eventId: result.eventId.toString(),
-            onMarketTime: new Date(result.onMarketTime).getTime(),
           }));
 
         if (ticket) {
           const event = await ThirdPartyEvents.findOne({
             _id: ticket?.eventId,
-          }).then((event1) => ({
-            ...event1,
-            timeAndDate: new Date(event1.timeAndDate).getTime(),
-            id: event1._id.toString(),
-          }));
+          })
+            .lean()
+            .then((event1) => ({
+              ...event1,
+              ownerId: event1.ownerId.toString(),
+              timeAndDate: new Date(event1.timeAndDate).getTime(),
+              id: event1._id.toString(),
+            }));
+          console.log(event);
           return { ticket, event };
         }
         return { ticket: {}, event: {} };

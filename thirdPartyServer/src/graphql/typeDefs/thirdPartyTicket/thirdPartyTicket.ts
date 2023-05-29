@@ -6,8 +6,11 @@ export default `
         eventId: String
         barcode: String
         isSecondHand: Boolean
-        onMarketTime: Float
+        onMarketTime: Date
+        price: Float
     }
+
+    scalar Date
 
     #Ticket for an event
     type ThirdPartyEvent {
@@ -17,6 +20,9 @@ export default `
         timeAndDate: Float
         type: String
         ticketsAmount: Int
+        ticketPrice: Int
+        description: String
+        ownerId: String
         image: Upload
     }
 
@@ -29,7 +35,7 @@ export default `
     }
 
     type Query {
-        validateTicketAndImport(id: String): ReturnedData!
+        validateTicketAndImport(id: String): ReturnedData!    
     }
 
     type Mutation {
