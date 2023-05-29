@@ -8,8 +8,6 @@ import {
   Divider,
   Button,
   IconButton,
-  FormControlLabel,
-  Switch,
   Tooltip,
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -20,7 +18,7 @@ import { useQuery } from "urql";
 import { graphql } from "../../graphql";
 import FetchingState from "../../utils/fetchingState";
 import { useEffect, useState } from "react";
-import {Exact, Event as EventType, User} from "../../graphql/graphql";
+import { Exact, Event as EventType, User } from "../../graphql/graphql";
 import PaymentForm from "../checkout/PaymentForm";
 import { useAuth } from "../../hooks/authController/AuthContext";
 import { Login, Logout } from "@mui/icons-material";
@@ -65,7 +63,6 @@ export const Event = () => {
   const navigate = useNavigate();
   const [event, setEvent] = useState<Exact<EventType>>();
   const { id = "" } = useParams();
-  const [isInEditMode, setIsInEditMode] = useState(false);
   const [{ data, fetching }] = useQuery<{
     event: Exact<EventType>[];
   }>({
@@ -74,12 +71,12 @@ export const Event = () => {
   });
 
   const [{ data: userData = { user: {} } }] = useQuery<
-      { user: Pick<User, 'username'> },
-      { userId: string; }
-      >({
+    { user: Pick<User, "username"> },
+    { userId: string }
+  >({
     query: USER_QUERY,
     variables: {
-      userId: currentUser?.['_id']
+      userId: currentUser?.["_id"],
     },
   });
 
@@ -122,22 +119,7 @@ export const Event = () => {
           xs
         >
           <Stack spacing={2}>
-            <Grid container justifyContent={"space-between"}>
-              <Typography variant={"h3"}>{event?.name}</Typography>
-              {event?.ownerId === currentUser?.["_id"] ? (
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={isInEditMode}
-                      onChange={(e) => setIsInEditMode(e.target.checked)}
-                    />
-                  }
-                  label="Edit Mode"
-                />
-              ) : (
-                <></>
-              )}
-            </Grid>
+            <Typography variant={"h3"}>{event?.name}</Typography>
             <Stack direction={"row"} spacing={2} alignItems={"center"}>
               <Avatar
                 sx={(theme) => ({ bgcolor: theme.palette.secondary.main })}
@@ -147,9 +129,8 @@ export const Event = () => {
               <Typography variant="h6">{userData.user.username}</Typography>
               <Tooltip title="scan event tickets">
                 <IconButton
-                    onClick={() => navigate(`${RoutePaths.SCAN_EVENT}/${id}`, {})}
+                  onClick={() => navigate(`${RoutePaths.SCAN_EVENT}/${id}`, {})}
                 >
-                  {" "}
                   <QrCodeScannerIcon fontSize="large" />
                 </IconButton>
               </Tooltip>
@@ -158,18 +139,18 @@ export const Event = () => {
               <EventIcon />
               <Typography variant="h6">
                 {event?.timeAndDate &&
-                    new Date(event?.timeAndDate).toDateString()}
+                  new Date(event?.timeAndDate).toDateString()}
               </Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
               <LocationOnIcon />
               <Typography variant="h6">{event?.location}</Typography>
             </Stack>
-              <Typography variant="h6">
-                {event?.ticketsAmount
-                  ? `${event?.ticketsAmount} tickets avilable`
-                  : "No avilable tickets"}
-              </Typography>
+            <Typography variant="h6">
+              {event?.ticketsAmount
+                ? `${event?.ticketsAmount} tickets avilable`
+                : "No avilable tickets"}
+            </Typography>
             <Typography variant="body1">
               {event?.ticketPrice && `${event?.ticketPrice} ₪`}
             </Typography>
