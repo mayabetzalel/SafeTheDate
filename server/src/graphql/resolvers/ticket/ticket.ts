@@ -5,6 +5,8 @@ import { User as UserModel } from "../../../../mongo/models/User"
 import mongoose, { Types } from 'mongoose';
 var nodemailer = require("nodemailer");
 
+const CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+const LENGTH = 60;
 const DEFAULT_LIMIT = 50
 const FAILED_MUTATION_MESSAGE = "mutation createTicket failed"
 const SECOND_HAND_SELL_TICKET_COMMISION = 2
@@ -159,12 +161,12 @@ const ticketResolvers: {
       const {
         eventId,
         isSecondHand,
-        price,
-        barcode } = inputTicket
+        price } = inputTicket
 
       try {
 
         const userId = context.user._id;
+        const barcode = await makeBarcoce()
 
         const newTicket = await TicketModel.create({
           _id: new mongoose.Types.ObjectId(),
@@ -185,6 +187,16 @@ const ticketResolvers: {
   },
 }
 
+const makeBarcoce = async function() {
+  let result = "";
+  const charactersLength = CHARACTERS.length;
+  let counter = 0;
+  while (counter < LENGTH) {
+    result += CHARACTERS.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+}
 
 const sendEmail = async function(email, creditToAdd) {
   var transporter = nodemailer.createTransport({

@@ -11,8 +11,6 @@ import _ from 'lodash';
 import { useLocation } from 'react-router-dom';
 import axios from "axios"
 
-const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-const LENGTH = 60;
 const CREATE_TICKET_MUTATION = graphql(`
   mutation CreateTicket($inputTicket: InputTicket!) {
     createTicket(inputTicket: $inputTicket) {
@@ -60,18 +58,6 @@ const UPDATE_TICKET_TO_FIRST_HAND = graphql(`
     }
   }
 `)
-
-
-function makeId() {
-  let result = "";
-  const charactersLength = characters.length;
-  let counter = 0;
-  while (counter < LENGTH) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    counter += 1;
-  }
-  return result;
-}
 
 const PaymentForm = ({
   amount,
@@ -156,7 +142,6 @@ const PaymentForm = ({
         eventId: eventId,
         isSecondHand: false,
         price: ticketPrice,
-        barcode: makeId(), 
       }
 
       // From external website
@@ -170,7 +155,6 @@ const PaymentForm = ({
       if (dataCount["getAllSecondHandTicketsByEventId"] > eventData["ticketsAmount"] - 1) {
         updateSecondToFirst({
           createTicketParams: {
-            barcode: inputTicket.barcode,
             eventId: eventId,
             isSecondHand: true
           }
