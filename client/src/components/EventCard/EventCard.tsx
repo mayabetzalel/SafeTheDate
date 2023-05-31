@@ -58,7 +58,7 @@ const EventCard = ({
   return (
     <Box padding={1}>
       <Card onClick={onClick}
-        sx={{ borderRadius: '10px' }}>
+        sx={{ borderRadius: '10px', cursor: onClick ? "pointer" : "default" }}>
         <CardHeader
           avatar={
             <Avatar sx={(theme) => ({ bgcolor: theme.palette.secondary.main })}>
@@ -69,14 +69,14 @@ const EventCard = ({
           subheader={subheader}
           action={
             <>
-              <IconButton
+              {menuItems && <IconButton
                 onClick={handleMenuOpen}
                 sx={{ ml: "auto", color: "black" }}
               >
                 <MoreVertIcon />
-              </IconButton>
-
+              </IconButton>}
             </>
+
           }
         />
         < CardContent >
