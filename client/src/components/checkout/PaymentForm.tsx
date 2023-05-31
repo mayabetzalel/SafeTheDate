@@ -159,7 +159,11 @@ const PaymentForm = ({
         barcode: makeId(), 
       }
 
-
+      // From external website
+      if (eventData["isExternal"]) {
+        // @Aviv 
+        // inputTicket.barcode = await axios.get("process.env.THIRD_PARTY_ENDPOINT/graphql")
+      }
 
       // SecondHandTicket
 
