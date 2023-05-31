@@ -40,8 +40,11 @@ const ChatPopUp = styled("div")`
 const SideChatbot = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const muiTheme = useTheme();
+  let isDragging = false;
 
   const handleChatClick = (event) => {
+    if (isDragging) return;
+
     setAnchorEl(event.currentTarget);
   };
 
@@ -49,12 +52,19 @@ const SideChatbot = () => {
     setAnchorEl(null);
   };
 
+  const onDrag = () => {
+    isDragging = true;
+  }
+  const onStop = () => {
+    setTimeout(() => (isDragging = false), 0);
+  }
+
   const open = Boolean(anchorEl);
   const id = open ? 'chat-popover' : undefined;
 
   return (
     <>
-      <Draggable>
+      <Draggable onStop={onStop} onDrag={onDrag}>
         <ChatButtonContainer theme={muiTheme}>
           <ChatButtonPrimary
             onClick={handleChatClick}
