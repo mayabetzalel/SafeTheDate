@@ -14,7 +14,6 @@ enum Filters {
   TODAY,
   THIS_WEEK,
   THIS_MONTH,
-  SECOND_HAND,
 }
 
 const getDateFromToday = (days: number) =>
@@ -45,9 +44,6 @@ export const EventsPage = () => {
         filterValues.to = getDateFromToday(30).getTime();
         break;
       }
-      case Filters.SECOND_HAND: {
-        break;
-      }
     }
 
     setFilterParams((prevFilter) => ({
@@ -61,7 +57,7 @@ export const EventsPage = () => {
   }, [searchText]);
 
   return (
-    <Stack spacing={3} sx={{height: "100%"}}>
+    <Stack spacing={3} sx={{ height: "100%" }}>
       <TextField
         value={searchText}
         color={"secondary"}
@@ -83,9 +79,6 @@ export const EventsPage = () => {
           </ToggleButton>
           <ToggleButton value={Filters.THIS_MONTH}>
             <Typography>This Month</Typography>
-          </ToggleButton>
-          <ToggleButton value={Filters.SECOND_HAND}>
-            <Typography>Second-Hand</Typography>
           </ToggleButton>
         </ToggleButtonGroup>
       </Stack>
