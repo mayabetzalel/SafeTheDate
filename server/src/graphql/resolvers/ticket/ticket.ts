@@ -47,12 +47,13 @@ const ticketResolvers: {
 
       const eventTickets = unprocessedTickets.filter(ticket => ticket.eventId);
 
-      let tickets = eventTickets.map(({ eventId, _id, onMarketTime }) => ({
+      let tickets = eventTickets.map(({ eventId, _id, onMarketTime, barcode }) => ({
         name: (eventId as any).name,
         location: (eventId as any).location,
         timeAndDate: new Date((eventId as any).timeAndDate).getTime(),
         type: (eventId as any).type,
         image: (eventId as any).image,
+        barcode: barcode,
         ticketId: _id.toString(),
         onMarketTime: new Date(onMarketTime).getTime()
       }));
@@ -63,6 +64,8 @@ const ticketResolvers: {
       const { filterParams = {}, ids } = args;
 
       const userId = context.user._id;
+      console.log(userId);
+      
       let { name, location, from, to, } = filterParams;
       let filter = {
         ...(ids && { _id: { $in: ids } }),

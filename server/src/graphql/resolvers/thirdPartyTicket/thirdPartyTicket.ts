@@ -1,28 +1,59 @@
-import { graphql } from "graphql";
 import { QueryResolvers, MutationResolvers } from "../../typeDefs";
 import axios from "axios";
+import { Event as EventModel } from "../../../../mongo/models/Event";
+import { Ticket as TicketModel } from "../../../../mongo/models/Ticket";
+import { Types } from "mongoose";
 const thirdPartyTicketsResolvers: {
-  Query: Pick<QueryResolvers, "validateTicket">;
+  Query: Pick<QueryResolvers, "validateTicketAndImport">;
   Mutation: Pick<MutationResolvers, "generateTicketForCurrentEvent">;
 } = {
   Query: {
-    validateTicket: async (parent, args, context, info) => {
+    validateTicketAndImport: async (parent, args, context, info) => {
       try {
-        console.log("validateTicket");
+        console.log("validateTicketAndImport");
         const { data } = await axios({
-          url: process.env.THIRD_PARTY_ENDPOINT + context.req.baseUrl,
+          url: process.env.THIRD_PARTY_ENDPOINT + context.req.url,
           method: "post",
           headers: context.request.headers.headersInit,
           data: context.params,
         });
 
-        if (data) {
-          return data.data.validateTicket;
+        const validateTicketAndImport = data?.data?.validateTicketAndImport;
+        if (
+          validateTicketAndImport.ticket.id &&
+          validateTicketAndImport.event.id
+        ) {
+          console.log(validateTicketAndImport.ticket.ownerId);
+          if (validateTicketAndImport.ticket.ownerId === context.user._id) {
+            await EventModel.findOneAndUpdate(
+              {
+                _id: new Types.ObjectId(validateTicketAndImport.event.id),
+              },
+              {
+                ...validateTicketAndImport.event,
+                ...validateTicketAndImport.ticket,
+                isExternal: true,
+              },
+              { upsert: true, new: true }
+            );
+
+            await TicketModel.findOneAndUpdate(
+              {
+                _id: new Types.ObjectId(validateTicketAndImport.ticket.id),
+              },
+              {
+                ...validateTicketAndImport.ticket,
+                isSecondHand: true,
+              },
+              { upsert: true, new: true }
+            );
+            return data.data.validateTicketAndImport;
+          }
         }
-        return {};
+        return { ticket: {}, event: {} };
       } catch (error) {
         console.log(error);
-        return {};
+        return { ticket: {}, event: {} };
       }
     },
   },

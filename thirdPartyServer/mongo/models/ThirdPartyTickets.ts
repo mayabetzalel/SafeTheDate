@@ -1,25 +1,26 @@
-import { Schema, model, Document, Model } from "mongoose";
+import { Schema, model, Document, Model, Types } from "mongoose";
 
 interface ThirdPartyTicketsMongoType {
-  qrCodeId: string;
+  barcode: string;
   price: number;
-  eventName: string;
-  ownerEmail: string;
+  eventId: Types.ObjectId;
+  ownerId: Types.ObjectId;
 }
-
 // Define Mongoose schema for Event
 const thirdPartyTicketsSchema = new Schema<ThirdPartyTicketsMongoType>({
-  qrCodeId: { type: String, unique: true, required: true },
+  barcode: { type: String, unique: true, required: true },
   price: {
     type: Number,
     required: true,
   },
-  eventName: {
-    type: String,
+  eventId: {
+    type: Schema.Types.ObjectId,
+    ref: "thirdPartyEvents",
     required: true,
+    unique: true,
   },
-  ownerEmail: {
-    type: String,
+  ownerId: {
+    type: Schema.Types.ObjectId,
     required: true,
   },
 });
