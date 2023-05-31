@@ -1,8 +1,8 @@
 export default `
     type Ticket {
         _id: ID
-        ownerId: ID
-        eventId: ID
+        ownerId: String
+        eventId: String
         isSecondHand: Boolean
         onMarketTime: Float
         price: Float
@@ -24,15 +24,15 @@ export default `
     }
 
     input InputTicket {
-        eventId: ID!,
+        eventId: String!,
         isSecondHand: Boolean!, 
         price: Float!,
         barcode: String!,
     }
 
     input FilterTicketParams {
-        userId: ID
-        eventId: ID
+        userId: String
+        eventId: String
         barcode: String
     }
 
