@@ -120,9 +120,11 @@ const PaymentForm = ({
 
   let eventData = event[0].data || {}
   let ticketPrice
+  let isExternal
   if (event && eventData && !_.isEqual(eventData, {}) && eventData["event"]) {
     eventData = eventData["event"][0]
     ticketPrice = eventData["ticketPrice"]
+    isExternal = eventData["isExternal"] || false
   }
 
   useEffect(() => {
@@ -142,16 +144,10 @@ const PaymentForm = ({
         eventId: eventId,
         isSecondHand: false,
         price: ticketPrice,
+        isExternal: isExternal
       }
-
-      // From external website
-      if (eventData["isExternal"]) {
-        // @Aviv 
-        // inputTicket.barcode = await axios.get("process.env.THIRD_PARTY_ENDPOINT/graphql")
-      }
-
+      console.log(eventData["isExternal"])
       // SecondHandTicket
-
       if (dataCount["getAllSecondHandTicketsByEventId"] > eventData["ticketsAmount"] - 1) {
         updateSecondToFirst({
           createTicketParams: {

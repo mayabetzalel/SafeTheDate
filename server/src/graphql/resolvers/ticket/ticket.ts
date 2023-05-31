@@ -161,12 +161,19 @@ const ticketResolvers: {
       const {
         eventId,
         isSecondHand,
-        price } = inputTicket
+        price,
+        isExternal } = inputTicket
 
       try {
-
+        console.log("isExternal " + isExternal)
         const userId = context.user._id;
-        const barcode = await makeBarcode()
+        let barcode
+        if(isExternal) {
+          //@Aviv
+        } else {
+          barcode = await makeBarcode()
+          console.log(barcode)
+        }
 
         const newTicket = await TicketModel.create({
           _id: new mongoose.Types.ObjectId(),

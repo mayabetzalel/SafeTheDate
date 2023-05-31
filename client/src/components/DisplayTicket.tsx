@@ -36,7 +36,6 @@ export const DisplayTicket = (props: DisplayTicketProps) => {
     const dateTime = time.toLocaleDateString("he");
 
     const handleClose = () => {
-        console.log(ticket)
         window.location.reload()
         toggleIsOpen()
     };

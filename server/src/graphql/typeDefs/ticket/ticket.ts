@@ -27,6 +27,7 @@ export default `
         eventId: String!,
         isSecondHand: Boolean!, 
         price: Float!,
+        isExternal: Boolean!
     }
 
     input FilterTicketParams {
