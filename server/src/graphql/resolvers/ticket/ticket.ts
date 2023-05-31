@@ -103,7 +103,7 @@ const ticketResolvers: {
         let onMarket = ticket?.onMarketTime
         let now = new Date()
 
-        // if ((eventDate && now.getTime() < eventDate.getTime()) || !eventDate) {
+        if ((eventDate && now.getTime() < eventDate.getTime()) || !eventDate) {
 
           let updatetime = await TicketModel.updateOne({ _id: new Types.ObjectId(ticketId) },
           { $set: { onMarketTime: onMarket ? null : new Date().getTime() } }, { upsert: true });
@@ -113,7 +113,7 @@ const ticketResolvers: {
           await EventModel.updateOne({ _id: ticket.eventId }, { $inc: { ticketsAmount: 1 }})
 
           return { message: "ticket updated succesfully", code: 200 }
-        // }
+        }
         throw new Error("The event has already happened.")
       } catch (error) {
         console.log("failed with " + error)
