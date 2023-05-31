@@ -133,7 +133,7 @@ const PaymentForm = ({
   });
 
   let eventData = event[0].data || {}
-  let ticketPrice = 100
+  let ticketPrice
   if (event && eventData && !_.isEqual(eventData, {}) && eventData["event"]) {
     eventData = eventData["event"][0]
     ticketPrice = eventData["ticketPrice"]
