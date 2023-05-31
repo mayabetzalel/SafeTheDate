@@ -2,7 +2,6 @@
 
 import { graphql } from "../graphql";
 import { useQuery } from "urql";
-import { PDFViewer } from '@react-pdf/renderer';
 import _ from 'lodash';
 import { InputTicket, TicketResponse } from "../graphql/graphql";
 import { DisplayTicket } from './DisplayTicket';
@@ -42,7 +41,6 @@ const DisplayTicketUsingEvent = ({ ticket }: DisplayTicketProps) => {
     
     if (event && eventData && !_.isEqual(eventData, {}) && eventData["event"]) {
         eventData = eventData["event"][0]
-
         location = eventData["location"]
         name = eventData["name"]
     }

@@ -1,9 +1,12 @@
 import { QueryResolvers, MutationResolvers, Ticket, TicketResponse, Event } from "../../typeDefs"
 import { Ticket as TicketModel } from "../../../../mongo/models/Ticket"
+import { Event as EventModel } from "../../../../mongo/models/Event"
 import { User as UserModel } from "../../../../mongo/models/User"
 import mongoose, { Types } from 'mongoose';
-import e = require("express");
+var nodemailer = require("nodemailer");
 
+const CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+const LENGTH = 60;
 const DEFAULT_LIMIT = 50
 const FAILED_MUTATION_MESSAGE = "mutation createTicket failed"
 const SECOND_HAND_SELL_TICKET_COMMISION = 2
@@ -86,10 +89,12 @@ const ticketResolvers: {
     },
     getAllSecondHandTicketsByEventId: async (parent, { eventId }) => {
       const tickets = await TicketModel.find({
-        isSecondHand: true,
+        //isSecondHand: true,
+        onMarketTime: { $exists: true },
         eventId: eventId
       }).count()
 
+      console.log(tickets)
       return tickets
     }
   },
@@ -101,13 +106,17 @@ const ticketResolvers: {
 
         let eventDate = (ticket?.eventId as any)?.timeAndDate;
         let onMarket = ticket?.onMarketTime
+        let now = new Date()
 
-        if ((eventDate && new Date() > eventDate) || !eventDate) {
+        if ((eventDate && now.getTime() < eventDate.getTime()) || !eventDate) {
 
           let updatetime = await TicketModel.updateOne({ _id: new Types.ObjectId(ticketId) },
           { $set: { onMarketTime: onMarket ? null : new Date().getTime() } }, { upsert: true });
 
           console.log("Ticket market time update: " + JSON.stringify(updatetime))
+
+          await EventModel.updateOne({ _id: ticket.eventId }, { $inc: { ticketsAmount: 1 }})
+
           return { message: "ticket updated succesfully", code: 200 }
         }
         throw new Error("The event has already happened.")
@@ -117,12 +126,12 @@ const ticketResolvers: {
       }
     },
 
-    changeSecondHandToFirstHand: async (parent, { filterTicketParams }, context, info) => {
-      const { barcode, eventId } = filterTicketParams
+    changeSecondHandToFirstHand: async (parent, { createTicketParams }, context, info) => {
+      const { barcode, eventId } = createTicketParams
       try {
         let oldTicket = await TicketModel.find({
-          eventId: eventId,
-          isSecondHand: true
+          eventId: eventId, 
+          onMarketTime: { $exists: true }
         }).sort({ "_id": 1, "onMarketTime": 1 }).limit(1)
 
         const creditToAdd = +oldTicket[0]["price"] - SECOND_HAND_SELL_TICKET_COMMISION
@@ -133,7 +142,9 @@ const ticketResolvers: {
           { $inc: { credit: creditToAdd } }
         )
 
-        // TODO: Add email massage to user that it's ticket was sold.
+        // Email massage to user that it's ticket was sold.
+        await sendEmail(updatedUserCredit.email, creditToAdd)
+        
         await TicketModel.deleteOne({
           _id: oldTicket[0]._id
         })
@@ -151,16 +162,23 @@ const ticketResolvers: {
         eventId,
         isSecondHand,
         price,
-        barcode } = inputTicket
+        isExternal } = inputTicket
 
       try {
-
+        console.log("isExternal " + isExternal)
         const userId = context.user._id;
+        let barcode
+        if(isExternal) {
+          //@Aviv
+        } else {
+          barcode = await makeBarcode()
+          console.log(barcode)
+        }
 
         const newTicket = await TicketModel.create({
           _id: new mongoose.Types.ObjectId(),
-          ownerId: new Types.ObjectId(userId),
-          eventId: new Types.ObjectId(eventId),
+          ownerId: userId,
+          eventId: eventId,
           isSecondHand: isSecondHand,
           price: price,
           barcode: barcode
@@ -174,7 +192,47 @@ const ticketResolvers: {
     },
 
   },
+}
 
+const makeBarcode = async function() {
+  let result = "";
+  const charactersLength = CHARACTERS.length;
+  let counter = 0;
+  while (counter < LENGTH) {
+    result += CHARACTERS.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+}
+
+const sendEmail = async function(email, creditToAdd) {
+  var transporter = nodemailer.createTransport({
+    service: process.env.SMTP_SERVICE,
+    secure: true, 
+    logger: true,
+    debug: true,
+    secureConnection: false,
+    auth: {
+        user: process.env.SMTP_AUTH_USER, 
+        pass: process.env.SMTP_AUTH_PASSWORD, 
+    },
+    tls:{
+        rejectUnAuthorized:true
+    }
+  })
+
+  transporter.sendMail({
+    to: email,
+    from: process.env.SMTP_AUTH_USER,
+    subject: "safe the date - ticket sold",
+    text: `We are glad to inform you that your published ticket was sold. You recived ${creditToAdd} shekels credit to your account`,
+  },  function(error, response) {
+    if(error){
+      console.log("error sending email", error)
+    } else{
+      console.log("Email send successfully to " + email)
+    }
+  })
 }
 
 export default ticketResolvers
