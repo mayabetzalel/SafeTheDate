@@ -9,6 +9,7 @@ import { graphql } from "../../graphql"
 import { useMutation, useQuery } from "urql"
 import _ from 'lodash';
 import { useLocation } from 'react-router-dom';
+import axios from "axios"
 
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 const LENGTH = 60;
@@ -158,9 +159,15 @@ const PaymentForm = ({
         barcode: makeId()
       }
 
-      // SecondHandTicket
-      if (dataCount["getAllSecondHandTicketsByEventId"] > eventData["ticketsAmount"] - 1) {
+      // From external website
+      // if (eventData["isExternal"]) {
+      //   inputTicket.barcode = await axios.get()
+      // }
+      // TODO: also add to second hand ticket isExternal field
 
+      // SecondHandTicket
+      debugger
+      if (dataCount["getAllSecondHandTicketsByEventId"] > eventData["ticketsAmount"] - 1) {
         updateSecondToFirst({
           filterTicketParams: {
             barcode: inputTicket.barcode,
@@ -168,6 +175,7 @@ const PaymentForm = ({
           }
         })
       }
+
       setTicketData(inputTicket)
       setCurrentUser(currentUser || [])
       CreateTicket({ inputTicket }).then((result) => {
