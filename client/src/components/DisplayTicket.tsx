@@ -38,7 +38,8 @@ export const DisplayTicket = (props: DisplayTicketProps) => {
 
     const handleClose = () => {
         console.log(ticket)
-        toggleIsOpen();
+        window.location.reload()
+        toggleIsOpen()
     };
 
 
