@@ -2,7 +2,7 @@ import { QueryResolvers, MutationResolvers, Ticket, TicketResponse, Event } from
 import { Ticket as TicketModel } from "../../../../mongo/models/Ticket"
 import { User as UserModel } from "../../../../mongo/models/User"
 import mongoose, { Types } from 'mongoose';
-import e = require("express");
+var nodemailer = require("nodemailer");
 
 const DEFAULT_LIMIT = 50
 const FAILED_MUTATION_MESSAGE = "mutation createTicket failed"
@@ -83,10 +83,12 @@ const ticketResolvers: {
     },
     getAllSecondHandTicketsByEventId: async (parent, { eventId }) => {
       const tickets = await TicketModel.find({
-        isSecondHand: true,
+        //isSecondHand: true,
+        onMarketTime: { $exists: true },
         eventId: eventId
       }).count()
 
+      console.log(tickets)
       return tickets
     }
   },
@@ -118,10 +120,11 @@ const ticketResolvers: {
       const { barcode, eventId } = filterTicketParams
       try {
         let oldTicket = await TicketModel.find({
-          eventId: eventId,
-          isSecondHand: true
+          eventId: eventId, 
+          onMarketTime: { $exists: true }
         }).sort({ "_id": 1, "onMarketTime": 1 }).limit(1)
 
+       
         const creditToAdd = +oldTicket[0]["price"] - SECOND_HAND_SELL_TICKET_COMMISION
 
         // Add to old ticket's user credit - ticket price  minus 2 shekels.
@@ -130,7 +133,9 @@ const ticketResolvers: {
           { $inc: { credit: creditToAdd } }
         )
 
-        // TODO: Add email massage to user that it's ticket was sold.
+        // Email massage to user that it's ticket was sold.
+        await sendEmail(updatedUserCredit.email, creditToAdd)
+        
         await TicketModel.deleteOne({
           _id: oldTicket[0]._id
         })
@@ -156,8 +161,8 @@ const ticketResolvers: {
 
         const newTicket = await TicketModel.create({
           _id: new mongoose.Types.ObjectId(),
-          ownerId: new Types.ObjectId(userId),
-          eventId: new Types.ObjectId(eventId),
+          ownerId: userId,
+          eventId: eventId,
           isSecondHand: isSecondHand,
           price: price,
           barcode: barcode
@@ -171,7 +176,38 @@ const ticketResolvers: {
     },
 
   },
+}
 
+
+const sendEmail = async function(email, creditToAdd) {
+  var transporter = nodemailer.createTransport({
+    service: process.env.SMTP_SERVICE,
+    // port: 465,
+    secure: true, // true for 465, false for other ports
+    logger: true,
+    debug: true,
+    secureConnection: false,
+    auth: {
+        user: process.env.SMTP_AUTH_USER, // generated ethereal user
+        pass: process.env.SMTP_AUTH_PASSWORD, // generated ethereal password
+    },
+    tls:{
+        rejectUnAuthorized:true
+    }
+  })
+
+  transporter.sendMail({
+    to: email,
+    from: process.env.SMTP_AUTH_USER,
+    subject: "safe the date - ticket sold",
+    text: `We are glad to inform you that your published ticket was sold. You recived ${creditToAdd} shekels credit to your account`,
+  },  function(error, response) {
+    if(error){
+      console.log("error sending email", error)
+    } else{
+      console.log("Email send successfully to " + email)
+    }
+  })
 }
 
 export default ticketResolvers
