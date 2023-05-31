@@ -36,6 +36,13 @@ export default `
         barcode: String
     }
 
+    input CreateTicketParams {
+        userId: String
+        eventId: String
+        barcode: String
+        isSecondHand: Boolean
+    }
+
     type Query {
         ticket(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String]): [TicketResponse!]! @auth
     }
@@ -61,6 +68,6 @@ export default `
     }
 
     type Mutation {
-        changeSecondHandToFirstHand(filterTicketParams: FilterTicketParams) : MutationResponse!
+        changeSecondHandToFirstHand(createTicketParams: CreateTicketParams) : MutationResponse!
     }
 `

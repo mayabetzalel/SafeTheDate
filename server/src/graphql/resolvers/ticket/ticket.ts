@@ -121,8 +121,8 @@ const ticketResolvers: {
       }
     },
 
-    changeSecondHandToFirstHand: async (parent, { filterTicketParams }, context, info) => {
-      const { barcode, eventId } = filterTicketParams
+    changeSecondHandToFirstHand: async (parent, { createTicketParams }, context, info) => {
+      const { barcode, eventId } = createTicketParams
       try {
         let oldTicket = await TicketModel.find({
           eventId: eventId, 

@@ -4,7 +4,7 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js"
 import { useSnackbar } from "notistack"
 import DisplayTicket from "../DisplayTicketUsingEvent"
 import { useAuth } from "../../hooks/authController/AuthContext"
-import { InputTicket, MutationResponse, Ticket, FilterTicketParams } from "../../graphql/graphql"
+import { InputTicket, MutationResponse, Ticket, FilterTicketParams, CreateTicketParams } from "../../graphql/graphql"
 import { graphql } from "../../graphql"
 import { useMutation, useQuery } from "urql"
 import _ from 'lodash';
@@ -53,8 +53,8 @@ const GET_EVENT = graphql(`
 `);
 
 const UPDATE_TICKET_TO_FIRST_HAND = graphql(`
-  mutation changeSecondHandToFirstHand($filterTicketParams: FilterTicketParams!) {
-    changeSecondHandToFirstHand(filterTicketParams: $filterTicketParams) {
+  mutation changeSecondHandToFirstHand($createTicketParams: CreateTicketParams!) {
+    changeSecondHandToFirstHand(createTicketParams: $createTicketParams) {
       message
       code
     }
@@ -111,7 +111,7 @@ const PaymentForm = ({
       {
         updateSecondToFirst: MutationResponse
       },
-      { filterTicketParams: FilterTicketParams }
+      { createTicketParams: CreateTicketParams }
     >(UPDATE_TICKET_TO_FIRST_HAND)
 
   const { pathname } = useLocation();
@@ -156,22 +156,19 @@ const PaymentForm = ({
         eventId: eventId,
         isSecondHand: false,
         price: ticketPrice,
-        barcode: makeId()
+        barcode: makeId(), 
       }
 
-      // From external website
-      // if (eventData["isExternal"]) {
-      //   inputTicket.barcode = await axios.get()
-      // }
-      // TODO: also add to second hand ticket isExternal field
+
 
       // SecondHandTicket
-      debugger
+
       if (dataCount["getAllSecondHandTicketsByEventId"] > eventData["ticketsAmount"] - 1) {
         updateSecondToFirst({
-          filterTicketParams: {
+          createTicketParams: {
             barcode: inputTicket.barcode,
             eventId: eventId,
+            isSecondHand: true
           }
         })
       }
