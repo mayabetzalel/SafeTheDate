@@ -1,5 +1,6 @@
 import { QueryResolvers, MutationResolvers, Ticket, TicketResponse, Event } from "../../typeDefs"
 import { Ticket as TicketModel } from "../../../../mongo/models/Ticket"
+import { Event as EventModel } from "../../../../mongo/models/Event"
 import { User as UserModel } from "../../../../mongo/models/User"
 import mongoose, { Types } from 'mongoose';
 var nodemailer = require("nodemailer");
@@ -100,15 +101,19 @@ const ticketResolvers: {
 
         let eventDate = (ticket?.eventId as any)?.timeAndDate;
         let onMarket = ticket?.onMarketTime
+        let now = new Date()
 
-        if ((eventDate && new Date() > eventDate) || !eventDate) {
+        // if ((eventDate && now.getTime() < eventDate.getTime()) || !eventDate) {
 
           let updatetime = await TicketModel.updateOne({ _id: new Types.ObjectId(ticketId) },
           { $set: { onMarketTime: onMarket ? null : new Date().getTime() } }, { upsert: true });
 
           console.log("Ticket market time update: " + JSON.stringify(updatetime))
+
+          await EventModel.updateOne({ _id: ticket.eventId }, { $inc: { ticketsAmount: 1 }})
+
           return { message: "ticket updated succesfully", code: 200 }
-        }
+        // }
         throw new Error("The event has already happened.")
       } catch (error) {
         console.log("failed with " + error)
@@ -124,7 +129,6 @@ const ticketResolvers: {
           onMarketTime: { $exists: true }
         }).sort({ "_id": 1, "onMarketTime": 1 }).limit(1)
 
-       
         const creditToAdd = +oldTicket[0]["price"] - SECOND_HAND_SELL_TICKET_COMMISION
 
         // Add to old ticket's user credit - ticket price  minus 2 shekels.
@@ -182,14 +186,13 @@ const ticketResolvers: {
 const sendEmail = async function(email, creditToAdd) {
   var transporter = nodemailer.createTransport({
     service: process.env.SMTP_SERVICE,
-    // port: 465,
-    secure: true, // true for 465, false for other ports
+    secure: true, 
     logger: true,
     debug: true,
     secureConnection: false,
     auth: {
-        user: process.env.SMTP_AUTH_USER, // generated ethereal user
-        pass: process.env.SMTP_AUTH_PASSWORD, // generated ethereal password
+        user: process.env.SMTP_AUTH_USER, 
+        pass: process.env.SMTP_AUTH_PASSWORD, 
     },
     tls:{
         rejectUnAuthorized:true
