@@ -166,7 +166,7 @@ const ticketResolvers: {
       try {
 
         const userId = context.user._id;
-        const barcode = await makeBarcoce()
+        const barcode = await makeBarcode()
 
         const newTicket = await TicketModel.create({
           _id: new mongoose.Types.ObjectId(),
@@ -187,7 +187,7 @@ const ticketResolvers: {
   },
 }
 
-const makeBarcoce = async function() {
+const makeBarcode = async function() {
   let result = "";
   const charactersLength = CHARACTERS.length;
   let counter = 0;
