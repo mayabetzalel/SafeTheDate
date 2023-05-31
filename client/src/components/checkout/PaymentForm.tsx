@@ -4,14 +4,13 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js"
 import { useSnackbar } from "notistack"
 import DisplayTicket from "../DisplayTicketUsingEvent"
 import { useAuth } from "../../hooks/authController/AuthContext"
-import { InputTicket, MutationResponse, Ticket, FilterTicketParams } from "../../graphql/graphql"
+import { InputTicket, MutationResponse, Ticket, FilterTicketParams, CreateTicketParams } from "../../graphql/graphql"
 import { graphql } from "../../graphql"
 import { useMutation, useQuery } from "urql"
 import _ from 'lodash';
 import { useLocation } from 'react-router-dom';
+import axios from "axios"
 
-const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-const LENGTH = 60;
 const CREATE_TICKET_MUTATION = graphql(`
   mutation CreateTicket($inputTicket: InputTicket!) {
     createTicket(inputTicket: $inputTicket) {
@@ -52,25 +51,13 @@ const GET_EVENT = graphql(`
 `);
 
 const UPDATE_TICKET_TO_FIRST_HAND = graphql(`
-  mutation changeSecondHandToFirstHand($filterTicketParams: FilterTicketParams!) {
-    changeSecondHandToFirstHand(filterTicketParams: $filterTicketParams) {
+  mutation changeSecondHandToFirstHand($createTicketParams: CreateTicketParams!) {
+    changeSecondHandToFirstHand(createTicketParams: $createTicketParams) {
       message
       code
     }
   }
 `)
-
-
-function makeId() {
-  let result = "";
-  const charactersLength = characters.length;
-  let counter = 0;
-  while (counter < LENGTH) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    counter += 1;
-  }
-  return result;
-}
 
 const PaymentForm = ({
   amount,
@@ -110,7 +97,7 @@ const PaymentForm = ({
       {
         updateSecondToFirst: MutationResponse
       },
-      { filterTicketParams: FilterTicketParams }
+      { createTicketParams: CreateTicketParams }
     >(UPDATE_TICKET_TO_FIRST_HAND)
 
   const { pathname } = useLocation();
@@ -132,10 +119,12 @@ const PaymentForm = ({
   });
 
   let eventData = event[0].data || {}
-  let ticketPrice = 60
+  let ticketPrice
+  let isExternal
   if (event && eventData && !_.isEqual(eventData, {}) && eventData["event"]) {
     eventData = eventData["event"][0]
-    ticketPrice = event["price"] || 50
+    ticketPrice = eventData["ticketPrice"]
+    isExternal = eventData["isExternal"] || false
   }
 
   useEffect(() => {
@@ -155,19 +144,19 @@ const PaymentForm = ({
         eventId: eventId,
         isSecondHand: false,
         price: ticketPrice,
-        barcode: makeId()
+        isExternal: isExternal
       }
-
+      console.log(eventData["isExternal"])
       // SecondHandTicket
       if (dataCount["getAllSecondHandTicketsByEventId"] > eventData["ticketsAmount"] - 1) {
-
         updateSecondToFirst({
-          filterTicketParams: {
-            barcode: inputTicket.barcode,
+          createTicketParams: {
             eventId: eventId,
+            isSecondHand: true
           }
         })
       }
+
       setTicketData(inputTicket)
       setCurrentUser(currentUser || [])
       CreateTicket({ inputTicket }).then((result) => {
