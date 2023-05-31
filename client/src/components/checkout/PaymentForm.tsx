@@ -135,7 +135,7 @@ const PaymentForm = ({
   let ticketPrice = 60
   if (event && eventData && !_.isEqual(eventData, {}) && eventData["event"]) {
     eventData = eventData["event"][0]
-    ticketPrice = event["price"] || 50
+    ticketPrice = event["ticketPrice"]
   }
 
   useEffect(() => {
