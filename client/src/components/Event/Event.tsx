@@ -21,14 +21,14 @@ import { useEffect, useState } from "react";
 import { Exact, Event as EventType, User } from "../../graphql/graphql";
 import PaymentForm from "../checkout/PaymentForm";
 import { useAuth } from "../../hooks/authController/AuthContext";
-import { Login, Logout } from "@mui/icons-material";
-import * as React from "react";
+import { Login } from "@mui/icons-material";
 import { RoutePaths } from "../../App";
 
 const EVENT_QUERY = graphql(`
   query event($ids: [String]) {
     event(ids: $ids) {
       id
+      ownerId
       name
       location
       ticketsAmount
@@ -96,7 +96,7 @@ export const Event = () => {
 
   useEffect(() => {
     if (event?.ownerId)
-    reexecuteUserQuery()
+      reexecuteUserQuery()
   }, [event])
 
   return (
@@ -133,13 +133,9 @@ export const Event = () => {
                 {userData.user.username?.charAt(0)}
               </Avatar>
               <Typography variant="h6">{userData.user.username}</Typography>
-              <Tooltip title="scan event tickets">
-                <IconButton
-                  onClick={() => navigate(`${RoutePaths.SCAN_EVENT}/${id}`, {})}
-                >
-                  <QrCodeScannerIcon fontSize="large" />
-                </IconButton>
-              </Tooltip>
+              {event?.ownerId === currentUser?.['_id'] && <Tooltip title="scan event tickets">
+                <IconButton onClick={() => navigate(`${RoutePaths.SCAN_EVENT}/${id}`, {})}> <QrCodeScannerIcon fontSize="large" /></IconButton>
+              </Tooltip>}
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
               <EventIcon />
@@ -186,8 +182,8 @@ export const Event = () => {
               </Button>
             )}
           </Stack>
-        </Grid>
-      </Grid>
-    </FetchingState>
+        </Grid >
+      </Grid >
+    </FetchingState >
   );
 };
