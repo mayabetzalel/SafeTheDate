@@ -2,22 +2,15 @@ export default `
     type User {
         _id: ID
         username: String
-        password: String
         email: String
         firstName: String
         lastName: String
-        refreshToken: ID
-        isConfirmed: Boolean
-        userConfirmation: ID
         creadit: Float
-    }   
-
-    type UserResponse {
         image: Upload
-    }
+    }   
     
     type Query {
-        user(userId: String!): UserResponse!
+        user(userId: String!): User!
     } 
 
     type Mutation {

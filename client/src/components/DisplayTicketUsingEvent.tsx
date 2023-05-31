@@ -42,9 +42,6 @@ const DisplayTicketUsingEvent = ({ ticket }: DisplayTicketProps) => {
     
     if (event && eventData && !_.isEqual(eventData, {}) && eventData["event"]) {
         eventData = eventData["event"][0]
-        console.log(ticket)
-        console.log(eventData)
-        
 
         location = eventData["location"]
         name = eventData["name"]

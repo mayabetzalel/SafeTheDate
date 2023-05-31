@@ -20,25 +20,32 @@ export const authSchemaTransformer = (schema: GraphQLSchema) =>
           const token = await context.request.cookieStore?.get("access_token");
 
           if (!!token) {
-            // @ts-ignore
-            const user = await axios
-              .get("http://localhost:5000/api/auth/session", {
-                headers: {
-                  cookie: `${token.name}=${token.value}`,
-                },
-              })
-              .then(({ data }) => data);
-            if (!user._id) {
-              console.log("Auth failed: user._id not valid");
+
+            try {
+              // @ts-ignore
+              const user = await axios
+                  .get("http://localhost:5000/api/auth/session", {
+                    headers: {
+                      cookie: `${token.name}=${token.value}`,
+                    },
+                  })
+                  .then(({data}) => data);
+              if (!user._id) {
+                console.log("Auth failed: user._id not valid");
+                return new GraphQLError(
+                    `Auth failed! please add token to the request`
+                );
+              }
+              context.user = user;
+              return originalResolver(source, args, context, info);
+            } catch (e) {
+              console.log("Auth failed1");
               return new GraphQLError(
-                `Auth failed! please add token to the request`
+                  `Auth failed! please add token to the request`
               );
             }
-            console.log("request accepted");
-            context.user = user;
-            return originalResolver(source, args, context, info);
           }
-          console.log("Auth failed");
+          console.log("Auth failed2");
           return new GraphQLError(
               `Auth failed! please add token to the request`
           );
