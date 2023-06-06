@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { floor } from "lodash";
 import { MyTicket } from "./MyTicket";
 import { useAuth } from "../../hooks/authController/AuthContext";
+import PutOnSellModal from "../PutOnSellModal";
 
 const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
@@ -32,6 +33,7 @@ const ticketQuery = graphql(`
       location
       timeAndDate
       type
+      price
       image
       onMarketTime
       barcode
@@ -125,6 +127,7 @@ const MyTickets = ({ filterParams, userId }: TicketsProps) => {
           );
         })}
       </GridHiddenScroll>
+      
       <Pagination
         count={floor(dataCount?.ticketCount / EVENTS_PER_FETCH) + 1}
         page={page + 1}

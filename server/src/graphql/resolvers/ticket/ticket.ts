@@ -50,16 +50,20 @@ const ticketResolvers: {
 
       const eventTickets = unprocessedTickets.filter(ticket => ticket.eventId);
 
-      let tickets = eventTickets.map(({ eventId, _id, onMarketTime, barcode }) => ({
+      let tickets = eventTickets.map(({ eventId, _id, onMarketTime, barcode, price }) => ({
         name: (eventId as any).name,
         location: (eventId as any).location,
         timeAndDate: new Date((eventId as any).timeAndDate).getTime(),
         type: (eventId as any).type,
+        price: price as number,
         image: (eventId as any).image,
         barcode: barcode,
         ticketId: _id.toString(),
         onMarketTime: new Date(onMarketTime).getTime()
       }));
+
+      console.log(tickets);
+      
 
       return tickets;
     },
@@ -94,7 +98,6 @@ const ticketResolvers: {
         eventId: eventId
       }).count()
 
-      console.log(tickets)
       return tickets
     }
   },
@@ -115,7 +118,8 @@ const ticketResolvers: {
 
           console.log("Ticket market time update: " + JSON.stringify(updatetime))
 
-          await EventModel.updateOne({ _id: ticket.eventId }, { $inc: { ticketsAmount: 1 }})
+          await EventModel.updateOne({ _id: ticket.eventId },
+            { $inc: { ticketsAmount: onMarket ? -1 : 1 }} )
 
           return { message: "ticket updated succesfully", code: 200 }
         }

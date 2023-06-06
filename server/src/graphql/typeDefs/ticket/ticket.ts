@@ -19,6 +19,7 @@ export default `
         name: String
         location: String
         timeAndDate: Float
+        price: Float
         type: String
         image: Upload
     }
