@@ -9,6 +9,8 @@ import { Divider, Grid } from "@mui/material";
 import logo from "../assets/logo.png";
 import { useAuth } from "../hooks/authController/AuthContext"
 import { TicketResponse } from '../graphql/graphql';
+import { useState } from "react"
+
 
 const BARCODE_SIZE = 256
 
@@ -22,6 +24,7 @@ export const DisplayTicket = (props: DisplayTicketProps) => {
     const { ticket, isOpen, toggleIsOpen } = props;
     const { timeAndDate, barcode, location, name } = ticket;
     const { currentUser } = useAuth()
+    const [open, setOpen] = useState(true);
 
     let firstName = ""
     let lastName = ""
@@ -32,22 +35,27 @@ export const DisplayTicket = (props: DisplayTicketProps) => {
     }
     let time = new Date(timeAndDate || new Date());
 
-    const hourTime = time.toLocaleTimeString("it-IT");
+    const hourTime = time.toLocaleTimeString("it-IT", {hour: '2-digit', minute:'2-digit'});
     const dateTime = time.toLocaleDateString("he");
 
     const handleClose = () => {
-        window.location.reload()
-        toggleIsOpen()
+        setOpen(false)
     };
 
 
     return (
         <div>
             <Dialog
-                open={isOpen}
+                open={isOpen && open}
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
+                PaperProps={{
+                    style: {
+                      backgroundColor: '#CDC5E2',
+                      boxShadow: 'none',
+                    },
+                  }}
             >
                 <Grid item xs={2}>
                     <img
@@ -56,16 +64,17 @@ export const DisplayTicket = (props: DisplayTicketProps) => {
                         alt="fireSpot"
                     />
                 </Grid>
-                <DialogTitle style={{ textAlign: "center" }} id="alert-dialog-title">
+                <DialogTitle style={{ textAlign: "center", fontWeight: "bold" }} id="alert-dialog-title">
                     {"Entry Ticket - "}
                     {name}
+                    <h6 style={{ textAlign: "center", marginBottom: "20px", marginTop: "15px" }}>Present in the entry with id</h6>
+                    <Divider />
+
                 </DialogTitle>
-                <h6 style={{ textAlign: "center" }}>Present in the entry with id</h6>
-                <Divider />
-                <DialogContent>
+                <DialogContent style={{ marginTop: "0"}}>
                     <DialogContentText id="alert-dialog-description">
                         <h3> {firstName} {lastName} </h3>
-                        <h5>{dateTime}  {hourTime} </h5>
+                        <h5>{dateTime}   {hourTime} </h5>
                         <h5> {location} </h5>
                     </DialogContentText>
                     <QRCode
@@ -74,9 +83,8 @@ export const DisplayTicket = (props: DisplayTicketProps) => {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Disagree</Button>
-                    <Button onClick={handleClose} autoFocus>
-                        Agree
+                    <Button style={{ color: "black" }} onClick={handleClose} autoFocus>
+                        Close
                     </Button>
                 </DialogActions>
             </Dialog>
