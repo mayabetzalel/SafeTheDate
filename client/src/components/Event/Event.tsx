@@ -163,7 +163,7 @@ export const Event = () => {
               <div>
                 {event?.ticketsAmount ? (
                   <PaymentForm
-                    amount={20}
+                    amount={event?.ticketPrice || 20}
                     description={event?.name ?? "Event"}
                   />
                 ) : (
