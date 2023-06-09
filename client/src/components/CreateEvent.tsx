@@ -40,11 +40,8 @@ export const CreateEvent = () => {
     createEvent: MutationResponse;
   }>(CREATE_EVENT_MUTATION);
 
-  const onChangeImage = (imageList) => {
-    // only allow one image to be uploaded
-    if (imageList.length === 1) {
-      setImage(imageList[0].data_url);
-    }
+  const onChangeImage = (image) => {
+    setImage(image);
   };
 
   const handleDiscard = () => {

@@ -1,6 +1,7 @@
 import { QueryResolvers, MutationResolvers, Event } from "../../typeDefs";
 import { Event as EventModel } from "../../../../mongo/models/Event";
 import { Ticket as TicketModel } from "../../../../mongo/models/Ticket";
+import { readAndConvertToBase64, writeBase64ToFile } from '../../../../mongo/FileHandler';
 import { Types } from "mongoose";
 
 const DEFAULT_LIMIT = 50;
@@ -29,24 +30,25 @@ const eventResolvers: {
         }),
       };
 
-      // need to add user that created
+
       let events = await EventModel.find({ ...filter, ...(userId && { ownerId: userId }) })
         .skip(skip)
         .limit(limit)
-        .then((events) =>
-          events.map<Event>(
-            ({
-              ownerId,
-              name,
-              location,
-              timeAndDate,
-              type,
-              ticketsAmount,
-              description,
-              ticketPrice,
-              image,
-              _id,
-            }) => ({
+        .then((events) => {
+          return Promise.all(events.map(({
+            ownerId,
+            name,
+            location,
+            timeAndDate,
+            type,
+            image,
+            ticketsAmount,
+            description,
+            ticketPrice,
+            _id,
+          }) => {
+            let eventData =
+            {
               ownerId: ownerId.toString(),
               name,
               location,
@@ -55,11 +57,23 @@ const eventResolvers: {
               ticketsAmount,
               description,
               ticketPrice,
-              image,
               id: _id.toString(),
-            })
-          )
-        );
+            }
+
+            if (image === "exists") {
+              return readAndConvertToBase64(_id + ".jpg")
+                .then((image) => ({
+                  ...eventData,
+                  image
+                }));
+            }
+            return eventData;
+          }));
+        });
+
+      // Use the events array here
+
+
 
       return events;
     },
@@ -97,7 +111,7 @@ const eventResolvers: {
       const userId = context.user._id;
 
       try {
-        await EventModel.create({
+        const event = await EventModel.create({
           name,
           location,
           timeAndDate: new Date(timeAndDate).toString(),
@@ -106,8 +120,15 @@ const eventResolvers: {
           description,
           ticketPrice,
           ownerId: userId,
-          image
+          ...(image && { image: "exists" }),
         });
+
+        if (image) {
+          const eventId = event._id.toString();
+          writeBase64ToFile(`${eventId}.jpg`, image);
+        }
+
+
         console.log(`Event created succesfully | eventName: "${name}"`)
         return { message: "event created succesfully", code: 200 };
       } catch (e) {
@@ -136,3 +157,4 @@ const eventResolvers: {
 };
 
 export default eventResolvers;
+
