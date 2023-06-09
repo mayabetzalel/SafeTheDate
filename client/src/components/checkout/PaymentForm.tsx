@@ -60,9 +60,11 @@ const UPDATE_TICKET_TO_FIRST_HAND = graphql(`
 `)
 
 const PaymentForm = ({
+  ticketAmount,
   amount,
   description,
 }: {
+  ticketAmount,
   amount: number
   description: string
 }) => {
@@ -75,7 +77,6 @@ const PaymentForm = ({
   const [user, setCurrentUser] = useState<any[]>([])
   const [isShowTicket, setShowTicket] = useState(false)
   const [ticketData, setTicketData] = useState<Partial<InputTicket>>({})
-
   const [CreateTicketResult, CreateTicket] =
     useMutation<
       {
@@ -130,6 +131,7 @@ const PaymentForm = ({
   useEffect(() => {
     if (decrease) {
       setDecrease(false)
+      ticketAmount(eventData["ticketsAmount"] - 1)
       const eventId = ticketData.eventId || ""
       setDeacreaseTicketAmount({ eventId }).then((result) => {
         if (result.error)

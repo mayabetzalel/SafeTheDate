@@ -24,6 +24,7 @@ import { useAuth } from "../../hooks/authController/AuthContext";
 import { Login } from "@mui/icons-material";
 import { RoutePaths } from "../../App";
 
+
 const EVENT_QUERY = graphql(`
   query event($ids: [String]) {
     event(ids: $ids) {
@@ -63,6 +64,8 @@ export const Event = () => {
   const navigate = useNavigate();
   const [event, setEvent] = useState<Exact<EventType>>();
   const { id = "" } = useParams();
+  const [ticketAmount, setTicketAmount] = useState(0);
+
   const [{ data, fetching }] = useQuery<{
     event: Exact<EventType>[];
   }>({
@@ -91,6 +94,7 @@ export const Event = () => {
   useEffect(() => {
     if (data?.event.length == 1) {
       setEvent(data.event.at(0));
+      setTicketAmount(data.event.at(0)?.ticketsAmount || 0)
     }
   }, [data]);
 
@@ -149,8 +153,8 @@ export const Event = () => {
               <Typography variant="h6">{event?.location}</Typography>
             </Stack>
             <Typography variant="h6">
-              {event?.ticketsAmount
-                ? `${event?.ticketsAmount} tickets avilable`
+              {ticketAmount
+                ? `${ticketAmount} tickets avilable`
                 : "No avilable tickets"}
             </Typography>
             <Typography variant="body1">
@@ -163,12 +167,13 @@ export const Event = () => {
               <div>
                 {event?.ticketsAmount ? (
                   <PaymentForm
+                    ticketAmount={setTicketAmount}
                     amount={event?.ticketPrice || 20}
                     description={event?.name ?? "Event"}
                   />
-                ) : (
-                  <></>
-                )}
+                  ) : (
+                    <></>
+                  )}
               </div>
             ) : (
               <Button
