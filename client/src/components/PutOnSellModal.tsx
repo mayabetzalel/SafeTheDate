@@ -8,7 +8,6 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
-  Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
