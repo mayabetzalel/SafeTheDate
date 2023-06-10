@@ -1,13 +1,14 @@
-import { graphql } from "../graphql";
+import { useState, useEffect } from "react";
 import { useQuery } from "urql";
-import { Exact, ReturnedData, ThirdPartyTicket } from "../graphql/graphql";
-import { useState, useEffect, useRef } from "react";
+import { QrReader } from "react-qr-reader";
 import { Box, Typography } from "@mui/material";
 import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import InvalidIcon from "@mui/icons-material/CancelOutlined";
+
+import { graphql } from "../graphql";
+import { Exact, ReturnedData } from "../graphql/graphql";
 import Spinner from "../utils/spinner";
 import { Center } from "../utils/center";
-import { QrReader } from "react-qr-reader";
 
 export const ImportTicket = () => {
   const [code, setCode] = useState("");

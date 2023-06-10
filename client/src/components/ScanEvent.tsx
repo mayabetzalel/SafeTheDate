@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react"
+import { useParams } from "react-router-dom"
+import { QrReader } from 'react-qr-reader';
+import { useQuery } from "urql"
 import { Box, Typography } from "@mui/material"
 import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined"
 import InvalidIcon from "@mui/icons-material/CancelOutlined"
+
 import Spinner from "../utils/spinner"
 import { Center } from "../utils/center"
-import { useParams } from "react-router-dom"
 import { graphql } from "../graphql"
-import { useQuery } from "urql"
-import { QrReader } from 'react-qr-reader';
 
 const VALIDATE_TICKET_QUERY = graphql(`
   query isValid($eventId: String!, $barcode: String!) {
