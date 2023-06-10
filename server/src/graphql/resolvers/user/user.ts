@@ -34,12 +34,13 @@ const userResolvers: {
     },
   },
   Mutation: {
-    updateCredit: async (userId: any, newCredit) => {
+    updateCredit: async (parent, { userId, newCredit }) => {
       try {
         await UserModel.updateOne(
           { _id: new Types.ObjectId(userId) },
           { $set: { credit: newCredit } }
         );
+        console.log("newCredit " + newCredit)
         return { message: "user credit updated succesfully", code: 200 };
       } catch (error) {
         console.log("failed with " + error);

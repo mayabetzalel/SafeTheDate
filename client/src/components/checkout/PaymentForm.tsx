@@ -9,7 +9,7 @@ import { graphql } from "../../graphql"
 import { useMutation, useQuery } from "urql"
 import _ from 'lodash';
 import { useLocation } from 'react-router-dom';
-import axios from "axios"
+import { User } from "../../graphql/graphql";
 
 const CREATE_TICKET_MUTATION = graphql(`
   mutation CreateTicket($inputTicket: InputTicket!) {
@@ -59,12 +59,25 @@ const UPDATE_TICKET_TO_FIRST_HAND = graphql(`
   }
 `)
 
+const UPDATE_USER_CREDIT = graphql(`
+  mutation updateCredit($userId: String!, $newCredit: Float!) {
+    updateCredit(userId: $userId, newCredit: $newCredit) {
+      message
+      code
+    }
+  }
+`)
+
 const PaymentForm = ({
+  ticketAmount,
   amount,
   description,
+  newCredit
 }: {
+  ticketAmount,
   amount: number
-  description: string
+  description: string,
+  newCredit: number
 }) => {
   const { enqueueSnackbar } = useSnackbar()
   const [orderID, setOrderID] = useState(false)
@@ -72,9 +85,11 @@ const PaymentForm = ({
   const [createTicket, setCreateTicket] = useState(false)
   const [decrease, setDecrease] = useState(false)
   const { currentUser } = useAuth()
-  const [user, setCurrentUser] = useState<any[]>([])
+  const [user, setCurrentUser] = useState<User>()
   const [isShowTicket, setShowTicket] = useState(false)
   const [ticketData, setTicketData] = useState<Partial<InputTicket>>({})
+
+  console.log(newCredit)
 
   const [CreateTicketResult, CreateTicket] =
     useMutation<
@@ -92,13 +107,22 @@ const PaymentForm = ({
       {}
     >(DECREASE_TICKET_AMOUNT)
 
-  const [updateTicket, updateSecondToFirst] =
+    const [updateTicket, updateSecondToFirst] =
     useMutation<
       {
         updateSecondToFirst: MutationResponse
       },
       { createTicketParams: CreateTicketParams }
     >(UPDATE_TICKET_TO_FIRST_HAND)
+
+  const [updateCredit, setUpdateCredit] =
+    useMutation<
+      {
+        userId: string,
+        newCredit: number
+      },
+      {}
+    >(UPDATE_USER_CREDIT)
 
   const { pathname } = useLocation();
 
@@ -130,6 +154,7 @@ const PaymentForm = ({
   useEffect(() => {
     if (decrease) {
       setDecrease(false)
+      ticketAmount(eventData["ticketsAmount"] - 1)
       const eventId = ticketData.eventId || ""
       setDeacreaseTicketAmount({ eventId }).then((result) => {
         if (result.error)
@@ -159,6 +184,8 @@ const PaymentForm = ({
 
       setTicketData(inputTicket)
       setCurrentUser(currentUser || [])
+      const userId = currentUser? currentUser["_id"] : ""
+
       CreateTicket({ inputTicket }).then((result) => {
         if (result.error) {
           console.error("Error creating ticket:", result.error)
@@ -166,6 +193,7 @@ const PaymentForm = ({
         } else {
           setDecrease(true)
           setShowTicket(true)
+          setUpdateCredit({ userId, newCredit })
           enqueueSnackbar("Ticket created successfully", { variant: 'success' })
         }
       })
