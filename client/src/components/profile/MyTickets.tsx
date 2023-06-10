@@ -1,11 +1,14 @@
 import { useQuery } from "urql";
 import FetchingState from "../../utils/fetchingState";
 import { graphql } from "../../graphql";
-import { Exact, FilterEventParams, TicketResponse } from "../../graphql/graphql";
+import {
+  Exact,
+  FilterEventParams,
+  TicketResponse,
+} from "../../graphql/graphql";
 import { Grid, Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
-import { useNavigate } from "react-router-dom";
 import { floor } from "lodash";
 import { MyTicket } from "./MyTicket";
 import { useAuth } from "../../hooks/authController/AuthContext";
@@ -28,6 +31,7 @@ const ticketQuery = graphql(`
       location
       timeAndDate
       type
+      price
       image
       onMarketTime
       barcode
@@ -48,21 +52,25 @@ interface TicketsProps {
   userId?: string;
 }
 
-const MyTickets = ({ filterParams, userId }: TicketsProps) => {
+const MyTickets = ({ filterParams }: TicketsProps) => {
   const { currentUser } = useAuth();
   const [tickets, setTickets] = useState<TicketResponse[]>([]);
   const [page, setPage] = useState(0);
-  const navigate = useNavigate();
   const [{ data = { ticket: [] }, fetching, error }] = useQuery<
     { ticket: Exact<TicketResponse>[] },
-    { filterParams: FilterEventParams; skip: number; limit: number; userId: string; }
+    {
+      filterParams: FilterEventParams;
+      skip: number;
+      limit: number;
+      userId: string;
+    }
   >({
     query: ticketQuery,
     variables: {
       filterParams: filterParams || {},
       skip: page * EVENTS_PER_FETCH,
       limit: EVENTS_PER_FETCH,
-      userId: currentUser?.['_id'] || ""
+      userId: currentUser?.["_id"] || "",
     },
   });
 
@@ -73,19 +81,23 @@ const MyTickets = ({ filterParams, userId }: TicketsProps) => {
     query: ticketCountQuery,
     variables: {
       filterParams: filterParams || {},
-      userId: currentUser?.['_id'] || ""
+      userId: currentUser?.["_id"] || "",
     },
   });
 
   function localUpdateMarketTime(ticketId: string) {
-    setTickets(prev => {
-      const ticketIndex = prev.findIndex(ticket => ticket.ticketId === ticketId);
+    setTickets((prev) => {
+      const ticketIndex = prev.findIndex(
+        (ticket) => ticket.ticketId === ticketId
+      );
 
       let updatedTickets = [...prev];
 
-      updatedTickets[ticketIndex].onMarketTime = prev[ticketIndex].onMarketTime ? 0 : new Date().getTime();
+      updatedTickets[ticketIndex].onMarketTime = prev[ticketIndex].onMarketTime
+        ? 0
+        : new Date().getTime();
       return updatedTickets;
-    })
+    });
   }
 
   useEffect(() => {
@@ -93,26 +105,26 @@ const MyTickets = ({ filterParams, userId }: TicketsProps) => {
   }, [filterParams]);
 
   useEffect(() => {
-    setTickets(data.ticket)
-  }, [data.ticket])
+    if (data?.ticket) setTickets(data.ticket);
+  }, [data]);
 
   return (
     <FetchingState isFetching={fetching}>
-
       <GridHiddenScroll container sx={{ height: "inherit", overflowY: "auto" }}>
         {tickets.map((ticket) => {
           const { ticketId, onMarketTime } = ticket;
-          return <Grid key={ticketId!} item sm={4} md={3}>
-            <MyTicket
-              ticket={ticket}
-              localUpdateMarketTime={localUpdateMarketTime}
-              isOnMarket={!!onMarketTime}
-            />
-          </Grid>
-
-        }
-        )}
+          return (
+            <Grid key={ticketId!} item sm={4} md={3}>
+              <MyTicket
+                ticket={ticket}
+                localUpdateMarketTime={localUpdateMarketTime}
+                isOnMarket={!!onMarketTime}
+              />
+            </Grid>
+          );
+        })}
       </GridHiddenScroll>
+
       <Pagination
         count={floor(dataCount?.ticketCount / EVENTS_PER_FETCH) + 1}
         page={page + 1}

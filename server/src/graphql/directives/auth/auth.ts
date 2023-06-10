@@ -5,8 +5,6 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-type x = ReturnType<any>
-
 export const authSchemaTransformer = (schema: GraphQLSchema) =>
   mapSchema(schema, {
     [MapperKind.OBJECT_FIELD]: (fieldConfig) => {
@@ -15,15 +13,16 @@ export const authSchemaTransformer = (schema: GraphQLSchema) =>
 
       if (authDirective && NEED_AUTH) {
         const originalResolver = fieldConfig.resolve;
-        const fieldType = fieldConfig.type;
         fieldConfig.resolve = async (source, args, context, info) => {
           const token = await context.request.cookieStore?.get("access_token");
+          const {AUTH_ENDPOINT} = process.env;
 
           if (!!token) {
-            // @ts-ignore
+
             try {
+              // @ts-ignore
               const user = await axios
-                  .get("http://localhost:5000/api/auth/session", {
+                  .get(`${AUTH_ENDPOINT}/api/auth/session`, {
                     headers: {
                       cookie: `${token.name}=${token.value}`,
                     },

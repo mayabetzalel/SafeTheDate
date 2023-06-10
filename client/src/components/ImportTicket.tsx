@@ -1,13 +1,14 @@
-import { graphql } from "../graphql";
+import { useState, useEffect } from "react";
 import { useQuery } from "urql";
-import { Exact, ReturnedData, ThirdPartyTicket } from "../graphql/graphql";
-import { useState, useEffect, useRef } from "react";
+import { QrReader } from "react-qr-reader";
 import { Box, Typography } from "@mui/material";
 import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import InvalidIcon from "@mui/icons-material/CancelOutlined";
+
+import { graphql } from "../graphql";
+import { Exact, ReturnedData } from "../graphql/graphql";
 import Spinner from "../utils/spinner";
 import { Center } from "../utils/center";
-import { QrReader } from "react-qr-reader";
 
 export const ImportTicket = () => {
   const [code, setCode] = useState("");
@@ -37,7 +38,7 @@ export const ImportTicket = () => {
     }
   `);
 
-  const [{ data: isValidData, fetching: fetchingIsVallid }] = useQuery<{
+  const [{ data: isValidData, fetching: fetchingIsValid }] = useQuery<{
     validateTicketAndImport: Exact<ReturnedData>;
   }>({
     query: VALIDATE_TICKET_QUERY,
@@ -66,7 +67,7 @@ export const ImportTicket = () => {
   }, [showIsValid]);
 
   const renderIsValidTicket = () => {
-    if (fetchingIsVallid) return <Spinner />;
+    if (fetchingIsValid) return <Spinner />;
 
     if (!showIsValid) return <></>;
 

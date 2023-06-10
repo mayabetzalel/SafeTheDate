@@ -1,14 +1,14 @@
+import { useState } from "react"
 import { Stack, Typography, Button } from "@mui/material";
 import { styled } from "@mui/system";
-import { useAuth } from "../../hooks/authController/AuthContext";
-import { useState } from "react"
+import { useSnackbar } from "notistack";
+import { useMutation, useQuery } from "urql";
 
 import shadowPersonImage from "../../assets/shadow-person.png";
 import ImagePicker from "../ImagePicker";
-import { useMutation, useQuery } from "urql";
 import { graphql } from "../../graphql";
 import { Exact, MutationResponse, User } from "../../graphql/graphql";
-import { useSnackbar } from "notistack";
+import { useAuth } from "../../hooks/authController/AuthContext";
 
 const CircleImage = styled("img")({
   width: "200px",
@@ -24,6 +24,7 @@ const USER_QUERY = graphql(`
   query User($userId: String!) {
     user(userId: $userId) {
       image
+      credit
     }
   }
 `);
@@ -44,7 +45,7 @@ export const MyDetails = () => {
   const [image, setImage] = useState(undefined);
 
   const [{ data = { user: {} }, fetching, error }] = useQuery<
-    { user: Pick<User, "image"> },
+    { user: Pick<User, "image" | "credit"> },
     { userId: string; }
   >({
     query: USER_QUERY,
@@ -53,16 +54,15 @@ export const MyDetails = () => {
     },
   });
 
+  console.log(data.user)
+
   const [updateUserImageResult, updateUserImage] = useMutation<
     {
       updateImage: MutationResponse;
     }>(UPDATE_IMAGE_MUTATION);
 
-  const onChangeImage = (imageList) => {
-    // only allow one image to be uploaded
-    if (imageList.length === 1) {
-      setEditedImage(imageList[0].data_url);
-    }
+  const onChangeImage = (image) => {
+    setEditedImage(image);
   };
 
   function saveImage() {
@@ -93,6 +93,9 @@ export const MyDetails = () => {
       </Typography>
       <Typography variant="h4" color="primary">
         {currentUser?.["email"]}
+      </Typography>
+      <Typography variant="h6" color="primary">
+        {`You have ${data.user?.credit} credit in your account`}
       </Typography>
     </Stack>
   );

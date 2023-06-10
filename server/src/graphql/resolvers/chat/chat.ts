@@ -1,9 +1,38 @@
 import { InputMessage } from "../../typeDefs"
+import { Event as EventModel } from "../../../../mongo/models/Event";
 import EntitiesMaping from "../../../chat/EntitiesMaping"
 import IntentsStore from "../../../chat/IntentsStore"
 import { log } from "console"
 const { Wit } = require("node-wit")
 var _ = require("lodash")
+
+type NewType = Date;
+
+interface emptySearchVariables {
+  eventName?: string;
+  location?: string;
+  from?: Date;
+  to?: NewType;
+}
+
+async function isSearchResultsEmpty(variables: emptySearchVariables) {
+  const {eventName, location, from, to} = variables;
+
+  let filter = {
+    ...(eventName && { name: { $regex: eventName, $options: "i" } }),
+    ...(location && { location: { $regex: location, $options: "i" } }),
+    ...((from || to) && {
+      timeAndDate: {
+        ...(from && { $gte: new Date(from) }),
+        ...(to && { $lt: new Date(to) }),
+      },
+    }),
+  };
+
+  let events = await EventModel.find(filter);
+
+  return events.length === 0;
+}
 
 export default {
   Mutation: {
@@ -29,8 +58,19 @@ export default {
 
         let responseMessage
 
-        if (intent && IntentsStore?.[intent] && intent !== "nothing")
-          responseMessage = IntentsStore[intent]?.responseMessage;
+        if (intent && IntentsStore?.[intent] && intent !== "nothing") {
+          let nestedEntities = {};
+          entities.forEach(entity => {
+            nestedEntities =  {...nestedEntities, ...entity}
+          });
+          
+          const isEmpty = await isSearchResultsEmpty(nestedEntities);
+
+          if (isEmpty) {
+            responseMessage = IntentsStore?.empty?.responseMessage;
+          } else responseMessage = IntentsStore[intent]?.responseMessage;
+
+        }
         else responseMessage = IntentsStore?.nothing?.responseMessage;
 
         return {

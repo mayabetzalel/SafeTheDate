@@ -7,7 +7,6 @@ interface CustomAxiosRequestConfig extends AxiosRequestConfig {
 axios.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
-    console.log("interceptors");
     const originalRequest: CustomAxiosRequestConfig =
       error.config as CustomAxiosRequestConfig;
     if (
@@ -19,7 +18,6 @@ axios.interceptors.response.use(
       console.log("regenerateAccessToken");
       const response = await backendAPI.auth.regenerateAccessToken();
       if (response) {
-        console.log(response);
         return axios(originalRequest);
         // Retry the original request
       }

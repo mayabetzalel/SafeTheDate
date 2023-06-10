@@ -1,17 +1,16 @@
 /* eslint-disable no-debugger */
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js"
 import { useSnackbar } from "notistack"
 import DisplayTicket from "../DisplayTicketUsingEvent"
 import { useAuth } from "../../hooks/authController/AuthContext"
-import { InputTicket, MutationResponse, Ticket, FilterTicketParams } from "../../graphql/graphql"
+import { InputTicket, MutationResponse, CreateTicketParams } from "../../graphql/graphql"
 import { graphql } from "../../graphql"
 import { useMutation, useQuery } from "urql"
 import _ from 'lodash';
 import { useLocation } from 'react-router-dom';
+import { User } from "../../graphql/graphql";
 
-const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-const LENGTH = 60;
 const CREATE_TICKET_MUTATION = graphql(`
   mutation CreateTicket($inputTicket: InputTicket!) {
     createTicket(inputTicket: $inputTicket) {
@@ -52,32 +51,33 @@ const GET_EVENT = graphql(`
 `);
 
 const UPDATE_TICKET_TO_FIRST_HAND = graphql(`
-  mutation changeSecondHandToFirstHand($filterTicketParams: FilterTicketParams!) {
-    changeSecondHandToFirstHand(filterTicketParams: $filterTicketParams) {
+  mutation changeSecondHandToFirstHand($createTicketParams: CreateTicketParams!) {
+    changeSecondHandToFirstHand(createTicketParams: $createTicketParams) {
       message
       code
     }
   }
 `)
 
-
-function makeId() {
-  let result = "";
-  const charactersLength = characters.length;
-  let counter = 0;
-  while (counter < LENGTH) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    counter += 1;
+const UPDATE_USER_CREDIT = graphql(`
+  mutation updateCredit($userId: String!, $newCredit: Float!) {
+    updateCredit(userId: $userId, newCredit: $newCredit) {
+      message
+      code
+    }
   }
-  return result;
-}
+`)
 
 const PaymentForm = ({
+  ticketAmount,
   amount,
   description,
+  newCredit
 }: {
+  ticketAmount,
   amount: number
-  description: string
+  description: string,
+  newCredit: number
 }) => {
   const { enqueueSnackbar } = useSnackbar()
   const [orderID, setOrderID] = useState(false)
@@ -85,9 +85,11 @@ const PaymentForm = ({
   const [createTicket, setCreateTicket] = useState(false)
   const [decrease, setDecrease] = useState(false)
   const { currentUser } = useAuth()
-  const [user, setCurrentUser] = useState<any[]>([])
+  const [user, setCurrentUser] = useState<User>()
   const [isShowTicket, setShowTicket] = useState(false)
   const [ticketData, setTicketData] = useState<Partial<InputTicket>>({})
+
+  console.log(newCredit)
 
   const [CreateTicketResult, CreateTicket] =
     useMutation<
@@ -110,8 +112,17 @@ const PaymentForm = ({
       {
         updateSecondToFirst: MutationResponse
       },
-      { filterTicketParams: FilterTicketParams }
+      { createTicketParams: CreateTicketParams }
     >(UPDATE_TICKET_TO_FIRST_HAND)
+
+  const [updateCredit, setUpdateCredit] =
+    useMutation<
+      {
+        userId: string,
+        newCredit: number
+      },
+      {}
+    >(UPDATE_USER_CREDIT)
 
   const { pathname } = useLocation();
 
@@ -132,15 +143,18 @@ const PaymentForm = ({
   });
 
   let eventData = event[0].data || {}
-  let ticketPrice = 60
+  let ticketPrice
+  let isExternal
   if (event && eventData && !_.isEqual(eventData, {}) && eventData["event"]) {
     eventData = eventData["event"][0]
-    ticketPrice = event["price"] || 50
+    ticketPrice = eventData["ticketPrice"]
+    isExternal = eventData["isExternal"] || false
   }
 
   useEffect(() => {
     if (decrease) {
       setDecrease(false)
+      ticketAmount(eventData["ticketsAmount"] - 1)
       const eventId = ticketData.eventId || ""
       setDeacreaseTicketAmount({ eventId }).then((result) => {
         if (result.error)
@@ -155,21 +169,23 @@ const PaymentForm = ({
         eventId: eventId,
         isSecondHand: false,
         price: ticketPrice,
-        barcode: makeId()
+        isExternal: isExternal
       }
-
+      console.log(eventData["isExternal"])
       // SecondHandTicket
       if (dataCount["getAllSecondHandTicketsByEventId"] > eventData["ticketsAmount"] - 1) {
-
         updateSecondToFirst({
-          filterTicketParams: {
-            barcode: inputTicket.barcode,
+          createTicketParams: {
             eventId: eventId,
+            isSecondHand: true
           }
         })
       }
+
       setTicketData(inputTicket)
       setCurrentUser(currentUser || [])
+      const userId = currentUser ? currentUser["_id"] : ""
+
       CreateTicket({ inputTicket }).then((result) => {
         if (result.error) {
           console.error("Error creating ticket:", result.error)
@@ -177,6 +193,7 @@ const PaymentForm = ({
         } else {
           setDecrease(true)
           setShowTicket(true)
+          setUpdateCredit({ userId, newCredit })
           enqueueSnackbar("Ticket created successfully", { variant: 'success' })
         }
       })

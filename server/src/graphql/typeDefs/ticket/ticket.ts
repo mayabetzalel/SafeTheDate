@@ -1,8 +1,8 @@
 export default `
     type Ticket {
         _id: ID
-        ownerId: ID
-        eventId: ID
+        ownerId: String
+        eventId: String
         isSecondHand: Boolean
         onMarketTime: Float
         price: Float
@@ -19,21 +19,29 @@ export default `
         name: String
         location: String
         timeAndDate: Float
+        price: Float
         type: String
         image: Upload
     }
 
     input InputTicket {
-        eventId: ID!,
+        eventId: String!,
         isSecondHand: Boolean!, 
         price: Float!,
-        barcode: String!,
+        isExternal: Boolean!
     }
 
     input FilterTicketParams {
-        userId: ID
-        eventId: ID
+        userId: String
+        eventId: String
         barcode: String
+    }
+
+    input CreateTicketParams {
+        userId: String
+        eventId: String
+        barcode: String
+        isSecondHand: Boolean
     }
 
     type Query {
@@ -53,7 +61,7 @@ export default `
     }
 
     type Query {
-        isVallid(eventId: String!, barcode: String!): Boolean!
+        isValid(eventId: String!, barcode: String!): Boolean!
     }
 
     type Mutation {
@@ -61,6 +69,6 @@ export default `
     }
 
     type Mutation {
-        changeSecondHandToFirstHand(filterTicketParams: FilterTicketParams) : MutationResponse!
+        changeSecondHandToFirstHand(createTicketParams: CreateTicketParams) : MutationResponse!
     }
 `
