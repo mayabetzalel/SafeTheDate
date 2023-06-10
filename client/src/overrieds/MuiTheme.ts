@@ -78,12 +78,6 @@ const theme = createTheme({
     MuiToggleButton: {
       styleOverrides: {
         root: ({ theme }) => ({
-          "&.Mui-selected": {
-            backgroundColor: theme.palette.secondary.main,
-            ":hover": {
-              backgroundColor: theme.palette.secondary.main,
-            },
-          },
           ":hover": {
             backgroundColor: theme.palette.secondary.main,
             color: theme.palette.text.primary,
