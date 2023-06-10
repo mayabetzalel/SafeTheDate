@@ -6,6 +6,7 @@ import EventCard from "../EventCard/EventCard";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
 import { DisplayTicket } from "../DisplayTicket";
+import PutOnSellModal from "../PutOnSellModal";
 
 const CREATE_EVENT_MUTATION = graphql(`
   mutation UpdateMarket($ticketId: String!) {
@@ -24,40 +25,57 @@ interface MyTicketCardProps {
 
 export const MyTicket = (props: MyTicketCardProps) => {
     const { isOnMarket, localUpdateMarketTime, ticket } = props;
-    const { name, image, ticketId, type, location } = ticket;
+    const { name, image, ticketId, type, location, price, onMarketTime } = ticket;
     const navigate = useNavigate();
-    const [chosenTicket, setChosenTicket] = useState<string>();
+    const [displayTicket, setDisplayTicket] = useState<boolean>(false);
+    const [sellModalOpen, setSellModalOpen] = useState<boolean>(false);
     const { enqueueSnackbar } = useSnackbar();
     const [updateMarketStatusResult, updateMarketStatus] = useMutation<
         {
             updateMarket: MutationResponse;
         }>(CREATE_EVENT_MUTATION);
 
-    function onMarketChange(ticketId: string) {
+    function onMarketChange() {
+        toggleModalView();
         updateMarketStatus({ ticketId }).then((result) => {
             if (result.error) {
                 console.error("Error updating ticket:", result.error);
                 enqueueSnackbar("An error occurred", { variant: "error" });
             } else {
-                localUpdateMarketTime(ticketId);
+                localUpdateMarketTime(ticketId || "");
                 enqueueSnackbar(`Ticket is ${!isOnMarket ? "on" : "off"} market`, { variant: "success" });
                 console.log("Ticket updated:", result.data?.updateMarket);
             }
         });
     }
 
-    function closeDisplay() {
-        setChosenTicket(undefined);
+    function toggleModalView() {
+        setSellModalOpen(prev => !prev);
+      }
+
+    function toggleDisplayTicket() {
+        setDisplayTicket(true);
     }
 
     const menuItems = [
-        { label: `Ticket ${!isOnMarket ? "on" : "off"} market`, onClick: onMarketChange },
-        { label: "Show ticket details", onClick: setChosenTicket }
+        { label: `Ticket ${!isOnMarket ? "on" : "off"} market`, onClick: toggleModalView },
+        { label: "Show ticket details", onClick: toggleDisplayTicket }
     ]
 
     return (
         <>
-            {chosenTicket && <DisplayTicket ticket={ticket} isOpen={!!chosenTicket} toggleIsOpen={closeDisplay} />}
+            {sellModalOpen && (
+                <PutOnSellModal
+                    eventName={name || ""}
+                    sellPrice={price || 0}
+                    commissionPercent={10} // example commission percent, replace with your actual value
+                    image={image}
+                    onClose={toggleModalView}
+                    onPutOnSell={onMarketChange}
+                    isOnMarket={!!onMarketTime}
+                />
+            )}
+            {displayTicket && <DisplayTicket ticket={ticket} isOpen={displayTicket} toggleIsOpen={toggleDisplayTicket} />}
             <EventCard
                 title={name!}
                 header={type!}

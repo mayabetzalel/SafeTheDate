@@ -23,7 +23,7 @@ interface EventCardProps {
   ticketsAmount?: number
   ticketPrice?: number
   onClick?: () => void;
-  menuItems?: { label: string; onClick: (id: string) => void }[];
+  menuItems?: { label: string; onClick: () => void }[];
   id: string;
 }
 
@@ -48,9 +48,9 @@ const EventCard = ({
     setAnchorEl(null);
   };
 
-  const handleMenuItemClick = (itemOnClick: (id: string) => void) => {
+  const handleMenuItemClick = (itemOnClick: () => void) => {
     return () => {
-      itemOnClick(id);
+      itemOnClick();
       handleMenuClose();
     };
   };
@@ -83,9 +83,12 @@ const EventCard = ({
           <Typography variant="h5" align="center">
             {title}
           </Typography>
-          <Typography variant="body1" align={"center"}>
-            {ticketsAmount ? (ticketsAmount + ' tickets avilable ' + (ticketPrice && ticketPrice + ' NIS')) : 'No tickets avilable'}
-          </Typography>
+          {
+            !menuItems && <Typography variant="body1" align={"center"}>
+              {ticketsAmount ? (ticketsAmount + ' tickets avilable ' + (ticketPrice && ticketPrice + ' NIS')) : 'No tickets avilable'}
+            </Typography>
+          }
+
         </CardContent >
         <CardMedia sx={{ height: TICKET_HEIGHT }} image={image} />
         <Menu

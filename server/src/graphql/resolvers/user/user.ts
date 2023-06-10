@@ -1,6 +1,7 @@
 import { MutationResolvers, QueryResolvers } from "../../typeDefs";
 import { User as UserModel } from "../../../../mongo/models/User";
 import mongoose, { Types } from "mongoose";
+import { readAndConvertToBase64, writeBase64ToFile } from "../../../../mongo/FileHandler";
 
 const FAILED_MUTATION_MESSAGE = "mutation upadteCredit failed";
 
@@ -17,7 +18,7 @@ const userResolvers: {
       })
         .exec()
         .then(
-          ({ _id, username, email, firstName, lastName, credit, image }) => {
+          async ({ _id, username, email, firstName, lastName, credit, image }) => {
             return {
               _id: _id?.toString(),
               username,
@@ -25,7 +26,7 @@ const userResolvers: {
               firstName,
               lastName,
               credit,
-              image,
+              ...(image === "exists" && {image: await readAndConvertToBase64(_id + ".jpg")}),
             };
           }
         );
@@ -33,12 +34,13 @@ const userResolvers: {
     },
   },
   Mutation: {
-    updateCredit: async (userId: any, newCredit) => {
+    updateCredit: async (parent, { userId, newCredit }) => {
       try {
         await UserModel.updateOne(
           { _id: new Types.ObjectId(userId) },
           { $set: { credit: newCredit } }
         );
+        console.log("newCredit " + newCredit)
         return { message: "user credit updated succesfully", code: 200 };
       } catch (error) {
         console.log("failed with " + error);
@@ -49,10 +51,12 @@ const userResolvers: {
       try {
         const { userId, image } = args;
 
-        await UserModel.updateOne(
+        let user = await UserModel.updateOne(
           { _id: new Types.ObjectId(userId) },
-          { $set: { image: image } }
+          { $set: { image: "exists" } }
         );
+        writeBase64ToFile(userId + ".jpg", image)
+
         return { message: "user credit updated succesfully", code: 200 };
       } catch (error) {
         console.log("failed with to save image" + error);

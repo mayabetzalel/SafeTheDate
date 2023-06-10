@@ -3,6 +3,7 @@ import { Ticket as TicketModel } from "../../../../mongo/models/Ticket"
 import { Event as EventModel } from "../../../../mongo/models/Event"
 import { User as UserModel } from "../../../../mongo/models/User"
 import mongoose, { Types } from 'mongoose';
+import { readAndConvertToBase64 } from "../../../../mongo/FileHandler";
 var nodemailer = require("nodemailer");
 
 const CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -42,7 +43,7 @@ const ticketResolvers: {
         }),
       };
 
-      const unprocessedTickets = await TicketModel.find({...filter, ...(userId && { ownerId: userId }) })
+      const unprocessedTickets = await TicketModel.find({ ...filter, ...(userId && { ownerId: userId }) })
         .populate("eventId")
         .skip(skip)
         .limit(limit)
@@ -50,15 +51,28 @@ const ticketResolvers: {
 
       const eventTickets = unprocessedTickets.filter(ticket => ticket.eventId);
 
-      let tickets = eventTickets.map(({ eventId, _id, onMarketTime, barcode }) => ({
-        name: (eventId as any).name,
-        location: (eventId as any).location,
-        timeAndDate: new Date((eventId as any).timeAndDate).getTime(),
-        type: (eventId as any).type,
-        image: (eventId as any).image,
-        barcode: barcode,
-        ticketId: _id.toString(),
-        onMarketTime: new Date(onMarketTime).getTime()
+      let tickets = await Promise.all(eventTickets.map(({ eventId, _id, onMarketTime, barcode, price }) => { 
+        let ticketResponse = {
+          name: (eventId as any).name,
+          location: (eventId as any).location,
+          timeAndDate: new Date((eventId as any).timeAndDate).getTime(),
+          type: (eventId as any).type,
+          price: price as number,
+          image: (eventId as any).image,
+          barcode: barcode,
+          ticketId: _id.toString(),
+          onMarketTime: new Date(onMarketTime).getTime()
+        }
+
+        if ((eventId as any).image === "exists") {
+          return readAndConvertToBase64((eventId as any)._id + ".jpg")
+            .then((image) => ({
+              ...ticketResponse,
+              image
+            }));
+        }
+
+        return ticketResponse;
       }));
 
       return tickets;
@@ -67,8 +81,7 @@ const ticketResolvers: {
       const { filterParams = {}, ids } = args;
 
       const userId = context.user._id;
-      console.log(userId);
-      
+
       let { name, location, from, to, } = filterParams;
       let filter = {
         ...(ids && { _id: { $in: ids } }),
@@ -82,7 +95,7 @@ const ticketResolvers: {
         }),
       };
 
-      return await TicketModel.find({...filter, ...(userId && { ownerId: userId }) })
+      return await TicketModel.find({ ...filter, ...(userId && { ownerId: userId }) })
         .count()
         .exec();
 
@@ -94,7 +107,6 @@ const ticketResolvers: {
         eventId: eventId
       }).count()
 
-      console.log(tickets)
       return tickets
     }
   },
@@ -111,11 +123,12 @@ const ticketResolvers: {
         if ((eventDate && now.getTime() < eventDate.getTime()) || !eventDate) {
 
           let updatetime = await TicketModel.updateOne({ _id: new Types.ObjectId(ticketId) },
-          { $set: { onMarketTime: onMarket ? null : new Date().getTime() } }, { upsert: true });
+            { $set: { onMarketTime: onMarket ? null : new Date().getTime() } }, { upsert: true });
 
           console.log("Ticket market time update: " + JSON.stringify(updatetime))
 
-          await EventModel.updateOne({ _id: ticket.eventId }, { $inc: { ticketsAmount: 1 }})
+          await EventModel.updateOne({ _id: ticket.eventId },
+            { $inc: { ticketsAmount: onMarket ? -1 : 1 } })
 
           return { message: "ticket updated succesfully", code: 200 }
         }
@@ -130,7 +143,7 @@ const ticketResolvers: {
       const { barcode, eventId } = createTicketParams
       try {
         let oldTicket = await TicketModel.find({
-          eventId: eventId, 
+          eventId: eventId,
           onMarketTime: { $exists: true }
         }).sort({ "_id": 1, "onMarketTime": 1 }).limit(1)
 
@@ -144,7 +157,7 @@ const ticketResolvers: {
 
         // Email massage to user that it's ticket was sold.
         await sendEmail(updatedUserCredit.email, creditToAdd)
-        
+
         await TicketModel.deleteOne({
           _id: oldTicket[0]._id
         })
@@ -168,7 +181,7 @@ const ticketResolvers: {
         console.log("isExternal " + isExternal)
         const userId = context.user._id;
         let barcode
-        if(isExternal) {
+        if (isExternal) {
           //@Aviv
         } else {
           barcode = await makeBarcode()
@@ -194,7 +207,7 @@ const ticketResolvers: {
   },
 }
 
-const makeBarcode = async function() {
+const makeBarcode = async function () {
   let result = "";
   const charactersLength = CHARACTERS.length;
   let counter = 0;
@@ -205,19 +218,19 @@ const makeBarcode = async function() {
   return result;
 }
 
-const sendEmail = async function(email, creditToAdd) {
+const sendEmail = async function (email, creditToAdd) {
   var transporter = nodemailer.createTransport({
     service: process.env.SMTP_SERVICE,
-    secure: true, 
+    secure: true,
     logger: true,
     debug: true,
     secureConnection: false,
     auth: {
-        user: process.env.SMTP_AUTH_USER, 
-        pass: process.env.SMTP_AUTH_PASSWORD, 
+      user: process.env.SMTP_AUTH_USER,
+      pass: process.env.SMTP_AUTH_PASSWORD,
     },
-    tls:{
-        rejectUnAuthorized:true
+    tls: {
+      rejectUnAuthorized: true
     }
   })
 
@@ -226,10 +239,10 @@ const sendEmail = async function(email, creditToAdd) {
     from: process.env.SMTP_AUTH_USER,
     subject: "safe the date - ticket sold",
     text: `We are glad to inform you that your published ticket was sold. You recived ${creditToAdd} shekels credit to your account`,
-  },  function(error, response) {
-    if(error){
+  }, function (error, response) {
+    if (error) {
       console.log("error sending email", error)
-    } else{
+    } else {
       console.log("Email send successfully to " + email)
     }
   })

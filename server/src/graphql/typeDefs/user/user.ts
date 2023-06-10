@@ -5,7 +5,7 @@ export default `
         email: String
         firstName: String
         lastName: String
-        creadit: Float
+        credit: Float
         image: Upload
     }   
     

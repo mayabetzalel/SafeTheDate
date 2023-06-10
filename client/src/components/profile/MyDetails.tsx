@@ -61,11 +61,8 @@ export const MyDetails = () => {
       updateImage: MutationResponse;
     }>(UPDATE_IMAGE_MUTATION);
 
-  const onChangeImage = (imageList) => {
-    // only allow one image to be uploaded
-    if (imageList.length === 1) {
-      setEditedImage(imageList[0].data_url);
-    }
+  const onChangeImage = (image) => {
+    setEditedImage(image);
   };
 
   function saveImage() {
