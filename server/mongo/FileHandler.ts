@@ -3,6 +3,10 @@ const fs = require('fs');
 export function writeBase64ToFile(fileName, base64String) {
   const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
   const buffer = Buffer.from(base64Data, 'base64');
+  
+  if (!fs.existsSync(FILE_PATH)) {
+    fs.mkdirSync(FILE_PATH);
+  }
 
   fs.writeFile(FILE_PATH + fileName, buffer, (error) => {
     if (error) {
