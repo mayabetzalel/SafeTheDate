@@ -65,6 +65,12 @@ const EventCard = ({
               {title.charAt(0)}
             </Avatar>
           }
+          subheaderTypographyProps={{
+            noWrap: true
+          }}
+          titleTypographyProps={{
+            noWrap: true
+          }}
           title={header}
           subheader={subheader}
           action={
@@ -80,7 +86,7 @@ const EventCard = ({
           }
         />
         < CardContent >
-          <Typography variant="h5" align="center">
+          <Typography variant="h5" align="center" noWrap>
             {title}
           </Typography>
           {

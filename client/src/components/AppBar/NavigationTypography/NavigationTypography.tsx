@@ -31,11 +31,10 @@ const NavigationTypography = ({
 
   return (
     <StyledTypography
-      variant={"h5"}
       {...other}
       color={getColor()}
       onClick={() => navigate(route)}
-      sx={{cursor: "pointer"}}
+      sx={{cursor: "pointer", typography: {sm: 'h6', md: "h5"}}}
     >
       {children}
     </StyledTypography>

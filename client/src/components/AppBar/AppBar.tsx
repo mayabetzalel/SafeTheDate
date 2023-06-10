@@ -49,7 +49,7 @@ const Navbar = () => {
     >
       <Grid item xs={2}>
         <img
-          style={{ height: "10vh", width: "10=7vh", cursor: "pointer" }}
+          style={{ width: "100%" , maxWidth: "200px", height: "auto", cursor: "pointer" }}
           src={logo}
           alt="fireSpot"
           onClick={() => navigate(RoutePaths.EVENTS)}

@@ -85,7 +85,7 @@ const Events = ({ filterParams, userId }: EventsProps) => {
     <FetchingState isFetching={fetching}>
       <GridHiddenScroll container sx={{ height: "inherit", overflowY: "auto" }}>
         {data.event.map(({ id, name, type, location, timeAndDate, ticketsAmount, ticketPrice, image }) => (
-          <Grid key={id!} item sm={4} md={3}>
+          <Grid key={id!} item sm={6} md={3}>
             <EventCard
               title={name!}
               header={type!}

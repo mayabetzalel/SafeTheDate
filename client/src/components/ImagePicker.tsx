@@ -56,30 +56,28 @@ function ImagePicker(props: ImagePickerProps) {
   };
 
   return (
-    <div>
-      <ImageUploading
-        onChange={handleImageUpload}
-        maxNumber={maxNumber}
-        acceptType={acceptType}
-        dataURLKey="data_url"
-        value={[]}
-      >
-        {({ onImageUpload, isDragging, dragProps }) => (
-          <div onClick={onImageUpload} {...dragProps}>
-            {image ? (
-              <img src={image} alt="uploaded" width="100" />
-            ) : (
-              <div>
-                <Button variant="contained" color="primary">
-                  {buttonTitle}
-                </Button>
-                {isDragging && <div>Drop here</div>}
-              </div>
-            )}
-          </div>
-        )}
-      </ImageUploading>
-    </div>
+    <ImageUploading
+      onChange={handleImageUpload}
+      maxNumber={maxNumber}
+      acceptType={acceptType}
+      dataURLKey="data_url"
+      value={[]}
+    >
+      {({ onImageUpload, isDragging, dragProps }) => (
+        <div onClick={onImageUpload} {...dragProps} style={{ width: "100%", height: "auto", cursor: "pointer" }}>
+          {image ? (
+            <img src={image} style={{ width: "100%", height: "auto", cursor: "pointer" }} alt="uploaded"/>
+          ) : (
+            <div>
+              <Button variant="contained" color="primary">
+                {buttonTitle}
+              </Button>
+              {isDragging && <div>Drop here</div>}
+            </div>
+          )}
+        </div>
+      )}
+    </ImageUploading>
   );
 }
 
