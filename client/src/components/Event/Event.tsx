@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 import {
   Avatar,
   CardMedia,
@@ -9,6 +10,8 @@ import {
   Button,
   IconButton,
   Tooltip,
+  Switch,
+  FormControlLabel 
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
@@ -23,7 +26,6 @@ import PaymentForm from "../checkout/PaymentForm";
 import { useAuth } from "../../hooks/authController/AuthContext";
 import { Login } from "@mui/icons-material";
 import { RoutePaths } from "../../App";
-
 
 const EVENT_QUERY = graphql(`
   query event($ids: [String]) {
@@ -60,12 +62,47 @@ const USER_QUERY = graphql(`
 `);
 
 export const Event = () => {
-  const { currentUser = {} } = useAuth();
+  const Situations = {
+    notEdit: 0,
+    regular: 1,
+    change: 2
+  }
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [event, setEvent] = useState<Exact<EventType>>();
   const { id = "" } = useParams();
   const [ticketAmount, setTicketAmount] = useState(0);
+  const [userCredit, setCredit] = useState(0);
+  const [ticketPrice, setTicketPrice] = useState(0);
+  const [useCredit, setUseCredit] = useState(false);
+  const [changePrices, setChangePrices] = useState(Situations.notEdit)
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUseCredit(e.target.checked)
+    const currentCredit = currentUser? currentUser["credit"] : 0
+      if (e.target.checked) {
+        setChangePrices(Situations.change)
+      } else {
+        setChangePrices(Situations.regular)
+      }
+  }
+  
+  useEffect(() => {
+    if(changePrices) {
+      setChangePrices(Situations.notEdit)
+      const currentCredit = currentUser? currentUser["credit"] : 0
+      const currenTicketPrice = event && event.ticketPrice ? event.ticketPrice : 0
+      
+      if (changePrices == Situations.regular) {
+        setTicketPrice(currenTicketPrice)
+        setCredit(currentCredit)
+      } else {
+        setTicketPrice( Math.max(ticketPrice - currentCredit, 0 ))
+        setCredit( Math.max(currentCredit - ticketPrice, 0 ))
+      }
+    } 
+  }, [ticketPrice, useCredit]);
+  
   const [{ data, fetching }] = useQuery<{
     event: Exact<EventType>[];
   }>({
@@ -93,8 +130,10 @@ export const Event = () => {
 
   useEffect(() => {
     if (data?.event.length == 1) {
+      console.log("here")
       setEvent(data.event.at(0));
       setTicketAmount(data.event.at(0)?.ticketsAmount || 0)
+      if(!ticketPrice) setTicketPrice(data.event.at(0)?.ticketPrice || 0)
     }
   }, [data]);
 
@@ -165,12 +204,21 @@ export const Event = () => {
 
             {currentUser ? (
               <div>
-                {event?.ticketsAmount ? (
+                { event?.ticketsAmount ? (
+                  <><div>
+                    { currentUser["credit"] ?
+                      <FormControlLabel
+                        control={ <Switch checked={useCredit} onChange={handleChange} /> }
+                        label="Use Credit" />
+                      :
+                      <></> }
+                  </div>
                   <PaymentForm
-                    ticketAmount={setTicketAmount}
-                    amount={event?.ticketPrice || 20}
-                    description={event?.name ?? "Event"}
-                  />
+                      ticketAmount={ setTicketAmount }
+                      amount={ ticketPrice }
+                      description={ event?.name ?? "Event" }
+                      newCredit={userCredit}
+                  /></>
                   ) : (
                     <></>
                   )}
