@@ -24,7 +24,7 @@ const USER_QUERY = graphql(`
   query User($userId: String!) {
     user(userId: $userId) {
       image
-      creadit
+      credit
     }
   }
 `);
@@ -45,7 +45,7 @@ export const MyDetails = () => {
   const [image, setImage] = useState(undefined);
 
   const [{ data = { user: {} }, fetching, error }] = useQuery<
-    { user: Pick<User, "image" | "creadit"> },
+    { user: Pick<User, "image" | "credit"> },
     { userId: string; }
   >({
     query: USER_QUERY,
@@ -93,6 +93,9 @@ export const MyDetails = () => {
       </Typography>
       <Typography variant="h4" color="primary">
         {currentUser?.["email"]}
+      </Typography>
+      <Typography variant="h6" color="primary">
+        {`You have ${data.user?.credit} credit in your account`}
       </Typography>
     </Stack>
   );
