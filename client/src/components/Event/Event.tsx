@@ -63,6 +63,7 @@ export const Event = () => {
   const navigate = useNavigate();
   const [event, setEvent] = useState<Exact<EventType>>();
   const { id = "" } = useParams();
+
   const [{ data, fetching }] = useQuery<{
     event: Exact<EventType>[];
   }>({

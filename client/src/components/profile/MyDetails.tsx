@@ -1,14 +1,14 @@
+import { useState } from "react"
 import { Stack, Typography, Button } from "@mui/material";
 import { styled } from "@mui/system";
-import { useAuth } from "../../hooks/authController/AuthContext";
-import { useState } from "react"
+import { useSnackbar } from "notistack";
+import { useMutation, useQuery } from "urql";
 
 import shadowPersonImage from "../../assets/shadow-person.png";
 import ImagePicker from "../ImagePicker";
-import { useMutation, useQuery } from "urql";
 import { graphql } from "../../graphql";
 import { Exact, MutationResponse, User } from "../../graphql/graphql";
-import { useSnackbar } from "notistack";
+import { useAuth } from "../../hooks/authController/AuthContext";
 
 const CircleImage = styled("img")({
   width: "200px",
@@ -24,6 +24,7 @@ const USER_QUERY = graphql(`
   query User($userId: String!) {
     user(userId: $userId) {
       image
+      creadit
     }
   }
 `);
@@ -44,7 +45,7 @@ export const MyDetails = () => {
   const [image, setImage] = useState(undefined);
 
   const [{ data = { user: {} }, fetching, error }] = useQuery<
-    { user: Pick<User, "image"> },
+    { user: Pick<User, "image" | "creadit"> },
     { userId: string; }
   >({
     query: USER_QUERY,
@@ -52,6 +53,8 @@ export const MyDetails = () => {
       userId: currentUser?.['_id']
     },
   });
+
+  console.log(data.user)
 
   const [updateUserImageResult, updateUserImage] = useMutation<
     {
