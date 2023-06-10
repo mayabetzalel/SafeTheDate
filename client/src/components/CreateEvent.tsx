@@ -97,6 +97,18 @@ export const CreateEvent = () => {
         <Grid item container xs={9} spacing={2}>
           <Grid item xs={12}>
             <TextField
+              sx={{
+                // '& .MuiOutlinedInput-root': {
+                //   '&:hover fieldset': {
+                //     borderColor: '#777777',
+                //   },
+                // },
+                // ".MuiOutlinedInput-root": {
+                //   ":hover": {
+                //     border: '0px solid pink',
+                //   },
+                // }
+              }}
               fullWidth
               label="Name of Event"
               color={"secondary"}

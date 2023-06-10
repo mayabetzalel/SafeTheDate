@@ -61,7 +61,7 @@ export default `
     }
 
     type Query {
-        isVallid(eventId: String!, barcode: String!): Boolean!
+        isValid(eventId: String!, barcode: String!): Boolean!
     }
 
     type Mutation {

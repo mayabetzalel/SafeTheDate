@@ -10,8 +10,8 @@ import { useQuery } from "urql"
 import { QrReader } from 'react-qr-reader';
 
 const VALIDATE_TICKET_QUERY = graphql(`
-  query isVallid($eventId: String!, $barcode: String!) {
-    isVallid(eventId: $eventId, barcode: $barcode)
+  query isValid($eventId: String!, $barcode: String!) {
+    isValid(eventId: $eventId, barcode: $barcode)
   }
 `);
 
@@ -20,7 +20,7 @@ export const ScanEvent = () => {
   const [code, setCode] = useState("")
   const [showIsValid, setShowIsValid] = useState(false)
 
-  const [{ data: isValidData, fetching: fetchingIsVallid }] = useQuery<{
+  const [{ data: isValidData, fetching: fetchingIsValid }] = useQuery<{
     isValid: boolean
   }>({
     query: VALIDATE_TICKET_QUERY,
@@ -48,7 +48,7 @@ export const ScanEvent = () => {
   }, [showIsValid]);
 
   const renderIsValidTicket = () => {
-    if (fetchingIsVallid) return <Spinner />
+    if (fetchingIsValid) return <Spinner />
 
     if (!showIsValid) return <></>;
 

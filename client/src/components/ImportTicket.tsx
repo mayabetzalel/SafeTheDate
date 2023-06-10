@@ -37,7 +37,7 @@ export const ImportTicket = () => {
     }
   `);
 
-  const [{ data: isValidData, fetching: fetchingIsVallid }] = useQuery<{
+  const [{ data: isValidData, fetching: fetchingIsValid }] = useQuery<{
     validateTicketAndImport: Exact<ReturnedData>;
   }>({
     query: VALIDATE_TICKET_QUERY,
@@ -66,7 +66,7 @@ export const ImportTicket = () => {
   }, [showIsValid]);
 
   const renderIsValidTicket = () => {
-    if (fetchingIsVallid) return <Spinner />;
+    if (fetchingIsValid) return <Spinner />;
 
     if (!showIsValid) return <></>;
 
