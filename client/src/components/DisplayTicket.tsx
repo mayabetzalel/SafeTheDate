@@ -19,12 +19,9 @@ interface DisplayTicketProps {
   toggleIsOpen: () => void;
 }
 
-export const DisplayTicket = (props: DisplayTicketProps) => {
-    const { ticket, isOpen, toggleIsOpen } = props;
+export const DisplayTicket = ({ ticket, isOpen, toggleIsOpen }: DisplayTicketProps) => {
     const { timeAndDate, barcode, location, name } = ticket;
     const { currentUser } = useAuth();
-
-    const [open, setOpen] = useState(true);
 
   let firstName = "";
   let lastName = "";
@@ -39,9 +36,8 @@ export const DisplayTicket = (props: DisplayTicketProps) => {
     const dateTime = time.toLocaleDateString("he");
 
     const handleClose = () => {
-        setOpen(false)
+        toggleIsOpen();
     };
-
 
     return (
         <Dialog
