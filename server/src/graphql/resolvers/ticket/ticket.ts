@@ -13,11 +13,11 @@ const FAILED_MUTATION_MESSAGE = "mutation createTicket failed"
 const SECOND_HAND_SELL_TICKET_COMMISION = 2
 
 const ticketResolvers: {
-  Query: Pick<QueryResolvers, "ticket" | "ticketCount" | "isVallid" | "getAllSecondHandTicketsByEventId">;
+  Query: Pick<QueryResolvers, "ticket" | "ticketCount" | "isValid" | "getAllSecondHandTicketsByEventId">;
   Mutation: Pick<MutationResolvers, "createTicket" | "updateMarket" | "changeSecondHandToFirstHand">;
 } = {
   Query: {
-    isVallid: async (parent, args, context, info) => {
+    isValid: async (parent, args, context, info) => {
       const { eventId, barcode } = args;
 
       const ticket = await TicketModel.findOne({ eventId: eventId, barcode: barcode })
@@ -51,7 +51,7 @@ const ticketResolvers: {
 
       const eventTickets = unprocessedTickets.filter(ticket => ticket.eventId);
 
-      let tickets = await Promise.all(eventTickets.map(({ eventId, _id, onMarketTime, barcode, price }) => { 
+      let tickets = await Promise.all(eventTickets.map(({ eventId, _id, onMarketTime, barcode, price }) => {
         let ticketResponse = {
           name: (eventId as any).name,
           location: (eventId as any).location,

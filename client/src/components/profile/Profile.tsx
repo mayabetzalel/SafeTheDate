@@ -1,12 +1,12 @@
 import { Outlet } from "react-router-dom";
-import { Box, Button, Divider, Grid, Stack } from "@mui/material";
+import { Box, Grid, Stack } from "@mui/material";
 import NavigationTypography from "../AppBar/NavigationTypography/NavigationTypography";
 import { RoutePaths } from "../../App";
 import { useAuth } from "../../hooks/authController/AuthContext";
 
 export const Profile = () => {
   const { currentUser } = useAuth();
-    return !currentUser ? (
+  return !currentUser ? (
     <div style={{ color: "white", marginTop: "200sx" }}>
       <h1> You Have To Sign In To Watch Your Profile</h1>
       <Grid container component="main" sx={{ height: "75vh" }}>

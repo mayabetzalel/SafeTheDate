@@ -1,6 +1,5 @@
 import { PropsWithChildren, createContext, useContext, useState } from 'react'
-import { ChatResponse, FilterEventParams } from '../../graphql/graphql'
-import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
+import { FilterEventParams } from '../../graphql/graphql'
 
 interface EventContextType {
     eventFilters: FilterEventParams | undefined

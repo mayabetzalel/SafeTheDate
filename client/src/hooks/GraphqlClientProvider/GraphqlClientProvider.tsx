@@ -1,5 +1,4 @@
 import {
-  Client,
   Provider,
   cacheExchange,
   fetchExchange,

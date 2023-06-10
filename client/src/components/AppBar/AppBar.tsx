@@ -1,16 +1,14 @@
-import * as React from "react";
-import { Button, Grid, IconButton } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import { RoutePaths } from "../../App";
 import { Logout } from "@mui/icons-material";
 import logo from "../../assets/logo.png";
-import { useNavigate, useNavigation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import NavigationTypography from "./NavigationTypography/NavigationTypography";
 import { useAuth } from "../../hooks/authController/AuthContext";
 import { useSnackbar } from "notistack";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { location } = useNavigation();
   const { currentUser, signOut, checkIfSessionValid } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 

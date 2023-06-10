@@ -1,10 +1,10 @@
 /* eslint-disable no-debugger */
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js"
 import { useSnackbar } from "notistack"
 import DisplayTicket from "../DisplayTicketUsingEvent"
 import { useAuth } from "../../hooks/authController/AuthContext"
-import { InputTicket, MutationResponse, Ticket, FilterTicketParams, CreateTicketParams } from "../../graphql/graphql"
+import { InputTicket, MutationResponse, CreateTicketParams } from "../../graphql/graphql"
 import { graphql } from "../../graphql"
 import { useMutation, useQuery } from "urql"
 import _ from 'lodash';
@@ -107,7 +107,7 @@ const PaymentForm = ({
       {}
     >(DECREASE_TICKET_AMOUNT)
 
-    const [updateTicket, updateSecondToFirst] =
+  const [updateTicket, updateSecondToFirst] =
     useMutation<
       {
         updateSecondToFirst: MutationResponse
@@ -184,7 +184,7 @@ const PaymentForm = ({
 
       setTicketData(inputTicket)
       setCurrentUser(currentUser || [])
-      const userId = currentUser? currentUser["_id"] : ""
+      const userId = currentUser ? currentUser["_id"] : ""
 
       CreateTicket({ inputTicket }).then((result) => {
         if (result.error) {
