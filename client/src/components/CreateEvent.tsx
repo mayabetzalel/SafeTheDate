@@ -90,12 +90,12 @@ export const CreateEvent = () => {
       <Typography variant="h3" align="center" gutterBottom color={"white"}>
         Create The Next Event
       </Typography>
-      <Grid container padding={10}>
-        <Grid item xs={3}>
+      <Grid container padding={10} columnSpacing={2}>
+        <Grid item xl={3} md={12} sm={12} xs={12}>
           <ImagePicker image={image} onChangeImage={onChangeImage} buttonTitle={"Pick an image"} />
         </Grid>
-        <Grid item container xs={9} spacing={2}>
-          <Grid item xs={12}>
+        <Grid item container spacing={2} xl={9} md={12} sm={12} xs={9}>
+          <Grid item xl={12} md={12} sm={12} xs={12}>
             <TextField
               fullWidth
               label="Name of Event"
@@ -104,7 +104,7 @@ export const CreateEvent = () => {
               inputRef={eventNameRef}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xl={6} md={6} sm={12} xs={12}>
             <TextField
               fullWidth
               label="Location"
@@ -113,7 +113,7 @@ export const CreateEvent = () => {
               variant="outlined"
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xl={6} md={6} sm={12} xs={12}>
             <TextField
               fullWidth
               label="Time and Date"
@@ -123,7 +123,7 @@ export const CreateEvent = () => {
               type="datetime-local"
             />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xl={6} md={6} sm={12} xs={12}>
             <TextField
               fullWidth
               color={"secondary"}
@@ -132,7 +132,7 @@ export const CreateEvent = () => {
               variant="outlined"
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xl={3} md={3} sm={6} xs={12}>
             <TextField
               fullWidth
               color={"secondary"}
@@ -142,7 +142,7 @@ export const CreateEvent = () => {
               type="number"
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xl={3} md={3} sm={6} xs={12}>
             <TextField
               fullWidth
               color={"secondary"}
@@ -152,7 +152,7 @@ export const CreateEvent = () => {
               type="number"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xl={12} md={12} sm={12} xs={12}>
             <TextField
               fullWidth
               multiline

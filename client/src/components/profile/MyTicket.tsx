@@ -54,7 +54,7 @@ export const MyTicket = (props: MyTicketCardProps) => {
       }
 
     function toggleDisplayTicket() {
-        setDisplayTicket(true);
+        setDisplayTicket(prev => !prev);
     }
 
     const menuItems = [
