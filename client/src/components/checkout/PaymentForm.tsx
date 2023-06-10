@@ -191,10 +191,8 @@ const PaymentForm = ({
           console.error("Error creating ticket:", result.error)
           enqueueSnackbar("An error occurred", { variant: "error" })
         } else {
-          debugger
           setDecrease(true)
           setShowTicket(true)
-          debugger
           setUpdateCredit({ userId, newCredit })
           enqueueSnackbar("Ticket created successfully", { variant: 'success' })
         }

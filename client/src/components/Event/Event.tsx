@@ -130,7 +130,6 @@ export const Event = () => {
 
   useEffect(() => {
     if (data?.event.length == 1) {
-      console.log("here")
       setEvent(data.event.at(0));
       setTicketAmount(data.event.at(0)?.ticketsAmount || 0)
       if(!ticketPrice) setTicketPrice(data.event.at(0)?.ticketPrice || 0)

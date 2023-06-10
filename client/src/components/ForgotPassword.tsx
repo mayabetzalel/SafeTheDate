@@ -32,7 +32,6 @@ const ForgotPassword = () => {
 
   const sendResetPassword = async () => {
     try {
-      console.log("here again");
       await resetPasswordSendMail(usernameOrMail.current.value);
       setIsMailSent(true);
       enqueueSnackbar("Successful send email!", { variant: "success" });
