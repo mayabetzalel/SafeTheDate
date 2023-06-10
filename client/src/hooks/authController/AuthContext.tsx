@@ -5,13 +5,7 @@
 import backendAPI from "../../api";
 import { useState, useContext, createContext, useEffect } from "react";
 import { googleLogout } from "@react-oauth/google";
-interface IUser {
-  email: string;
-  userConfirmation: boolean;
-  username: string;
-  firstName: string;
-  lastName: string;
-}
+
 const AuthContext = createContext({
   currentUser: null,
   signUp: async (

@@ -57,7 +57,6 @@ const Login = () => {
     });
     try {
       await signIn(data.get("email") as string, data.get("password") as string);
-      console.log("here again");
       enqueueSnackbar("Successful log in!", { variant: "success" });
       navigate("/");
     } catch (error: any) {
