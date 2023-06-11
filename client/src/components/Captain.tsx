@@ -12,6 +12,7 @@ const GET_CHATBOT_RESPONSE = gql`
     chatCommand(inputMessage: $inputMessage) {
       responseMessage
       eventName
+      isEmpty
       location
       from
       to
@@ -40,7 +41,7 @@ export default function Captain() {
         const eventFilters = { name, location, from, to };
 
         setEventFilter(_.pickBy(eventFilters, _.isString));
-        setMessages(prev => ([...prev, { type, messageData: result.data.chatCommand.responseMessage, direction: "incoming" }]));
+        setMessages(prev => ([...prev, { type, messageData: result.data.chatCommand.responseMessage, direction: "incoming", isEmpty: result.data.chatCommand.isEmpty }]));
       }
     })
   }
