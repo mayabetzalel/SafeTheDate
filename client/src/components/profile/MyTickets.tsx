@@ -56,7 +56,7 @@ const MyTickets = ({ filterParams }: TicketsProps) => {
   const { currentUser } = useAuth();
   const [tickets, setTickets] = useState<TicketResponse[]>([]);
   const [page, setPage] = useState(0);
-  const [{ data = { ticket: [] }, fetching, error }] = useQuery<
+  const [{ data = { ticket: [] }, fetching }] = useQuery<
     { ticket: Exact<TicketResponse>[] },
     {
       filterParams: FilterEventParams;
@@ -91,7 +91,7 @@ const MyTickets = ({ filterParams }: TicketsProps) => {
         (ticket) => ticket.ticketId === ticketId
       );
 
-      let updatedTickets = [...prev];
+      const updatedTickets = [...prev];
 
       updatedTickets[ticketIndex].onMarketTime = prev[ticketIndex].onMarketTime
         ? 0

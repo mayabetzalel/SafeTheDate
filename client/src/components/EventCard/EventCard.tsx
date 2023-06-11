@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import SellIcon from "@mui/icons-material/Sell";
-import { primary } from '../../overrieds/MuiTheme';
 
 const TICKET_HEIGHT = '20rem';
 
@@ -79,7 +78,6 @@ const EventCard = ({
           subheader={subheader}
           action={
             <>
-
               {<SellIcon sx={{ verticalAlign: 'middle', color: '#4273dc', visibility: `${isOnMarket ? 'visible' : 'hidden'} ` }} />}
               {menuItems && <IconButton
                 onClick={handleMenuOpen}
