@@ -44,7 +44,6 @@ const EventCard = ({
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
-    console.log(isOnMarket)
   };
 
   const handleMenuClose = () => {
