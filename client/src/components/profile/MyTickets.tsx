@@ -114,7 +114,7 @@ const MyTickets = ({ filterParams }: TicketsProps) => {
         {tickets.map((ticket) => {
           const { ticketId, onMarketTime } = ticket;
           return (
-            <Grid key={ticketId!} item sm={4} md={3}>
+            <Grid key={ticketId!} item sm={4} md={3.5}>
               <MyTicket
                 ticket={ticket}
                 localUpdateMarketTime={localUpdateMarketTime}

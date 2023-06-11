@@ -51,14 +51,14 @@ export const MyTicket = (props: MyTicketCardProps) => {
 
     function toggleModalView() {
         setSellModalOpen(prev => !prev);
-      }
+    }
 
     function toggleDisplayTicket() {
         setDisplayTicket(prev => !prev);
     }
 
     const menuItems = [
-        { label: `Ticket ${!isOnMarket ? "on" : "off"} market`, onClick: toggleModalView },
+        { label: ` ${!isOnMarket ? "Put ticket up on market" : "Take ticket off the market"}`, onClick: toggleModalView },
         { label: "Show ticket details", onClick: toggleDisplayTicket }
     ]
 
@@ -83,6 +83,7 @@ export const MyTicket = (props: MyTicketCardProps) => {
                 image={image || undefined}
                 id={ticketId!}
                 menuItems={menuItems}
+                isOnMarket={isOnMarket}
             />
         </>
     )
