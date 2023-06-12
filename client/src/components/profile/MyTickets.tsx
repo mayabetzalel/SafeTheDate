@@ -12,6 +12,7 @@ import styled from "@emotion/styled";
 import { floor } from "lodash";
 import { MyTicket } from "./MyTicket";
 import { useAuth } from "../../hooks/authController/AuthContext";
+import { useSnackbar } from "notistack";
 
 const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
@@ -56,7 +57,8 @@ const MyTickets = ({ filterParams }: TicketsProps) => {
   const { currentUser } = useAuth();
   const [tickets, setTickets] = useState<TicketResponse[]>([]);
   const [page, setPage] = useState(0);
-  const [{ data = { ticket: [] }, fetching }] = useQuery<
+  const { enqueueSnackbar } = useSnackbar();
+  const [{ data = { ticket: [] }, fetching, error }] = useQuery<
     { ticket: Exact<TicketResponse>[] },
     {
       filterParams: FilterEventParams;
@@ -99,6 +101,12 @@ const MyTickets = ({ filterParams }: TicketsProps) => {
       return updatedTickets;
     });
   }
+
+  useEffect(() => {
+    if (error?.message.includes("Auth failed")) {
+      enqueueSnackbar("Token expired, Please login again or refresh", {variant: "error"});
+    }
+  }, [error])
 
   useEffect(() => {
     setPage(0);
