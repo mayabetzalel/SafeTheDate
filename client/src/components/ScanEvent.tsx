@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react"
+import { useParams } from "react-router-dom"
+import { QrReader } from 'react-qr-reader';
+import { useQuery } from "urql"
 import { Box, Typography } from "@mui/material"
 import ValidIcon from "@mui/icons-material/CheckCircleOutlineOutlined"
 import InvalidIcon from "@mui/icons-material/CancelOutlined"
+
 import Spinner from "../utils/spinner"
 import { Center } from "../utils/center"
-import { useParams } from "react-router-dom"
 import { graphql } from "../graphql"
-import { useQuery } from "urql"
-import { QrReader } from 'react-qr-reader';
 
 const VALIDATE_TICKET_QUERY = graphql(`
-  query isVallid($eventId: String!, $barcode: String!) {
-    isVallid(eventId: $eventId, barcode: $barcode)
+  query isValid($eventId: String!, $barcode: String!) {
+    isValid(eventId: $eventId, barcode: $barcode)
   }
 `);
 
@@ -20,7 +21,7 @@ export const ScanEvent = () => {
   const [code, setCode] = useState("")
   const [showIsValid, setShowIsValid] = useState(false)
 
-  const [{ data: isValidData, fetching: fetchingIsVallid }] = useQuery<{
+  const [{ data: isValidData, fetching: fetchingIsValid }] = useQuery<{
     isValid: boolean
   }>({
     query: VALIDATE_TICKET_QUERY,
@@ -48,7 +49,7 @@ export const ScanEvent = () => {
   }, [showIsValid]);
 
   const renderIsValidTicket = () => {
-    if (fetchingIsVallid) return <Spinner />
+    if (fetchingIsValid) return <Spinner />
 
     if (!showIsValid) return <></>;
 

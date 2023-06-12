@@ -6,14 +6,12 @@ import {
   FilterEventParams,
   TicketResponse,
 } from "../../graphql/graphql";
-import { Button, Grid, Pagination } from "@mui/material";
+import { Grid, Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
-import { useNavigate } from "react-router-dom";
 import { floor } from "lodash";
 import { MyTicket } from "./MyTicket";
 import { useAuth } from "../../hooks/authController/AuthContext";
-import PutOnSellModal from "../PutOnSellModal";
 
 const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
@@ -54,12 +52,11 @@ interface TicketsProps {
   userId?: string;
 }
 
-const MyTickets = ({ filterParams, userId }: TicketsProps) => {
+const MyTickets = ({ filterParams }: TicketsProps) => {
   const { currentUser } = useAuth();
   const [tickets, setTickets] = useState<TicketResponse[]>([]);
   const [page, setPage] = useState(0);
-  const navigate = useNavigate();
-  const [{ data = { ticket: [] }, fetching, error }] = useQuery<
+  const [{ data = { ticket: [] }, fetching }] = useQuery<
     { ticket: Exact<TicketResponse>[] },
     {
       filterParams: FilterEventParams;
@@ -94,7 +91,7 @@ const MyTickets = ({ filterParams, userId }: TicketsProps) => {
         (ticket) => ticket.ticketId === ticketId
       );
 
-      let updatedTickets = [...prev];
+      const updatedTickets = [...prev];
 
       updatedTickets[ticketIndex].onMarketTime = prev[ticketIndex].onMarketTime
         ? 0
@@ -117,7 +114,7 @@ const MyTickets = ({ filterParams, userId }: TicketsProps) => {
         {tickets.map((ticket) => {
           const { ticketId, onMarketTime } = ticket;
           return (
-            <Grid key={ticketId!} item sm={4} md={3}>
+            <Grid key={ticketId!} item sm={4} md={3.5}>
               <MyTicket
                 ticket={ticket}
                 localUpdateMarketTime={localUpdateMarketTime}
@@ -127,7 +124,7 @@ const MyTickets = ({ filterParams, userId }: TicketsProps) => {
           );
         })}
       </GridHiddenScroll>
-      
+
       <Pagination
         count={floor(dataCount?.ticketCount / EVENTS_PER_FETCH) + 1}
         page={page + 1}

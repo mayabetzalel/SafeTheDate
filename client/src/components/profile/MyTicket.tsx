@@ -1,7 +1,6 @@
 import { useMutation } from "urql";
 import { graphql } from "../../graphql";
-import { Exact, InputTicket, MutationResponse, Ticket, TicketResponse } from "../../graphql/graphql";
-import { useNavigate } from "react-router";
+import { MutationResponse, TicketResponse } from "../../graphql/graphql";
 import EventCard from "../EventCard/EventCard";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
@@ -26,7 +25,6 @@ interface MyTicketCardProps {
 export const MyTicket = (props: MyTicketCardProps) => {
     const { isOnMarket, localUpdateMarketTime, ticket } = props;
     const { name, image, ticketId, type, location, price, onMarketTime } = ticket;
-    const navigate = useNavigate();
     const [displayTicket, setDisplayTicket] = useState<boolean>(false);
     const [sellModalOpen, setSellModalOpen] = useState<boolean>(false);
     const { enqueueSnackbar } = useSnackbar();
@@ -51,14 +49,14 @@ export const MyTicket = (props: MyTicketCardProps) => {
 
     function toggleModalView() {
         setSellModalOpen(prev => !prev);
-      }
+    }
 
     function toggleDisplayTicket() {
         setDisplayTicket(prev => !prev);
     }
 
     const menuItems = [
-        { label: `Ticket ${!isOnMarket ? "on" : "off"} market`, onClick: toggleModalView },
+        { label: ` ${!isOnMarket ? "Put ticket up on market" : "Take ticket off the market"}`, onClick: toggleModalView },
         { label: "Show ticket details", onClick: toggleDisplayTicket }
     ]
 
@@ -83,6 +81,7 @@ export const MyTicket = (props: MyTicketCardProps) => {
                 image={image || undefined}
                 id={ticketId!}
                 menuItems={menuItems}
+                isOnMarket={isOnMarket}
             />
         </>
     )

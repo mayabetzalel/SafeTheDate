@@ -78,12 +78,6 @@ const theme = createTheme({
     MuiToggleButton: {
       styleOverrides: {
         root: ({ theme }) => ({
-          "&.Mui-selected": {
-            backgroundColor: theme.palette.secondary.main,
-            ":hover": {
-              backgroundColor: theme.palette.secondary.main,
-            },
-          },
           ":hover": {
             backgroundColor: theme.palette.secondary.main,
             color: theme.palette.text.primary,
@@ -107,9 +101,12 @@ const theme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         root: ({ theme }) => ({
-          ":hover": {
-            borderColor: "red",
+          '&:hover fieldset': {
+            borderColor: `${theme.palette.primary.main} !important`,
           },
+          '&.Mui-focused fieldset': {
+            borderColor: `${theme.palette.secondary.main} !important`,
+          }
         }),
         colorSecondary: ({ theme }) => ({
           color: theme.palette.background.paper,
@@ -117,9 +114,6 @@ const theme = createTheme({
         notchedOutline: ({ theme }) => ({
           color: theme.palette.primary.main,
           borderColor: theme.palette.primary.dark,
-          ":hover": {
-            borderColor: "red",
-          },
         }),
       },
     },

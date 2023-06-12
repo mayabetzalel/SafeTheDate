@@ -11,7 +11,7 @@ import {
   IconButton,
   Tooltip,
   Switch,
-  FormControlLabel 
+  FormControlLabel
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
@@ -79,30 +79,30 @@ export const Event = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUseCredit(e.target.checked)
-    const currentCredit = currentUser? currentUser["credit"] : 0
-      if (e.target.checked) {
-        setChangePrices(Situations.change)
-      } else {
-        setChangePrices(Situations.regular)
-      }
+    const currentCredit = currentUser ? currentUser["credit"] : 0
+    if (e.target.checked) {
+      setChangePrices(Situations.change)
+    } else {
+      setChangePrices(Situations.regular)
+    }
   }
-  
+
   useEffect(() => {
-    if(changePrices) {
+    if (changePrices) {
       setChangePrices(Situations.notEdit)
-      const currentCredit = currentUser? currentUser["credit"] : 0
+      const currentCredit = currentUser ? currentUser["credit"] : 0
       const currenTicketPrice = event && event.ticketPrice ? event.ticketPrice : 0
-      
+
       if (changePrices == Situations.regular) {
         setTicketPrice(currenTicketPrice)
         setCredit(currentCredit)
       } else {
-        setTicketPrice( Math.max(ticketPrice - currentCredit, 0 ))
-        setCredit( Math.max(currentCredit - ticketPrice, 0 ))
+        setTicketPrice(Math.max(ticketPrice - currentCredit, 0))
+        setCredit(Math.max(currentCredit - ticketPrice, 0))
       }
-    } 
+    }
   }, [ticketPrice, useCredit]);
-  
+
   const [{ data, fetching }] = useQuery<{
     event: Exact<EventType>[];
   }>({
@@ -132,7 +132,7 @@ export const Event = () => {
     if (data?.event.length == 1) {
       setEvent(data.event.at(0));
       setTicketAmount(data.event.at(0)?.ticketsAmount || 0)
-      if(!ticketPrice) setTicketPrice(data.event.at(0)?.ticketPrice || 0)
+      if (!ticketPrice) setTicketPrice(data.event.at(0)?.ticketPrice || 0)
     }
   }, [data]);
 
@@ -203,24 +203,24 @@ export const Event = () => {
 
             {currentUser ? (
               <div>
-                { event?.ticketsAmount ? (
+                {event?.ticketsAmount ? (
                   <><div>
-                    { currentUser["credit"] ?
+                    {currentUser["credit"] ?
                       <FormControlLabel
-                        control={ <Switch checked={useCredit} onChange={handleChange} /> }
+                        control={<Switch checked={useCredit} onChange={handleChange} />}
                         label="Use Credit" />
                       :
-                      <></> }
+                      <></>}
                   </div>
-                  <PaymentForm
-                      ticketAmount={ setTicketAmount }
-                      amount={ ticketPrice }
-                      description={ event?.name ?? "Event" }
+                    <PaymentForm
+                      ticketAmount={setTicketAmount}
+                      amount={ticketPrice}
+                      description={event?.name ?? "Event"}
                       newCredit={userCredit}
-                  /></>
-                  ) : (
-                    <></>
-                  )}
+                    /></>
+                ) : (
+                  <></>
+                )}
               </div>
             ) : (
               <Button

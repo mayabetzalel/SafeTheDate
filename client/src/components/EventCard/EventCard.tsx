@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import SellIcon from "@mui/icons-material/Sell";
 
 const TICKET_HEIGHT = '20rem';
 
@@ -25,6 +26,7 @@ interface EventCardProps {
   onClick?: () => void;
   menuItems?: { label: string; onClick: () => void }[];
   id: string;
+  isOnMarket?: boolean;
 }
 
 const EventCard = ({
@@ -36,7 +38,7 @@ const EventCard = ({
   subheader,
   onClick,
   menuItems,
-  id,
+  isOnMarket = false
 }: EventCardProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -75,6 +77,7 @@ const EventCard = ({
           subheader={subheader}
           action={
             <>
+              {<SellIcon sx={{ verticalAlign: 'middle', color: '#4273dc', visibility: `${isOnMarket ? 'visible' : 'hidden'} ` }} />}
               {menuItems && <IconButton
                 onClick={handleMenuOpen}
                 sx={{ ml: "auto", color: "black" }}
@@ -82,7 +85,6 @@ const EventCard = ({
                 <MoreVertIcon />
               </IconButton>}
             </>
-
           }
         />
         < CardContent >
