@@ -10,6 +10,7 @@ export default `
         description: String
         ownerId: String
         image: Upload
+        isExternal: Boolean
     }
 
     scalar Upload
@@ -47,4 +48,4 @@ export default `
     type Mutation {
         decreaseTicketAmount(eventId: String!): MutationResponse!
     } 
-`
+`;
