@@ -32,7 +32,6 @@ const thirdPartyTicketsResolvers: {
           .then((result) => ({
             ...result,
             id: result._id.toString(),
-            onMarketTime: new Date(),
             isSecondHand: true,
             ownerId: result.ownerId.toString(),
             eventId: result.eventId.toString(),
@@ -49,6 +48,7 @@ const thirdPartyTicketsResolvers: {
               timeAndDate: new Date(event1.timeAndDate).getTime(),
               id: event1._id.toString(),
             }));
+          console.log(ticket);
           console.log(event);
           return { ticket, event };
         }

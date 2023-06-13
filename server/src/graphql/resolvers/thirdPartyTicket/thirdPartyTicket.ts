@@ -20,6 +20,7 @@ const thirdPartyTicketsResolvers: {
         });
 
         const validateTicketAndImport = data?.data?.validateTicketAndImport;
+        console.log(data?.data);
         if (
           validateTicketAndImport.ticket.id &&
           validateTicketAndImport.event.id

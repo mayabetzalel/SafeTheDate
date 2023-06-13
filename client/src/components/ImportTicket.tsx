@@ -25,6 +25,9 @@ export const ImportTicket = () => {
           ticketsAmount
           timeAndDate
           type
+          ticketPrice
+          description
+          ownerId
         }
         ticket {
           barcode
@@ -33,6 +36,7 @@ export const ImportTicket = () => {
           onMarketTime
           ownerId
           id
+          price
         }
       }
     }
