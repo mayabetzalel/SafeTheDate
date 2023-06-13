@@ -2,7 +2,6 @@ import { InputMessage } from "../../typeDefs"
 import { Event as EventModel } from "../../../../mongo/models/Event";
 import EntitiesMaping from "../../../chat/EntitiesMaping"
 import IntentsStore from "../../../chat/IntentsStore"
-import { log } from "console"
 const { Wit } = require("node-wit")
 var _ = require("lodash")
 
@@ -16,7 +15,7 @@ interface emptySearchVariables {
 }
 
 async function isSearchResultsEmpty(variables: emptySearchVariables) {
-  const {eventName, location, from, to} = variables;
+  const { eventName, location, from, to } = variables;
 
   let filter = {
     ...(eventName && { name: { $regex: eventName, $options: "i" } }),
@@ -46,6 +45,7 @@ export default {
 
       const client = new Wit({ accessToken: process.env.BOT_ACCESS_TOKEN })
       var res = await client.message(message, {})
+      let isEmpty = false
       if (!res && res.error) {
         console.error("Got error from wit ai")
         return {
@@ -61,10 +61,10 @@ export default {
         if (intent && IntentsStore?.[intent] && intent !== "nothing") {
           let nestedEntities = {};
           entities.forEach(entity => {
-            nestedEntities =  {...nestedEntities, ...entity}
+            nestedEntities = { ...nestedEntities, ...entity }
           });
-          
-          const isEmpty = await isSearchResultsEmpty(nestedEntities);
+
+          isEmpty = await isSearchResultsEmpty(nestedEntities);
 
           if (isEmpty) {
             responseMessage = IntentsStore?.empty?.responseMessage;
@@ -74,6 +74,7 @@ export default {
         else responseMessage = IntentsStore?.nothing?.responseMessage;
 
         return {
+          isEmpty: isEmpty,
           type: intent,
           ...Object.assign({}, ...entities),
           responseMessage,
@@ -114,7 +115,7 @@ function matchWitToSearchedRequests(responseMessage: WitResponse): WitIntent {
 
   // Get the best hypothesis
   var intent = sortedIntents[0];
-  
+
   return intent ? intent.name as WitIntent : "nothing";
 }
 

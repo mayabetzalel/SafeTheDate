@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "urql";
 import { useSnackbar } from "notistack";
@@ -36,7 +36,7 @@ export const CreateEvent = () => {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
-  const [createEventResult, createEvent] = useMutation<{
+  const [{error}, createEvent] = useMutation<{
     createEvent: MutationResponse;
   }>(CREATE_EVENT_MUTATION);
 
@@ -77,6 +77,8 @@ export const CreateEvent = () => {
       if (result.data?.createEvent.code == 500) {
         console.error("Error creating event:", result.error);
         enqueueSnackbar("An error occurred", { variant: "error" });
+      } else if (result.error?.message.includes("Auth failed")) {
+        enqueueSnackbar("Token expired, Please login again or refresh", {variant: "error"});
       } else {
         navigate("/");
         enqueueSnackbar("Event created successfully", { variant: "success" });

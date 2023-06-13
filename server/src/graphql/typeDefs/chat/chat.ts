@@ -1,6 +1,7 @@
-export default  `
+export default `
     type ChatResponse {
         responseMessage: String!
+        isEmpty: Boolean
         eventName: String
         location: String
         from: String

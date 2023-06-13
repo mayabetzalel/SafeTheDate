@@ -2,10 +2,10 @@ import { WitIntent } from "../graphql/resolvers/chat/chat"
 
 export default {
     ["get_event" as WitIntent]: {
-        responseMessage: "The captain found you some events",
+        responseMessage: "The captain found some events for you",
     },
     ["navigate_page" as WitIntent]: {
-        responseMessage: "The captain will navigate you to the requested page"
+        responseMessage: "The captain will take you to the requested page"
     },
     ["nothing" as WitIntent]: {
         responseMessage: "The captain didn't processed the request properly, please request events queries or page navigation orders."
@@ -16,5 +16,5 @@ export default {
     ["error" as WitIntent]: {
         responseMessage: "Something went wrong, please try again or consult with the support."
     },
-    
+
 }
