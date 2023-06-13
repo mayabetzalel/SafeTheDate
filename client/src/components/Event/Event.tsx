@@ -11,7 +11,7 @@ import {
   IconButton,
   Tooltip,
   Switch,
-  FormControlLabel
+  FormControlLabel,
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
@@ -26,6 +26,7 @@ import PaymentForm from "../checkout/PaymentForm";
 import { useAuth } from "../../hooks/authController/AuthContext";
 import { Login } from "@mui/icons-material";
 import { RoutePaths } from "../../App";
+import { isExternal } from "util/types";
 
 const EVENT_QUERY = graphql(`
   query event($ids: [String]) {
@@ -34,6 +35,7 @@ const EVENT_QUERY = graphql(`
       ownerId
       name
       location
+      isExternal
       ticketsAmount
       ticketPrice
       timeAndDate
@@ -65,8 +67,8 @@ export const Event = () => {
   const Situations = {
     notEdit: 0,
     regular: 1,
-    change: 2
-  }
+    change: 2,
+  };
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [event, setEvent] = useState<Exact<EventType>>();
@@ -75,30 +77,31 @@ export const Event = () => {
   const [userCredit, setCredit] = useState(0);
   const [ticketPrice, setTicketPrice] = useState(0);
   const [useCredit, setUseCredit] = useState(false);
-  const [changePrices, setChangePrices] = useState(Situations.notEdit)
+  const [changePrices, setChangePrices] = useState(Situations.notEdit);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUseCredit(e.target.checked)
-    const currentCredit = currentUser ? currentUser["credit"] : 0
+    setUseCredit(e.target.checked);
+    const currentCredit = currentUser ? currentUser["credit"] : 0;
     if (e.target.checked) {
-      setChangePrices(Situations.change)
+      setChangePrices(Situations.change);
     } else {
-      setChangePrices(Situations.regular)
+      setChangePrices(Situations.regular);
     }
-  }
+  };
 
   useEffect(() => {
     if (changePrices) {
-      setChangePrices(Situations.notEdit)
-      const currentCredit = currentUser ? currentUser["credit"] : 0
-      const currenTicketPrice = event && event.ticketPrice ? event.ticketPrice : 0
+      setChangePrices(Situations.notEdit);
+      const currentCredit = currentUser ? currentUser["credit"] : 0;
+      const currenTicketPrice =
+        event && event.ticketPrice ? event.ticketPrice : 0;
 
       if (changePrices == Situations.regular) {
-        setTicketPrice(currenTicketPrice)
-        setCredit(currentCredit)
+        setTicketPrice(currenTicketPrice);
+        setCredit(currentCredit);
       } else {
-        setTicketPrice(Math.max(ticketPrice - currentCredit, 0))
-        setCredit(Math.max(currentCredit - ticketPrice, 0))
+        setTicketPrice(Math.max(ticketPrice - currentCredit, 0));
+        setCredit(Math.max(currentCredit - ticketPrice, 0));
       }
     }
   }, [ticketPrice, useCredit]);
@@ -131,15 +134,14 @@ export const Event = () => {
   useEffect(() => {
     if (data?.event.length == 1) {
       setEvent(data.event.at(0));
-      setTicketAmount(data.event.at(0)?.ticketsAmount || 0)
-      if (!ticketPrice) setTicketPrice(data.event.at(0)?.ticketPrice || 0)
+      setTicketAmount(data.event.at(0)?.ticketsAmount || 0);
+      if (!ticketPrice) setTicketPrice(data.event.at(0)?.ticketPrice || 0);
     }
   }, [data]);
 
   useEffect(() => {
-    if (event?.ownerId)
-      reexecuteUserQuery()
-  }, [event])
+    if (event?.ownerId) reexecuteUserQuery();
+  }, [event]);
 
   return (
     <FetchingState isFetching={fetching}>
@@ -175,9 +177,19 @@ export const Event = () => {
                 {userData.user.username?.charAt(0)}
               </Avatar>
               <Typography variant="h6">{userData.user.username}</Typography>
-              {event?.ownerId === currentUser?.['_id'] && <Tooltip title="scan event tickets">
-                <IconButton onClick={() => navigate(`${RoutePaths.SCAN_EVENT}/${id}`, {})}> <QrCodeScannerIcon fontSize="large" /></IconButton>
-              </Tooltip>}
+              {event?.ownerId === currentUser?.["_id"] &&
+                !event?.isExternal && (
+                  <Tooltip title="scan event tickets">
+                    <IconButton
+                      onClick={() =>
+                        navigate(`${RoutePaths.SCAN_EVENT}/${id}`, {})
+                      }
+                    >
+                      {" "}
+                      <QrCodeScannerIcon fontSize="large" />
+                    </IconButton>
+                  </Tooltip>
+                )}
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center">
               <EventIcon />
@@ -204,20 +216,29 @@ export const Event = () => {
             {currentUser ? (
               <div>
                 {event?.ticketsAmount ? (
-                  <><div>
-                    {currentUser["credit"] ?
-                      <FormControlLabel
-                        control={<Switch checked={useCredit} onChange={handleChange} />}
-                        label="Use Credit" />
-                      :
-                      <></>}
-                  </div>
+                  <>
+                    <div>
+                      {currentUser["credit"] ? (
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={useCredit}
+                              onChange={handleChange}
+                            />
+                          }
+                          label="Use Credit"
+                        />
+                      ) : (
+                        <></>
+                      )}
+                    </div>
                     <PaymentForm
                       ticketAmount={setTicketAmount}
                       amount={ticketPrice}
                       description={event?.name ?? "Event"}
                       newCredit={userCredit}
-                    /></>
+                    />
+                  </>
                 ) : (
                   <></>
                 )}
@@ -234,8 +255,8 @@ export const Event = () => {
               </Button>
             )}
           </Stack>
-        </Grid >
-      </Grid >
-    </FetchingState >
+        </Grid>
+      </Grid>
+    </FetchingState>
   );
 };

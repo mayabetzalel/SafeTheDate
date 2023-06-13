@@ -1,7 +1,10 @@
 import { QueryResolvers, MutationResolvers, Event } from "../../typeDefs";
 import { Event as EventModel } from "../../../../mongo/models/Event";
 import { Ticket as TicketModel } from "../../../../mongo/models/Ticket";
-import { readAndConvertToBase64, writeBase64ToFile } from '../../../../mongo/FileHandler';
+import {
+  readAndConvertToBase64,
+  writeBase64ToFile,
+} from "../../../../mongo/FileHandler";
 import { Types } from "mongoose";
 
 const DEFAULT_LIMIT = 50;
@@ -13,7 +16,13 @@ const eventResolvers: {
 } = {
   Query: {
     event: async (parent, args, context, info) => {
-      const { filterParams = {}, skip = 0, limit = DEFAULT_LIMIT, ids, userId } = args;
+      const {
+        filterParams = {},
+        skip = 0,
+        limit = DEFAULT_LIMIT,
+        ids,
+        userId,
+      } = args;
 
       // Those are filters to query the mongo
       let { name, location, from, to } = filterParams;
@@ -30,50 +39,54 @@ const eventResolvers: {
         }),
       };
 
-
-      let events = await EventModel.find({ ...filter, ...(userId && { ownerId: userId }) })
+      let events = await EventModel.find({
+        ...filter,
+        ...(userId && { ownerId: userId }),
+      })
         .skip(skip)
         .limit(limit)
         .then((events) => {
-          return Promise.all(events.map(({
-            ownerId,
-            name,
-            location,
-            timeAndDate,
-            type,
-            image,
-            ticketsAmount,
-            description,
-            ticketPrice,
-            _id,
-          }) => {
-            let eventData =
-            {
-              ownerId: ownerId.toString(),
-              name,
-              location,
-              timeAndDate: new Date(timeAndDate).getTime(),
-              type,
-              ticketsAmount,
-              description,
-              ticketPrice,
-              id: _id.toString(),
-            }
+          return Promise.all(
+            events.map(
+              ({
+                ownerId,
+                name,
+                location,
+                timeAndDate,
+                type,
+                image,
+                ticketsAmount,
+                description,
+                ticketPrice,
+                _id,
+                isExternal,
+              }) => {
+                let eventData = {
+                  ownerId: ownerId.toString(),
+                  name,
+                  location,
+                  timeAndDate: new Date(timeAndDate).getTime(),
+                  type,
+                  ticketsAmount,
+                  description,
+                  ticketPrice,
+                  isExternal,
+                  id: _id.toString(),
+                };
 
-            if (image === "exists") {
-              return readAndConvertToBase64(_id + ".jpg")
-                .then((image) => ({
-                  ...eventData,
-                  image
-                }));
-            }
-            return eventData;
-          }));
+                if (image === "exists") {
+                  return readAndConvertToBase64(_id + ".jpg").then((image) => ({
+                    ...eventData,
+                    image,
+                  }));
+                }
+                return eventData;
+              }
+            )
+          );
         });
 
       // Use the events array here
-
-
 
       return events;
     },
@@ -93,7 +106,12 @@ const eventResolvers: {
         }),
       };
 
-      return await EventModel.find({ ...filter, ...(userId && { ownerId: userId }) }).count().exec();
+      return await EventModel.find({
+        ...filter,
+        ...(userId && { ownerId: userId }),
+      })
+        .count()
+        .exec();
     },
   },
   Mutation: {
@@ -128,33 +146,32 @@ const eventResolvers: {
           writeBase64ToFile(`${eventId}.jpg`, image);
         }
 
-
-        console.log(`Event created succesfully | eventName: "${name}"`)
+        console.log(`Event created succesfully | eventName: "${name}"`);
         return { message: "event created succesfully", code: 200 };
       } catch (e) {
-        console.error(`failed to create event...`)
-        console.error(e)
+        console.error(`failed to create event...`);
+        console.error(e);
         return { message: FAILED_MUTATION_MESSAGE, code: 500 };
       }
     },
     decreaseTicketAmount: async (parent, { eventId }) => {
       try {
-        let event = await EventModel.findOne({ _id: new Types.ObjectId(eventId) });
-        let ticketAmount = event?.ticketsAmount
+        let event = await EventModel.findOne({
+          _id: new Types.ObjectId(eventId),
+        });
+        let ticketAmount = event?.ticketsAmount;
 
         await EventModel.updateOne(
           { _id: new Types.ObjectId(eventId) },
           { $set: { ticketsAmount: ticketAmount - 1 } }
         );
-        return { message: "tickets amount updated succesfully", code: 200 }
-
+        return { message: "tickets amount updated succesfully", code: 200 };
       } catch (error) {
-        console.log("failed with " + error)
-        return { message: FAILED_MUTATION_MESSAGE, code: 500 }
+        console.log("failed with " + error);
+        return { message: FAILED_MUTATION_MESSAGE, code: 500 };
       }
-    }
+    },
   },
 };
 
 export default eventResolvers;
-

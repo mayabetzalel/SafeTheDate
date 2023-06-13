@@ -37,23 +37,12 @@ export default `
         barcode: String
     }
 
-    input CreateTicketParams {
-        userId: String
-        eventId: String
-        barcode: String
-        isSecondHand: Boolean
-    }
-
     type Query {
         ticket(filterParams: FilterEventParams, skip: Int, limit: Int, ids: [String]): [TicketResponse!]! @auth
     }
 
     type Query {
         ticketCount(filterParams: FilterEventParams, ids: [String]): Int! @auth
-    }
-
-    type Query {
-        getAllSecondHandTicketsByEventId(eventId: String!): Int!
     }
 
     type Mutation {
@@ -65,10 +54,6 @@ export default `
     }
 
     type Mutation {
-        createTicket(inputTicket: InputTicket!): MutationResponse! @auth
+        purchaseTicket(inputTicket: InputTicket!): MutationResponse! @auth
     }
-
-    type Mutation {
-        changeSecondHandToFirstHand(createTicketParams: CreateTicketParams) : MutationResponse!
-    }
-`
+`;
