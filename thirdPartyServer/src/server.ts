@@ -12,7 +12,8 @@ import setUpMongo from "../mongo/mongoDbManager";
 
   setUpMongo();
   let app;
-  if (!process.env.IS_DEVELOPMENT) {
+  console.log(process.env.IS_DEVELOPMENT === "true" ? "dev mode" : "prod mode");
+  if (process.env.IS_DEVELOPMENT === "false") {
     const https = require("https");
     const fs = require("fs");
     const options = {

@@ -60,7 +60,8 @@ app.use("/api", router);
 // Global Error Handler
 app.use(errorHandler());
 
-if (!process.env.IS_DEVELOPMENT) {
+console.log(process.env.IS_DEVELOPMENT === "true" ? "dev mode" : "prod mode");
+if (process.env.IS_DEVELOPMENT === "false") {
   const https = require("https");
   const fs = require("fs");
   const options = {
