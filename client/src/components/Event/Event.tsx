@@ -69,7 +69,7 @@ export const Event = () => {
     regular: 1,
     change: 2,
   };
-  const { currentUser } = useAuth();
+  const { currentUser = {} } = useAuth();
   const navigate = useNavigate();
   const [event, setEvent] = useState<Exact<EventType>>();
   const { id = "" } = useParams();
@@ -78,7 +78,7 @@ export const Event = () => {
   const [ticketPrice, setTicketPrice] = useState(0);
   const [useCredit, setUseCredit] = useState(false);
   const [changePrices, setChangePrices] = useState(Situations.notEdit);
-
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUseCredit(e.target.checked);
     const currentCredit = currentUser ? currentUser["credit"] : 0;
@@ -105,7 +105,6 @@ export const Event = () => {
       }
     }
   }, [ticketPrice, useCredit]);
-
   const [{ data, fetching }] = useQuery<{
     event: Exact<EventType>[];
   }>({
@@ -215,10 +214,10 @@ export const Event = () => {
 
             {currentUser ? (
               <div>
-                {event?.ticketsAmount ? (
+                {event?.ticketsAmount ?(
                   <>
                     <div>
-                      {currentUser["credit"] ? (
+                      {currentUser["credit"] > 0 ? (
                         <FormControlLabel
                           control={
                             <Switch
