@@ -1,6 +1,8 @@
 import { QueryResolvers, MutationResolvers } from "../../typeDefs";
 import { ThirdPartyTickets } from "../../../../mongo/models/ThirdPartyTickets";
 import { ThirdPartyEvents } from "../../../../mongo/models/ThirdPartyEvents";
+import { Types } from "mongoose";
+
 const LENGTH = 60;
 
 function makeId() {
@@ -63,11 +65,13 @@ const thirdPartyTicketsResolvers: {
     generateTicketForCurrentEvent: async (parent, args, context, info) => {
       try {
         console.log("generateTicketForCurrentEvent");
-        const { id } = args;
+        const { id, userId } = args;
 
         const newId = makeId(); // Generate a new qr id
         const filter = { barcode: id };
-        const update = { $set: { barcode: newId } };
+        const update = {
+          $set: { barcode: newId, ownerId: new Types.ObjectId(userId) },
+        };
         const options = { returnOriginal: false };
 
         const result = await ThirdPartyTickets.findOneAndUpdate(

@@ -39,6 +39,6 @@ export default `
     }
 
     type Mutation {
-        generateTicketForCurrentEvent(id: String): ThirdPartyTicket!
+        generateTicketForCurrentEvent(id: String, userId: String): ThirdPartyTicket!
     }
 `;
