@@ -14,8 +14,8 @@ import { Client, cacheExchange, fetchExchange } from "@urql/core";
 var nodemailer = require("nodemailer");
 
 const GENERATE_TICKET = `
-  mutation generateTicketForCurrentEvent($id: String) {
-    generateTicketForCurrentEvent(id: $id) {
+  mutation generateTicketForCurrentEvent($id: String, $userId: String) {
+    generateTicketForCurrentEvent(id: $id, userId: $userId) {
       barcode
       eventId
       id
