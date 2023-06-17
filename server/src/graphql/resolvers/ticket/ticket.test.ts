@@ -75,7 +75,7 @@ describe("Ticket tests", () => {
                 _id: ticketId,
             })
             if (ticket)
-                expect(ticket.onMarketTime).toBeNull;
+                expect(ticket.onMarketTime).toBeNull();
         } else
             expect(UpdateTicketResult.data.updateMarket.code).toBe(200)
     });
