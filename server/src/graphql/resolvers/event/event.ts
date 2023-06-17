@@ -179,12 +179,12 @@ const eventResolvers: {
         }
 
         const event = await EventModel.create({
-          name,
-          location,
+          name: name.trim(),
+          location: location.trim(),
           timeAndDate: new Date(timeAndDate).toString(),
-          type,
+          type: type.trim(),
           ticketsAmount,
-          description,
+          description: description.trim(),
           ticketPrice,
           ownerId: userId,
           ...(image && { image: "exists" }),
