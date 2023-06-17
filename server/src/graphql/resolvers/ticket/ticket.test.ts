@@ -1,7 +1,7 @@
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 import { parse } from "graphql";
 import { yoga } from "../../../server";
-import { forEach } from "lodash";
+import { Ticket } from "../../../../mongo/models/Ticket";
 
 describe("Ticket tests", () => {
     let executor;
@@ -12,62 +12,71 @@ describe("Ticket tests", () => {
         });
     });
 
-    it("Evente filtered by name", async () => {
-        const userId = "646f7007e60b814321d18029";
-
+    it("Tickets invalid", async () => {
         let result = await executor({
             document: parse(`
         query {
-            ticketPageQuery(filterParams: {userId: "${userId}"}) {
-            userId
-          }
+            isValid(eventId: "6489fa5c4d0e9d2f9623185d", barcode: "1")      
         }
       `),
         });
 
-        result = result["data"]["event"];
-
-        forEach(result, ({ userId: ticketUserId }) => {
-            expect(ticketUserId).toBe(userId);
-        });
+        expect(result.data.isValid).toBe(false);
     });
 
+    it("Tickets valid", async () => {
+        let result = await executor({
+            document: parse(`
+        query {
+            isValid(eventId: "6488ef6de987f464be8763e3", barcode: "kDFZY4kxD5YG7KQLMSVFQBXrnyeeLDmCGzhxEr50226LbaasB3n0p3K8e3hY")
+          }`),
+        });
 
+        expect(result.data.isValid).toBe(true);
+    });
 
+    it("Tickets on market", async () => {
+        let ticketId = "6488f0b80ed5147ca5028773"
+        let UpdateTicketResult = await executor({
+            document: parse(`
+            mutation {
+                updateMarket(ticketId: "${ticketId}") {
+                  message
+                  code
+                }
+              }`),
+        });
+
+        if (UpdateTicketResult.data.updateMarket.code === 200) {
+            const ticket = await Ticket.findOne({
+                _id: ticketId,
+            })
+            if (ticket)
+                expect(!!ticket.onMarketTime).toBeDefined();
+        } else
+            expect(UpdateTicketResult.data.updateMarket.code).toBe(200)
+
+    });
+
+    it("Tickets off market", async () => {
+        let ticketId = "6488f0b80ed5147ca5028773"
+        let UpdateTicketResult = await executor({
+            document: parse(`
+            mutation {
+                updateMarket(ticketId: "${ticketId}") {
+                  message
+                  code
+                }
+              }`),
+        });
+
+        if (UpdateTicketResult.data.updateMarket.code === 200) {
+            const ticket = await Ticket.findOne({
+                _id: ticketId,
+            })
+            if (ticket)
+                expect(ticket.onMarketTime).toBeNull;
+        } else
+            expect(UpdateTicketResult.data.updateMarket.code).toBe(200)
+    });
 });
-
-// describe('Ticket create', () => {
-//     it("test create ticket", () => {
-//         expect(true).toBe(true);
-//     });
-// })
-// describe('Ticket get', () => {
-//     it("test get ticket", () => {
-//         expect(true).toBe(true);
-//     });
-// })
-// describe('Ticket update', () => {
-//     it("test update ticket", () => {
-//         expect(true).toBe(true);
-//     });
-// })
-// describe('Ticket for sale', () => {
-//     it("put ticket on market", () => {
-//         expect(true).toBe(true);
-//     });
-// })
-// describe('Ticket not for sale', () => {
-//     it("take ticket off market", () => {
-//         expect(true).toBe(true);
-//     });
-// })
-// describe('Ticket valida', () => {
-//     it("test valid ticket", () => {
-//         expect(true).toBe(true);
-//     });
-// })
-// describe('Event invalid', () => {
-//     it("test invalid ticket", () => {
-//         expect(true).toBe(true);
-//     });
-// })
