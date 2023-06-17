@@ -28,14 +28,14 @@ function configureTokensCookie(res: Response, tokens: TokensPack) {
   res.cookie(REFRESH_TOKEN_COOKIE_NAME, tokens.refreshToken, {
     httpOnly: true,
     path: "/api/auth/token",
-    domain: process.env.COOKIE_DOMAIN,
+    // domain: process.env.COOKIE_DOMAIN,
     expires: tokens.refreshExpiryDate,
     sameSite: "strict",
   });
 
   res.cookie(ACCESS_TOKEN_COOKIE_NAME, tokens.accessToken, {
     httpOnly: true,
-    domain: process.env.COOKIE_DOMAIN,
+    // domain: process.env.COOKIE_DOMAIN,
     maxAge: tokens.expiresIn * 1000,
     sameSite: "strict",
   });
