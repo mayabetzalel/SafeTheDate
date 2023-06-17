@@ -23,9 +23,8 @@ describe("Chat tests", () => {
       }
       `),
         });
-        console.log(result);
         
-        expect(result.data.chatCommand.isEmpty).toEqual(true);
+        expect(result.data.chatCommand.isEmpty).toBeTruthy();
     });
 
     it("Chat request gibrish", async () => {
