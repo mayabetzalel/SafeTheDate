@@ -1,4 +1,7 @@
 import express from "express"
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+
 import "./lib/dotenv-init"
 import "./lib/reflect-metadata"
 import helmet from "helmet"
@@ -17,6 +20,33 @@ const SERVER_PORT = process.env.BACKEND_PORT || 80 // default port of http is 80
 const app = express()
 
 // ---------App Middlewares--------
+
+
+
+if (process.env.NODE_ENV === "development") {
+  // Swagger options
+  const swaggerOptions = {
+    definition: {
+      openapi: '3.0.0',
+      info: {
+        title: 'SafeTheDate API',
+        version: '1.0.0',
+        description: 'API documentation for SafeTheDate API',
+      },
+      servers: [
+        {
+          url: `http://localhost:${SERVER_PORT}`,
+        },
+      ],
+    },
+    apis: ['src/routes/*.ts'], // Path to the API routes
+  };
+
+  const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
+  // Swagger endpoint
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
 
 app.use(helmet()) // Security headers & policies addon
 app.use(compression())
@@ -38,6 +68,7 @@ app.use(
     credentials: true,
   })
 )
+
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
