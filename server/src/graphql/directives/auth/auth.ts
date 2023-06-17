@@ -10,7 +10,7 @@ export const authSchemaTransformer = (schema: GraphQLSchema) =>
     [MapperKind.OBJECT_FIELD]: (fieldConfig) => {
       const authDirective = getDirective(schema, fieldConfig, "auth")?.[0];
 
-      if (authDirective && process.env.NEED_AUTH === "true") {
+      if (authDirective && process.env.IS_DEVELOPMENT === "false") {
         const originalResolver = fieldConfig.resolve;
         fieldConfig.resolve = async (source, args, context, info) => {
           const token = await context.request.cookieStore?.get("access_token");
@@ -24,6 +24,7 @@ export const authSchemaTransformer = (schema: GraphQLSchema) =>
                   headers: {
                     cookie: `${token.name}=${token.value}`,
                   },
+                  withCredentials: true,
                 })
                 .then(({ data }) => data);
               if (!user._id) {
