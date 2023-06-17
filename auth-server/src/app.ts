@@ -23,7 +23,7 @@ const app = express();
 
 
 
-if (process.env.Is_development === "true") {
+if (process.env.IS_DEVELOPMENT === "true") {
   // Swagger options
   const swaggerOptions = {
     definition: {
