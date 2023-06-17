@@ -188,7 +188,7 @@ const ticketResolvers: {
         const userId = context.user._id;
         let barcode;
         let oldTicket = await TicketModel.find({
-          eventId: eventId,
+          eventId: new Types.ObjectId(eventId),
           onMarketTime: { $exists: true },
         })
           .sort({ _id: 1, onMarketTime: 1 })
@@ -196,7 +196,7 @@ const ticketResolvers: {
 
         if (isExternal) {
           await client
-            .mutation(GENERATE_TICKET, { id: oldTicket[0].barcode })
+            .mutation(GENERATE_TICKET, { id: oldTicket[0].barcode, userId })
             .toPromise()
             .then(({ data }) => {
               console.log(data.generateTicketForCurrentEvent.barcode);
@@ -207,7 +207,7 @@ const ticketResolvers: {
                 {
                   $set: {
                     barcode: data.generateTicketForCurrentEvent.barcode,
-                    ownerId: userId,
+                    ownerId: new Types.ObjectId(userId),
                   },
                   $unset: { onMarketTime: 1 },
                 }
