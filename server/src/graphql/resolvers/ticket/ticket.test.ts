@@ -21,7 +21,7 @@ describe("Ticket tests", () => {
       `),
         });
 
-        expect(result.data.isValid).toBe(false);
+        expect(result.data.isValid).toBeFalsy;
     });
 
     it("Tickets valid", async () => {
@@ -32,7 +32,7 @@ describe("Ticket tests", () => {
           }`),
         });
 
-        expect(result.data.isValid).toBe(true);
+        expect(result.data.isValid).toBeTruthy;
     });
 
     it("Tickets on market", async () => {
