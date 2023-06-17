@@ -17,8 +17,6 @@ import { ResetPasswordTokenRequestDTO } from "../dto-types/resetPassToken.req";
 import { ResetPasswordRequestDTO } from "../dto-types/resetPassword.req";
 const rateLimit = require("express-rate-limit");
 
-
-
 // Define the rate limit configuration
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
