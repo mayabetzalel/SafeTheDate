@@ -75,7 +75,7 @@ const PaymentForm = ({
   const [isShowTicket, setShowTicket] = useState(false);
   const [ticketData, setTicketData] = useState<Partial<InputTicket>>({});
 
-  console.log(newCredit);
+  console.log("The new credit is going to be: " + newCredit);
 
   const [PurchaseTicketResult, PurchaseTicket] = useMutation<
     {

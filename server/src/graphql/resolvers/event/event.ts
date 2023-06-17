@@ -127,8 +127,57 @@ const eventResolvers: {
         image,
       } = inputEvent;
       const userId = context.user._id;
-
+      
       try {
+        const errors = {};
+      
+        if (!name) {
+          errors["name"] = "Please enter the name of the event";
+        }
+      
+        if (!location) {
+          errors["location"] = "Please enter the location of the event";
+        }
+      
+        if (!timeAndDate) {
+          errors["timeAndDate"] = "Please enter the time and date of the event";
+        }
+      
+        if (timeAndDate) {
+          const selectedDateTime = new Date(timeAndDate);
+          const currentDateTime = new Date();
+      
+          if (selectedDateTime <= currentDateTime) {
+            errors["timeAndDate"] = "Event date and time should be in the future";
+          } else if (
+            selectedDateTime.getTime() - currentDateTime.getTime() <
+            60 * 60 * 1000 // 1 hour in milliseconds
+          ) {
+            errors["timeAndDate"] =
+              "Event should be scheduled at least 1 hour from now";
+          }
+        }
+      
+        if (!type) {
+          errors["type"] = "Please enter the type of the event";
+        }
+      
+        if (!ticketsAmount) {
+          errors["ticketsAmount"] = "Please enter the ticket amount";
+        } else if (ticketsAmount < 1) {
+          errors["ticketsAmount"] = "Ticket amount must be at least 1";
+        }
+      
+        if (!ticketPrice) {
+          errors["ticketPrice"] = "Please enter the ticket price";
+        } else if (ticketPrice < 1) {
+          errors["ticketPrice"] = "Ticket price must be at least 1";
+        }
+      
+        if (Object.keys(errors).length > 0) {
+          return { message: "Validation errors", code: 400, errors };
+        }
+      
         const event = await EventModel.create({
           name,
           location,
@@ -140,19 +189,20 @@ const eventResolvers: {
           ownerId: userId,
           ...(image && { image: "exists" }),
         });
-
+      
         if (image) {
           const eventId = event._id.toString();
           writeBase64ToFile(`${eventId}.jpg`, image);
         }
-
-        console.log(`Event created succesfully | eventName: "${name}"`);
-        return { message: "event created succesfully", code: 200 };
+      
+        console.log(`Event created successfully | eventName: "${name}"`);
+        return { message: "Event created successfully", code: 200 };
       } catch (e) {
-        console.error(`failed to create event...`);
+        console.error("Failed to create event...");
         console.error(e);
         return { message: FAILED_MUTATION_MESSAGE, code: 500 };
       }
+      
     },
     decreaseTicketAmount: async (parent, { eventId }) => {
       try {
