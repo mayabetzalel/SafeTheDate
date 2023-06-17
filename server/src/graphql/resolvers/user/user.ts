@@ -3,6 +3,7 @@ import { User as UserModel } from "../../../../mongo/models/User";
 import mongoose, { Types } from "mongoose";
 import { readAndConvertToBase64, writeBase64ToFile } from "../../../../mongo/FileHandler";
 
+
 const FAILED_MUTATION_MESSAGE = "mutation upadteCredit failed";
 
 const userResolvers: {
@@ -41,10 +42,10 @@ const userResolvers: {
           { $set: { credit: newCredit } }
         );
         console.log("newCredit " + newCredit)
-        return { message: "user credit updated succesfully", code: 200 };
+        return { message: "user credit updated succesfully", code: 200 } as const;;
       } catch (error) {
         console.log("failed with " + error);
-        return { message: FAILED_MUTATION_MESSAGE, code: 500 };
+        return { message: FAILED_MUTATION_MESSAGE, code: 500 }  as const;;
       }
     },
     updateImage: async (parent, args, context, info) => {
