@@ -43,6 +43,36 @@ function configureTokensCookie(res: Response, tokens: TokensPack) {
 
 const router = express.Router();
 
+/**
+* @swagger
+* tags:
+* name: Auth
+* description: The Authentication API
+*/
+
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/RegisterDTO'
+ *     responses:
+ *       '201':
+ *         description: User registered successfully
+ *       '400':
+ *         description: Service Unavailable
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.post("/register", useValidateBodyDto(RegisterDTO), (req, res, next) => {
   authService
     .register(req.body as RegisterDTO)
@@ -56,6 +86,35 @@ router.post("/register", useValidateBodyDto(RegisterDTO), (req, res, next) => {
     .catch(next);
 });
 
+/**
+ * @swagger
+ * /api/auth/reset/token:
+ *   put:
+ *     summary: Send a password reset token
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ResetPasswordTokenRequestDTO'
+ *     responses:
+ *       '202':
+ *         description: Token sent successfully
+ *       '403':
+ *         description: Forbidden - User does not exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       '429':
+ *         description: Too many requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.put(
   "/reset/token",
   limiter,
@@ -69,6 +128,35 @@ router.put(
   }
 );
 
+/**
+ * @swagger
+ * /api/auth/reset:
+ *   put:
+ *     summary: Reset user password
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ResetPasswordRequestDTO'
+ *     responses:
+ *       '202':
+ *         description: Password reset successful
+ *       '403':
+ *         description: Forbidden - Invalid reset token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       '429':
+ *         description: Too many requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.put(
   "/reset",
   limiter,
@@ -81,6 +169,35 @@ router.put(
   }
 );
 
+/**
+ * @swagger
+ * /api/auth/google/login:
+ *   post:
+ *     summary: Login/Register with Google
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/GoogleLoginRequestDTO'
+ *     responses:
+ *       '200':
+ *         description: Login/Register successful
+ *       '403':
+ *         description: Invalid access token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       '429':
+ *         description: Too many requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.post("/google/login", (req, res, next) => {
   authService
     .loginRegisterWithGoogle(req.body)
@@ -90,6 +207,24 @@ router.post("/google/login", (req, res, next) => {
     })
     .catch(next);
 });
+
+/**
+ * @swagger
+ * /api/auth/token:
+ *   post:
+ *     summary: Regenerate access token
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       '200':
+ *         description: Access token regenerated successfully
+ *       '403':
+ *         description: Forbidden - No refresh token provided
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.post("/token", (req, res, next) => {
   try {
     const refreshToken = (req.cookies ?? {})[REFRESH_TOKEN_COOKIE_NAME];
@@ -114,6 +249,35 @@ router.post("/token", (req, res, next) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: User login
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginDTO'
+ *     responses:
+ *       '200':
+ *         description: Login successful
+ *       '403':
+ *         description: Forbidden - User password incorrect
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       '429':
+ *         description: Too many requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.post("/login", useValidateBodyDto(LoginDTO), (req, res, next) => {
   authService
     .login(req.body)
@@ -124,6 +288,17 @@ router.post("/login", useValidateBodyDto(LoginDTO), (req, res, next) => {
     .catch(next);
 });
 
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     summary: User logout
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       '202':
+ *         description: Logout successful
+ */
 router.post("/logout", (req, res, next) => {
   if (!req.user?._id) {
     res.sendStatus(HttpStatus.ACCEPTED);
@@ -139,6 +314,29 @@ router.post("/logout", (req, res, next) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/auth/confirm:
+ *   put:
+ *     summary: Confirm user registration
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ConfirmDTO'
+ *     responses:
+ *       '200':
+ *         description: User registration confirmed
+ *       '400':
+ *         description: Service Unavailable
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.put("/confirm", useValidateBodyDto(ConfirmDTO), (req, res, next) => {
   authService
     .confirmUser(new Types.ObjectId((req.body as ConfirmDTO).confirmId))
@@ -146,6 +344,21 @@ router.put("/confirm", useValidateBodyDto(ConfirmDTO), (req, res, next) => {
     .catch(next);
 });
 
+/**
+ * @swagger
+ * /api/auth/session:
+ *   get:
+ *     summary: Get user session
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       '200':
+ *         description: User session retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserSession'
+ */
 router.get("/session", useAuth, (req, res, next) => {
   res.send(req.user);
 });
