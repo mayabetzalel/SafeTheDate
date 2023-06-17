@@ -60,6 +60,7 @@ export const EventsPage = () => {
     <Stack spacing={3} sx={{ height: "100%" }}>
       <TextField
         value={searchText}
+        placeholder="search"
         color={"secondary"}
         onChange={(e) => setSearchText(e.target.value)}
       />

@@ -14,7 +14,7 @@ import CloseIcon from '@mui/icons-material/Close';
 interface PurchaseSummaryModalProps {
   eventName: string;
   sellPrice: number;
-  commissionPercent: number;
+  commission: number;
   image: string;
   isOnMarket: boolean;
   onClose: () => void;
@@ -24,7 +24,7 @@ interface PurchaseSummaryModalProps {
 const PurchaseSummaryModal: React.FC<PurchaseSummaryModalProps> = ({
   eventName,
   sellPrice,
-  commissionPercent,
+  commission,
   image,
   isOnMarket,
   onClose,
@@ -53,7 +53,7 @@ const PurchaseSummaryModal: React.FC<PurchaseSummaryModalProps> = ({
           Sell Price: {sellPrice} NIS
         </DialogContentText>
         <DialogContentText>
-          Commission Percent: {commissionPercent}%
+          Commission: {commission} NIS
         </DialogContentText>
       </DialogContent>
       <DialogActions>

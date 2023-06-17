@@ -66,7 +66,7 @@ export const MyTicket = (props: MyTicketCardProps) => {
                 <PutOnSellModal
                     eventName={name || ""}
                     sellPrice={price || 0}
-                    commissionPercent={10} // example commission percent, replace with your actual value
+                    commission={2} // example commission percent, replace with your actual value
                     image={image}
                     onClose={toggleModalView}
                     onPutOnSell={onMarketChange}
