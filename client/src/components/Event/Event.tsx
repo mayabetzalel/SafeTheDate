@@ -78,33 +78,31 @@ export const Event = () => {
   const [ticketPrice, setTicketPrice] = useState(0);
   const [useCredit, setUseCredit] = useState(false);
   const [changePrices, setChangePrices] = useState(Situations.notEdit);
+  const [initEventData, setInitEventData] = useState(false)
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUseCredit(e.target.checked);
     const currentCredit = currentUser ? currentUser["credit"] : 0;
+    const currenTicketPrice =
+        event && event.ticketPrice ? event.ticketPrice : 0;
+    
     if (e.target.checked) {
       setChangePrices(Situations.change);
+      setTicketPrice(Math.max(ticketPrice - currentCredit, 0));
+      setCredit(Math.max(currentCredit - ticketPrice, 0));
     } else {
       setChangePrices(Situations.regular);
+      setTicketPrice(currenTicketPrice);
+      setCredit(currentCredit);
     }
   };
 
   useEffect(() => {
     if (changePrices) {
       setChangePrices(Situations.notEdit);
-      const currentCredit = currentUser ? currentUser["credit"] : 0;
-      const currenTicketPrice =
-        event && event.ticketPrice ? event.ticketPrice : 0;
-
-      if (changePrices == Situations.regular) {
-        setTicketPrice(currenTicketPrice);
-        setCredit(currentCredit);
-      } else {
-        setTicketPrice(Math.max(ticketPrice - currentCredit, 0));
-        setCredit(Math.max(currentCredit - ticketPrice, 0));
-      }
     }
   }, [ticketPrice, useCredit]);
+
   const [{ data, fetching }] = useQuery<{
     event: Exact<EventType>[];
   }>({
@@ -131,10 +129,12 @@ export const Event = () => {
   });
 
   useEffect(() => {
-    if (data?.event.length == 1) {
+    if (data?.event.length == 1 && !initEventData) {
+      console.log("here")
       setEvent(data.event.at(0));
       setTicketAmount(data.event.at(0)?.ticketsAmount || 0);
-      if (!ticketPrice) setTicketPrice(data.event.at(0)?.ticketPrice || 0);
+      setTicketPrice(data.event.at(0)?.ticketPrice || 0);
+      setInitEventData(true)
     }
   }, [data]);
 

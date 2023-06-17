@@ -2,6 +2,7 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  noSchemaStitching: true,
   testPathIgnorePatterns: [
     "/node_modules/",
     "./dist"

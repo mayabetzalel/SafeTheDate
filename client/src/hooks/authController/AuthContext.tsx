@@ -23,7 +23,8 @@ const AuthContext = createContext({
   getUser: () => { },
   getUserProfilePicture: () => { },
   logWithGoogle: async (accessToken: string) => { },
-  checkIfSessionValid: async () => { },
+  checkIfSessionValid: async () => {},
+  setCredit: (newCredit: number) => {}
 });
 
 export function useAuth() {
@@ -136,6 +137,11 @@ export const AuthContextProvider = ({
     return userProfilePicture;
   }
 
+  function setCredit(newCredit: number) {
+    currentUser.credit = newCredit
+    setCurrentUser(currentUser)
+  }
+
   const value = {
     currentUser,
     isUserSignedIn,
@@ -148,6 +154,7 @@ export const AuthContextProvider = ({
     checkIfSessionValid,
     resetPasswordSendMail,
     resetPassword,
+    setCredit
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
