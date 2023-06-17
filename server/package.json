@@ -15,6 +15,7 @@
   "author": "SafeTheDate",
   "license": "ISC",
   "dependencies": {
+    "@graphql-tools/executor-http": "^1.0.0",
     "@urql/core": "^4.0.10",
     "@whatwg-node/server-plugin-cookies": "^0.0.6",
     "axios": "^1.4.0",
