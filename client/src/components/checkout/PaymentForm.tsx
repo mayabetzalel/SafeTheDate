@@ -10,6 +10,8 @@ import { useMutation, useQuery } from "urql";
 import _ from "lodash";
 import { useLocation } from "react-router-dom";
 import { User } from "../../graphql/graphql";
+import { Button } from "@mui/material";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const PURCHASE_TICKET_MUTATION = graphql(`
   mutation purchaseTicket($inputTicket: InputTicket!) {
@@ -70,12 +72,14 @@ const PaymentForm = ({
   const [success, setSuccess] = useState(false);
   const [purchaseTicket, setPurchaseTicket] = useState(false);
   const [decrease, setDecrease] = useState(false);
-  const { currentUser } = useAuth();
+  const { currentUser, setCredit } = useAuth();
   const [user, setCurrentUser] = useState<User>();
   const [isShowTicket, setShowTicket] = useState(false);
   const [ticketData, setTicketData] = useState<Partial<InputTicket>>({});
 
   console.log("The new credit is going to be: " + newCredit);
+  console.log("The ticket price is going to be: " +   amount);
+
 
   const [PurchaseTicketResult, PurchaseTicket] = useMutation<
     {
@@ -163,6 +167,7 @@ const PaymentForm = ({
         } else {
           setDecrease(true);
           setShowTicket(true);
+          setCredit(newCredit)
           setUpdateCredit({ userId, newCredit });
           enqueueSnackbar("Ticket created successfully", {
             variant: "success",
@@ -174,23 +179,23 @@ const PaymentForm = ({
   });
 
   // creates a paypal order
-  const createOrder = (data, actions) => {
+  const createOrder = async (data, actions) => {
     return actions.order
-      .create({
-        purchase_units: [
-          {
-            description: description,
-            amount: {
-              currency_code: "ILS",
-              value: amount,
-            },
+    .create({
+      purchase_units: [
+        {
+          description: description,
+          amount: {
+            currency_code: "ILS",
+            value: amount,
           },
-        ],
-      })
-      .then((orderID) => {
-        setOrderID(orderID);
-        return orderID;
-      });
+        },
+      ],
+    })
+    .then((orderID) => {
+      setOrderID(orderID);
+      return orderID;
+    });
   };
 
   // check Approval
@@ -218,21 +223,39 @@ const PaymentForm = ({
     }
   }, [success]);
 
+  const theme = createTheme({
+    palette: {
+      primary: {
+        // Purple and green play nicely together.
+        main: '#36343B',
+      }
+    },
+  });
+
   return (
-    <PayPalScriptProvider
-      options={{
-        "client-id": process.env.REACT_APP_CLIENT_ID as string,
-        currency: "ILS",
-      }}
-    >
-      <PayPalButtons
-        style={{ layout: "vertical" }}
-        onApprove={onApprove}
-        onError={onError}
-        createOrder={createOrder}
-      />
-      {isShowTicket ? <DisplayTicket ticket={ticketData} /> : <></>}
-    </PayPalScriptProvider>
+    <div>
+      {amount?
+      <PayPalScriptProvider
+        options={{
+          "client-id": process.env.REACT_APP_CLIENT_ID as string,
+          currency: "ILS",
+        }}
+      >
+        <PayPalButtons
+          style={{ layout: "vertical" }}
+          onApprove={onApprove}
+          onError={onError}
+          createOrder={createOrder}
+          forceReRender={[amount]}
+        />
+      </PayPalScriptProvider>
+      :
+      <ThemeProvider theme={theme}>
+        <Button variant="contained" color="primary" fullWidth={true} onClick={() => { setPurchaseTicket(true); }}>Pay with credit</Button>
+      </ThemeProvider>
+      }
+      { isShowTicket ? <DisplayTicket ticket={ticketData} /> : <></> }
+    </div>
   );
 };
 
