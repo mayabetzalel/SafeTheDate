@@ -3,13 +3,14 @@ import FetchingState from "../utils/fetchingState";
 import EventCard from "./EventCard/EventCard";
 import { graphql } from "../graphql";
 import { Event, Exact, FilterEventParams } from "../graphql/graphql";
-import { Grid, Pagination } from "@mui/material";
+import { Grid, Pagination, Typography, useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import { RoutePaths } from "../App";
 import { floor } from "lodash";
 import { useAuth } from "../hooks/authController/AuthContext";
+import EmptySearch from "./EmptySearch";
 
 const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
@@ -53,6 +54,7 @@ interface EventsProps {
 const Events = ({ filterParams, userId }: EventsProps) => {
   const [page, setPage] = useState(0);
   const navigate = useNavigate();
+  const theme = useTheme();
   const [{ data = { event: [] }, fetching, error }, reexecuteQuery] = useQuery<
     { event: Exact<Event>[] },
     { filterParams: FilterEventParams; skip: number; limit: number; userId: string; }
@@ -81,8 +83,20 @@ const Events = ({ filterParams, userId }: EventsProps) => {
     setPage(0);
   }, [filterParams]);
 
+  if (fetching) {
+    return <FetchingState isFetching={fetching} >
+
+    </FetchingState>;
+  }
+
+  if (data.event.length === 0) {
+    return (
+      <EmptySearch message={"No events found."}/>
+    );
+  }
+
   return (
-    <FetchingState isFetching={fetching}>
+    <>
       <GridHiddenScroll container sx={{ height: "inherit", overflowY: "auto" }}>
         {data.event.map(({ id, name, type, location, timeAndDate, ticketsAmount, ticketPrice, image }) => (
           <Grid key={id!} item sm={6} md={4} lg={3}>
@@ -107,7 +121,7 @@ const Events = ({ filterParams, userId }: EventsProps) => {
         onChange={(e_, page) => setPage(page - 1)}
         shape="rounded"
       />
-    </FetchingState>
+    </>
   );
 };
 
