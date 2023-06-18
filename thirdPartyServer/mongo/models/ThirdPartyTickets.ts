@@ -17,7 +17,6 @@ const thirdPartyTicketsSchema = new Schema<ThirdPartyTicketsMongoType>({
     type: Schema.Types.ObjectId,
     ref: "thirdPartyEvents",
     required: true,
-    unique: true,
   },
   ownerId: {
     type: Schema.Types.ObjectId,
