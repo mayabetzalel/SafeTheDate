@@ -103,7 +103,7 @@ const router = createBrowserRouter([
         path: RoutePaths.PROFILE,
         element: (
           <PrivateRoute>
-            <MyDetails />
+            <Profile />
           </PrivateRoute>
         ),
         children: [
