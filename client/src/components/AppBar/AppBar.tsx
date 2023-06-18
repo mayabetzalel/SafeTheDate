@@ -47,7 +47,7 @@ const Navbar = () => {
     >
       <Grid item xs={2}>
         <img
-          style={{ width: "100%" , maxWidth: "200px", height: "auto", cursor: "pointer" }}
+          style={{ width: "100%", maxWidth: "200px", height: "auto", cursor: "pointer" }}
           src={logo}
           alt="fireSpot"
           onClick={() => navigate(RoutePaths.EVENTS)}
@@ -78,7 +78,7 @@ const Navbar = () => {
       </Grid>
       <Grid item xs>
         {currentUser ? (
-          <NavigationTypography route={RoutePaths.PROFILE}>
+          <NavigationTypography route={RoutePaths.MY_DETAILS}>
             Profile
           </NavigationTypography>
         ) : (

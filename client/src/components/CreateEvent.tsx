@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "urql";
 import { graphql } from "../graphql";
@@ -8,10 +8,6 @@ import {
   TextField,
   Button,
   Grid,
-  Stack,
-  Paper,
-  InputAdornment,
-  FormHelperText,
 } from "@mui/material";
 import ImagePicker from "./ImagePicker";
 
@@ -84,7 +80,7 @@ export const CreateEvent = () => {
         errors["eventTimeAndDate"] =
           "Event should be scheduled at least 1 hour from now";
       }
-    }    
+    }
 
     if (!eventTypeRef.current?.value) {
       errors["eventType"] = "Please enter the type of the event";
@@ -105,7 +101,7 @@ export const CreateEvent = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-  
+
     // Clear the error message for the corresponding input field
     setFormErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   }
