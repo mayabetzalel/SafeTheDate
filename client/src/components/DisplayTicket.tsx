@@ -73,7 +73,9 @@ export const DisplayTicket = ({ ticket, isOpen, toggleIsOpen }: DisplayTicketPro
           </Grid>
           <Grid item>
             <Typography align="center">Present in the entry with id</Typography>
-            <QRCode value={ticket.barcode || ""} size={BARCODE_SIZE} />
+            {ticket.barcode ?
+            <QRCode value={ticket.barcode} size={BARCODE_SIZE} />
+            : "Go to the profile to view the barcode"}
           </Grid>
         </Grid>
       </Dialog>

@@ -6,13 +6,15 @@ import {
   FilterEventParams,
   TicketResponse,
 } from "../../graphql/graphql";
-import { Grid, Pagination } from "@mui/material";
+import noEventsImage from "../assets/search-no-result.jpg";
+import { Grid, Pagination, Typography, useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { floor } from "lodash";
 import { MyTicket } from "./MyTicket";
 import { useAuth } from "../../hooks/authController/AuthContext";
 import { useSnackbar } from "notistack";
+import EmptySearch from "../EmptySearch";
 
 const GridHiddenScroll = styled(Grid)({
   "::-webkit-scrollbar": {
@@ -58,6 +60,7 @@ const MyTickets = ({ filterParams }: TicketsProps) => {
   const [tickets, setTickets] = useState<TicketResponse[]>([]);
   const [page, setPage] = useState(0);
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
   const [{ data = { ticket: [] }, fetching, error }] = useQuery<
     { ticket: Exact<TicketResponse>[] },
     {
@@ -104,7 +107,7 @@ const MyTickets = ({ filterParams }: TicketsProps) => {
 
   useEffect(() => {
     if (error?.message.includes("Auth failed")) {
-      enqueueSnackbar("Token expired, Please login again or refresh", {variant: "error"});
+      enqueueSnackbar("Token expired, Please login again or refresh", { variant: "error" });
     }
   }, [error])
 
@@ -115,6 +118,18 @@ const MyTickets = ({ filterParams }: TicketsProps) => {
   useEffect(() => {
     if (data?.ticket) setTickets(data.ticket);
   }, [data]);
+
+  if (fetching) {
+    return <FetchingState isFetching={fetching} >
+
+    </FetchingState>;
+  }
+
+  if (dataCount?.ticketCount === 0) {
+    return (
+      <EmptySearch message={"No tickets found."} />
+    );
+  }
 
   return (
     <FetchingState isFetching={fetching}>
