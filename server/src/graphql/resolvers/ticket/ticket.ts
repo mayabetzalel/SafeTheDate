@@ -195,26 +195,37 @@ const ticketResolvers: {
           .limit(1);
 
         if (isExternal) {
-          await client
+          const { data } = await client
             .mutation(GENERATE_TICKET, { id: oldTicket[0].barcode, userId })
-            .toPromise()
-            .then(({ data }) => {
-              console.log(data.generateTicketForCurrentEvent.barcode);
-              TicketModel.findOneAndUpdate(
-                {
-                  _id: oldTicket[0]._id,
-                },
-                {
-                  $set: {
-                    barcode: data.generateTicketForCurrentEvent.barcode,
-                    ownerId: new Types.ObjectId(userId),
-                  },
-                  $unset: { onMarketTime: 1 },
-                }
-              ).then((data) => {
-                console.log(data);
-              });
-            });
+            .toPromise();
+          console.log(data.generateTicketForCurrentEvent.barcode);
+          const ticket = await TicketModel.findOneAndUpdate(
+            {
+              _id: oldTicket[0]._id,
+            },
+            {
+              $set: {
+                barcode: data.generateTicketForCurrentEvent.barcode,
+                ownerId: new Types.ObjectId(userId),
+              },
+              $unset: { onMarketTime: 1 },
+            }
+          );
+          console.log(ticket);
+
+          const creditToAdd =
+            +oldTicket[0]["price"] - SECOND_HAND_SELL_TICKET_COMMISION;
+
+          // Add to old ticket's user credit - ticket price  minus 2 shekels.
+          const updatedUserCredit = await UserModel.findOneAndUpdate(
+            { _id: oldTicket[0].ownerId },
+            { $inc: { credit: creditToAdd } }
+          );
+
+          // Email massage to user that it's ticket was sold.
+          await sendEmail(updatedUserCredit.email, creditToAdd);
+
+          console.log("second hand ticket updated to first hand");
         } else {
           barcode = await makeBarcode();
           const numberOfOnMarketTimeTickets = await TicketModel.find({
