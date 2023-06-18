@@ -63,12 +63,22 @@ const USER_QUERY = graphql(`
   }
 `);
 
+const USER_CREDIT_QUERY = graphql(`
+  query getUserCredit($userId: String!) {
+    user(userId: $userId) {
+      credit
+    }
+  }
+`);
+
+
 export const Event = () => {
   const Situations = {
     notEdit: 0,
     regular: 1,
     change: 2,
   };
+
   const { currentUser = {} } = useAuth();
   const navigate = useNavigate();
   const [event, setEvent] = useState<Exact<EventType>>();
@@ -82,7 +92,7 @@ export const Event = () => {
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUseCredit(e.target.checked);
-    const currentCredit = currentUser ? currentUser["credit"] : 0;
+    const currentCredit = userCreditData.user.credit ? userCreditData.user.credit : 0;
     const currenTicketPrice =
         event && event.ticketPrice ? event.ticketPrice : 0;
     
@@ -121,6 +131,18 @@ export const Event = () => {
     },
   });
 
+  const [{ data: userCreditData = { user: {} } }, reexecuteUserQuery2] = useQuery<
+    { user: Pick<User, "credit"> },
+    { userId: string }
+  >({
+    pause: true,
+    query: USER_CREDIT_QUERY,
+    variables: {
+      userId: currentUser?.['_id']
+    }
+  });
+
+  console.log("Credit: " + JSON.stringify(userCreditData.user))
   const [dataImage] = useQuery<{
     event: Exact<EventType>[];
   }>({
@@ -130,7 +152,6 @@ export const Event = () => {
 
   useEffect(() => {
     if (data?.event.length == 1 && !initEventData) {
-      console.log("here")
       setEvent(data.event.at(0));
       setTicketAmount(data.event.at(0)?.ticketsAmount || 0);
       setTicketPrice(data.event.at(0)?.ticketPrice || 0);
@@ -141,6 +162,10 @@ export const Event = () => {
   useEffect(() => {
     if (event?.ownerId) reexecuteUserQuery();
   }, [event]);
+
+  useEffect(() => {
+    if (currentUser?.['_id']) reexecuteUserQuery2();
+  }, [currentUser]);
 
   return (
     <FetchingState isFetching={fetching}>
@@ -217,7 +242,7 @@ export const Event = () => {
                 {event?.ticketsAmount ?(
                   <>
                     <div>
-                      {currentUser["credit"] > 0 ? (
+                      {userCreditData.user.credit?  (
                         <FormControlLabel
                           control={
                             <Switch
