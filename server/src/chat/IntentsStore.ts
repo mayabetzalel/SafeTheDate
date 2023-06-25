@@ -13,6 +13,9 @@ export default {
     ["empty" as WitIntent]: {
         responseMessage: "The captain didn't find the searched events, please try again."
     },
+    ["message_to_long" as WitIntent]: {
+        responseMessage: "Requests can't be longer than 280 characters"
+    },
     ["error" as WitIntent]: {
         responseMessage: "Something went wrong, please try again or consult with the support."
     },
