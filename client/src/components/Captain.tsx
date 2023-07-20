@@ -38,9 +38,9 @@ export default function Captain() {
       if (result.error) console.error("Error generating chat reponse:", result.error)
       else {
         const { eventName: name, location, from, to, type } = result.data.chatCommand;
-        const eventFilters = { name, location, from, to };
+        const eventFilters = { name, location, from: new Date(from).getTime(), to: new Date(to).getTime() };
 
-        setEventFilter(_.pickBy(eventFilters, _.isString));
+        setEventFilter(eventFilters);
         setMessages(prev => ([...prev, { type, messageData: result.data.chatCommand.responseMessage, direction: "incoming", isEmpty: result.data.chatCommand.isEmpty }]));
       }
     })

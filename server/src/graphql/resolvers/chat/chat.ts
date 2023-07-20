@@ -42,17 +42,32 @@ export default {
       // Extract values from the inputEvent object
       const { message } = inputMessage
       // Create a new event using the extracted values
+      
+      let isEmpty = false
+      // Check if message to long
+      if (message.length > 280) {
+        console.error("Got error from wit ai, message to long")
+        return {
+          responseMessage: IntentsStore.message_to_long.responseMessage,
+          isEmpty: isEmpty,
+          type: "nothing",
+        }
+      }
 
       const client = new Wit({ accessToken: process.env.BOT_ACCESS_TOKEN })
-      var res = await client.message(message, {})
-      let isEmpty = false
-      if (!res && res.error) {
+      try {
+        var res = await client.message(message, {})
+      } catch (e) {
         console.error("Got error from wit ai")
         return {
           responseMessage: IntentsStore.error.responseMessage,
+          isEmpty: isEmpty,
+          type: "nothing",
         }
-      } else {
-        var intent = matchWitToSearchedRequests(res)
+      }
+
+      if (res && !res.error) {
+        let intent = matchWitToSearchedRequests(res)
 
         var entities = matchEntities(res)
 
